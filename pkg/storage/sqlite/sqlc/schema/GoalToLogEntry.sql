@@ -1,0 +1,5 @@
+CREATE TABLE GoalToLogEntry (
+  GoalID INTEGER NOT NULL,
+  LogEntryID INTEGER NOT NULL,
+  UNIQUE(GoalID,LogEntryID)
+);
