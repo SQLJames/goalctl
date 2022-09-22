@@ -1,0 +1,38 @@
+---
+name: "tagged-release"
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  tagged-release:
+    name: "Tagged Release"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '1.19.1'
+          check-latest: true
+          cache: true
+      - uses: actions/checkout@v3
+      - name: Running govulncheck
+        uses: Templum/govulncheck-action@main
+        with:
+          vulncheck-version: latest
+          package: ./...
+      - name: Run Gosec Security Scanner
+        uses: securego/gosec@master
+        with:
+          args: ./...
+      - name: "Build & test"
+        run: |
+          make release
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.PAT }}"
+          prerelease: true
+          automatic_release_tag: "latest"
+          files: |
+            ./bin/*
