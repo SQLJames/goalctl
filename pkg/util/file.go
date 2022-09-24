@@ -25,6 +25,14 @@ func MakeStorageLocation() (StorageLocation string, err error) {
 	if err != nil {
 		return "", err
 	}
+	if filepath.Dir(func () string {
+		ex, _ := os.Executable() 
+		return ex
+		}()) == homedir {
+			log.Logger.Error(err, "file names cant be the same get rekt noob.")
+			return "", errors.New("file name strugs")
+	}
+
 	applicationName := info.GetApplicationName()
 	StorageLocation = path.Join(homedir, applicationName)
 	err = os.MkdirAll(StorageLocation, os.FileMode(0666))
