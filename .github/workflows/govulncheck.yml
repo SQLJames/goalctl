@@ -16,3 +16,4 @@ jobs:
         with:
           vulncheck-version: latest
           package: ./...
+          github-token: ${{ secrets.SECURITY_EVENTS }}
