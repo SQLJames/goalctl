@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
 	"path"
 	"path/filepath"
 	"runtime"
@@ -138,19 +137,18 @@ func Release() error {
 	return nil
 }
 
-// Lint the codebase, checking for common errors
-func Lint() {
-	fmt.Println("--> Linting codebase")
-
-	c := exec.Command("gometalinter", "-e", "internal", "-e", "go/pkg/mod", "./...")
-	c.Env = os.Environ()
-	out, err := c.CombinedOutput()
-	if err == nil {
-		fmt.Println("    no issues detected")
-	} else {
-		fmt.Print("    ")
-		fmt.Println(strings.Replace(string(out), "\n", "\n    ", -1))
+// StaticSecurity runs various static checkers to ensure you minimize security holes
+func Scan() (err error) {
+	fmt.Println("--> Scanning code")
+	err = confirmScanners()
+	if err != nil {
+		return err
 	}
+	err = runStaticScanners()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // Test the codebase
