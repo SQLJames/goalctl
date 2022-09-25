@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -11,8 +12,8 @@ import (
 func modulePath() string {
 	file, err := os.Open("go.mod")
 	if err != nil {
-
-		log.Fatal(err)
+		log.Println(err)
+		return filepath.Base(gitRoot())
 	}
 	defer file.Close()
 	var lines []string
@@ -24,8 +25,8 @@ func modulePath() string {
 	if err := scanner.Err(); err != nil {
 		// closing file because we are logging a fatal error
 		// log.Fatal will exit, and `defer file.Close()` will not run
-		file.Close()
-		log.Fatal(err)
+		log.Println(err)
+		return filepath.Base(gitRoot())
 	}
 	return parseFileLines(lines)
 }

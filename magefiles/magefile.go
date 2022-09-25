@@ -162,7 +162,7 @@ func Test() error {
 	log.Println("--> Testing codebase")
 	results, err := sh.Output(goexe, "test", "-cover", "-e", "internal", "-e", "cache", "./...")
 	log.Print("    ")
-	log.Println(strings.Replace(results, "\n", "\n    ", -1))
+	log.Println(strings.ReplaceAll(results, "\n", "\n    "))
 
 	return err
 }

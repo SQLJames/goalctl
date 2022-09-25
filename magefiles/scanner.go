@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os/exec"
 
 	"github.com/magefile/mage/sh"
@@ -24,7 +25,7 @@ func (s *scanner) getInstallURL() (installURL string) {
 }
 func runStaticScanners() (err error) {
 	for _, scanner := range scanners {
-		fmt.Printf("--> Running Scanner: %s\n", scanner.command)
+		log.Printf("--> Running Scanner: %s\n", scanner.command)
 		if err := sh.RunV(scanner.command, scanner.runArgs...); err != nil {
 			return err
 		}
@@ -43,10 +44,10 @@ func confirmScanners() (err error) {
 
 // installIfMissing checks for existence then installs a file if it's not there
 func installIfMissing(executableName, installURL string) (err error) {
-	fmt.Printf("--> Checking if Scanner Exists: %s\n", executableName)
+	log.Printf("--> Checking if Scanner Exists: %s\n", executableName)
 	_, missing := exec.LookPath(executableName)
 	if missing != nil {
-		fmt.Printf("--> Scanner Missing Installing Scanner: %s\n", executableName)
+		log.Printf("--> Scanner Missing Installing Scanner: %s\n", executableName)
 		err := sh.Run("go", "install", installURL)
 		if err != nil {
 			return err

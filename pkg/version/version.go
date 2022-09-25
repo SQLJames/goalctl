@@ -2,6 +2,7 @@ package version
 
 import (
 	"fmt"
+	"log"
 	"runtime"
 
 	"github.com/sqljames/goalctl/pkg/info"
@@ -49,11 +50,40 @@ type Info struct {
 }
 
 func (vi *Info) String() string {
-	return fmt.Sprintf("\tApplication:\t%s\n\tVersion:\t%s-v%s \n\tGitBranch:\t%s \n\tGitBuildTag:\t%s \n\tGitCommitHash:\t%s \n\tBuildTarget:\t%s \n\tBuildDate:\t%s", vi.applicationName, vi.release, vi.buildVersion, vi.buildBranch, vi.buildTag, vi.commitHash, vi.buildTarget, vi.buildDate)
+	return fmt.Sprintf(`
+   Application:    %s
+   Version:        %s-v%s 
+   GitBranch:      %s
+   GitBuildTag:    %s 
+   GitCommitHash:  %s 
+   BuildTarget:    %s 
+   BuildDate:      %s`,
+		vi.applicationName,
+		vi.release,
+		vi.buildVersion,
+		vi.buildBranch,
+		vi.buildTag,
+		vi.commitHash,
+		vi.buildTarget,
+		vi.buildDate)
 }
 
-func (vi *Info) CliPrinter() string {
-	return fmt.Sprintf("Application:\t%s\nVersion:\t%s-v%s \nGitBranch:\t%s\nGitBuildTag:\t%s \nGitCommitHash:\t%s \nBuildTarget:\t%s \nBuildDate:\t%s", vi.applicationName, vi.release, vi.buildVersion, vi.buildBranch, vi.buildTag, vi.commitHash, vi.buildTarget, vi.buildDate)
+func (vi *Info) CliPrinter() {
+	log.Printf(`Application:    %s
+Version:        %s-v%s 
+GitBranch:      %s
+GitBuildTag:    %s 
+GitCommitHash:  %s 
+BuildTarget:    %s 
+BuildDate:      %s`,
+		vi.applicationName,
+		vi.release,
+		vi.buildVersion,
+		vi.buildBranch,
+		vi.buildTag,
+		vi.commitHash,
+		vi.buildTarget,
+		vi.buildDate)
 }
 
 func GetGOARCH() string {

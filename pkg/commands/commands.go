@@ -1,8 +1,6 @@
 package commands
 
 import (
-	"fmt"
-
 	"github.com/sqljames/goalctl/pkg/commands/create"
 	"github.com/sqljames/goalctl/pkg/commands/export"
 	"github.com/sqljames/goalctl/pkg/commands/link"
@@ -77,6 +75,6 @@ func modifyCLIDefaultVersion() {
 		Value: false,
 	}
 	cli.VersionPrinter = func(cCtx *cli.Context) {
-		fmt.Println(version.Version.CliPrinter())
+		version.Version.CliPrinter()
 	}
 }

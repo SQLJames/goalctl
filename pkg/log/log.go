@@ -1,7 +1,7 @@
 package log
 
 var (
-	Logger = newInternalklog()
+	Logger = newLogger()
 )
 
 type logger interface {
@@ -12,4 +12,8 @@ type logger interface {
 	Info(message string, keysAndValues ...interface{})
 	Debug(message string, keysAndValues ...interface{})
 	Trace(message string, keysAndValues ...interface{})
+}
+
+func newLogger() logger {
+	return newInternalklog()
 }
