@@ -15,11 +15,10 @@ func getVersion() string {
 }
 
 func getRelease() string {
-	defaultValue := "dev"
 	v := "RELEASE"
 	value, set := os.LookupEnv(v)
 	if set {
 		return value
 	}
-	return defaultValue
+	return devRelease
 }

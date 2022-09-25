@@ -15,6 +15,10 @@ import (
 	"github.com/magefile/mage/sh"
 )
 
+const (
+	devRelease string = "dev"
+)
+
 var (
 	goexe      = getGoExe()
 	binaryPath = path.Join(gitRoot(), "bin")
@@ -120,7 +124,7 @@ func Release() {
 
 			if cgoEnabled && runtime.GOOS != env["GOOS"] {
 				fmt.Printf("      CGO is enabled, skipping compilation of %s for %s\n", buildTarget.name(), env["GOOS"])
-				
+
 				return
 			}
 			fmt.Printf("      Building %s\n", buildTarget.name())
@@ -128,7 +132,7 @@ func Release() {
 			err := sh.RunWith(env, goexe, "build", "-o", path.Join(binaryPath, buildTarget.name()), "-ldflags="+flags(), buildTarget.SourceDir)
 			if err != nil {
 				fmt.Printf("compilation failed: %s\n", err.Error())
-				
+
 				return
 			}
 		}(buildTarget)

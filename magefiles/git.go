@@ -18,9 +18,9 @@ func gitTag() string {
 			ok := errors.As(err, &exitError)
 			if ok && exitError.Exited() {
 				// probably no git tag
-				return "dev"
+				return devRelease
 			}
-			return "dev"
+			return devRelease
 		}
 	}
 
