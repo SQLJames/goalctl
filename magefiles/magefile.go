@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	goexe      = "go"
+	goexe      = getGoExe()
 	binaryPath = path.Join(gitRoot(), "bin")
 	tempPath   = path.Join(gitRoot(), "tmp")
 	dirs       = []string{binaryPath, tempPath}
@@ -28,10 +28,12 @@ var (
 	}
 )
 
-func init() {
-	if exe := os.Getenv("GOEXE"); exe != "" {
-		goexe = exe
+func getGoExe() (goexe string) {
+	goexe = os.Getenv("GOEXE")
+	if goexe == "" {
+		goexe = "go"
 	}
+	return goexe
 }
 
 func flags() string {

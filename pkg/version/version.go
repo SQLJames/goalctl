@@ -10,7 +10,19 @@ import (
 // These variables are usually defined via LDFLags at compile-time
 var (
 	// Version is the default version of the package/tool
-	Version Info
+	Version = Info{
+		applicationName: applicationName,
+		release:         release,
+		commitHash:      commitHash,
+		buildDate:       buildDate,
+		buildTag:        buildTag,
+		buildOS:         runtime.GOOS,
+		buildARCH:       runtime.GOARCH,
+		buildTarget:     fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH),
+		buildVersion:    buildVersion,
+		buildBranch:     buildBranch,
+		goVersion:       runtime.Version(),
+	}
 	// Name of application
 	applicationName = info.GetApplicationName()
 	commitHash      = "unknown"
@@ -34,22 +46,6 @@ type Info struct {
 	buildVersion    string
 	buildBranch     string
 	goVersion       string
-}
-
-func init() {
-	Version = Info{
-		applicationName: applicationName,
-		release:         release,
-		commitHash:      commitHash,
-		buildDate:       buildDate,
-		buildTag:        buildTag,
-		buildOS:         runtime.GOOS,
-		buildARCH:       runtime.GOARCH,
-		buildTarget:     fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH),
-		buildVersion:    buildVersion,
-		buildBranch:     buildBranch,
-		goVersion:       runtime.Version(),
-	}
 }
 
 func (vi Info) String() string {

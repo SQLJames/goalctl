@@ -133,7 +133,6 @@ issues:
 run:
   timeout: 5m
   skip-dirs:
-    - magefiles
     - vendor/
 
 output:
