@@ -32,7 +32,7 @@ func actionListEntries(cliContext *cli.Context) error {
 
 	notebook := resources.Notebook{
 		Name:    cliContext.String(flags.NameFlagName),
-		Entries: *NotebookEntries,
+		Entries: NotebookEntries,
 	}
 	log.Logger.Trace("Created notebook resource")
 	err = printer.NewPrinter(cliContext).Write(notebook, os.Stdout)

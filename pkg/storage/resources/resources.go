@@ -4,13 +4,13 @@ type Book struct {
 	Journal Journal `json:"journal,omitempty" toml:"journal,omitempty" xml:"journal,omitempty" yaml:"journal,omitempty"`
 }
 type Journal struct {
-	NoteBooks   []Notebook   `json:"notebooks,omitempty" toml:"notebooks,omitempty" xml:"notebooks,omitempty" yaml:"notebooks,omitempty"`
+	NoteBooks   []*Notebook   `json:"notebooks,omitempty" toml:"notebooks,omitempty" xml:"notebooks,omitempty" yaml:"notebooks,omitempty"`
 	GoalDetails []GoalDetail `json:"goalDetails,omitempty" toml:"goalDetails,omitempty" xml:"goalDetails,omitempty" yaml:"goalDetails,omitempty"`
 }
 
 type GoalDetail struct {
 	Goal    Goal       `json:"goalEntry,omitempty"  toml:"goalEntry,omitempty"  xml:"goalEntry,omitempty"  yaml:"goalEntry,omitempty"`
-	Entries []LogEntry `json:"logEntries,omitempty"  toml:"logEntries,omitempty"  xml:"logEntries,omitempty"  yaml:"logEntries,omitempty"`
+	Entries []*LogEntry `json:"logEntries,omitempty"  toml:"logEntries,omitempty"  xml:"logEntries,omitempty"  yaml:"logEntries,omitempty"`
 }
 
 type Goal struct {
@@ -40,7 +40,7 @@ type Association struct {
 type Notebook struct {
 	Notebookid int64      `json:"notebookid,omitempty"        toml:"notebookid,omitempty"        xml:"notebookid,omitempty"        yaml:"notebookid,omitempty"`
 	Name       string     `json:"notebookName,omitempty" toml:"notebookName,omitempty" xml:"notebookName,omitempty" yaml:"notebookName,omitempty"`
-	Entries    []LogEntry `json:"entries,omitempty"      toml:"entries,omitempty"      xml:"entries,omitempty"      yaml:"entries,omitempty"`
+	Entries    []*LogEntry `json:"entries,omitempty"      toml:"entries,omitempty"      xml:"entries,omitempty"      yaml:"entries,omitempty"`
 }
 
 type LogEntry struct {

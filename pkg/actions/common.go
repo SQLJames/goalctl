@@ -7,7 +7,7 @@ import (
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 )
 
-func GetNotebooks() (notebookList []resources.Notebook, err error) {
+func GetNotebooks() (notebookList []*resources.Notebook, err error) {
 	storagelayer, err := storage.NewVault()
 	if err != nil {
 		return nil, err
@@ -20,7 +20,7 @@ func GetNotebooks() (notebookList []resources.Notebook, err error) {
 	return notebooks, nil
 }
 
-func GetEntriesForNotebook(notebookName string) (entries *[]resources.LogEntry, err error) {
+func GetEntriesForNotebook(notebookName string) (entries []*resources.LogEntry, err error) {
 	storagelayer, err := storage.NewVault()
 	if err != nil {
 		return nil, err
@@ -36,7 +36,7 @@ func GetGoalDetails() (details []resources.GoalDetail, err error) {
 	goals, err := storagelayer.GetGoals(context.TODO())
 	var journal resources.Journal
 	for _, goal := range goals {
-		logEntries := []resources.LogEntry{}
+		logEntries := []*resources.LogEntry{}
 
 		associations, err := ListAssociationsByGoalID(goal.GoalID)
 		if err != nil {
@@ -50,14 +50,14 @@ func GetGoalDetails() (details []resources.GoalDetail, err error) {
 			logEntries = append(logEntries, entry)
 		}
 		journal.GoalDetails = append(journal.GoalDetails, resources.GoalDetail{
-			Goal:    goal,
+			Goal:    *goal,
 			Entries: logEntries,
 		})
 	}
 	return journal.GoalDetails, err
 }
 
-func ListAssociationsByGoalID(goalid int) ([]resources.Association, error) {
+func ListAssociationsByGoalID(goalid int) ([]*resources.Association, error) {
 	storagelayer, err := storage.NewVault()
 	if err != nil {
 		return nil, err
@@ -65,10 +65,10 @@ func ListAssociationsByGoalID(goalid int) ([]resources.Association, error) {
 	return storagelayer.GetAssociationsByGoalID(context.TODO(), goalid)
 }
 
-func GetLogEntryByLogEntryID(logentryid int) (resources.LogEntry, error) {
+func GetLogEntryByLogEntryID(logentryid int) (*resources.LogEntry, error) {
 	storagelayer, err := storage.NewVault()
 	if err != nil {
-		return resources.LogEntry{}, err
+		return nil, err
 	}
 	return storagelayer.GetLogEntryByLogEntryID(context.TODO(), int64(logentryid))
 }

@@ -8,4 +8,5 @@ sql:
         package: "sqlc"
         out: "."
         emit_json_tags: true
+        emit_result_struct_pointers: true
 

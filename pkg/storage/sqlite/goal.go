@@ -31,7 +31,7 @@ func (sl Repository) CreateGoal(ctx context.Context, arg *resources.Goal) (*reso
 	return arg, err
 }
 
-func (sl Repository) GetGoals(ctx context.Context) ([]resources.Goal, error) {
+func (sl Repository) GetGoals(ctx context.Context) ([]*resources.Goal, error) {
 	sqlcGoals, err := sl.queries.GetGoals(ctx)
 	if err != nil {
 		return nil, err

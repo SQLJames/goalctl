@@ -15,18 +15,18 @@ func convertStringToSlice(delimitedString string) []string {
 	return strings.Split(delimitedString, delimiter)
 }
 
-func convertSqlcLogEntriesToResource(sqlcEntries *[]sqlc.LogEntry) (logEntries *[]resources.LogEntry) {
-	var entries []resources.LogEntry
-	for _, entry := range *sqlcEntries {
-		entries = append(entries, convertSqlcLogEntryToResource(&entry))
+func convertSqlcLogEntriesToResource(sqlcEntries []*sqlc.LogEntry) (logEntries []*resources.LogEntry) {
+	var entries []*resources.LogEntry
+	for _, entry := range sqlcEntries {
+		entries = append(entries, convertSqlcLogEntryToResource(entry))
 	}
 
-	return &entries
+	return entries
 
 }
 
-func convertSqlcLogEntryToResource(sqlcEntry *sqlc.LogEntry) (logEnty resources.LogEntry) {
-	return resources.LogEntry{
+func convertSqlcLogEntryToResource(sqlcEntry *sqlc.LogEntry) (logEnty *resources.LogEntry) {
+	return &resources.LogEntry{
 		LogEntryID:  sqlcEntry.Logentryid,
 		Author:      sqlcEntry.Author.String,
 		Tags:        convertStringToSlice(sqlcEntry.Tags.String),
@@ -36,16 +36,16 @@ func convertSqlcLogEntryToResource(sqlcEntry *sqlc.LogEntry) (logEnty resources.
 	}
 }
 
-func convertSqlcGoalsToResource(sqlcEntries []sqlc.Goal) []resources.Goal {
-	var goals = make([]resources.Goal, len(sqlcEntries))
-	for index := range sqlcEntries {
-		goals[index] = convertSqlcGoalToResource(&sqlcEntries[index])
+func convertSqlcGoalsToResource(sqlcEntries []*sqlc.Goal) []*resources.Goal {
+	var goals = make([]*resources.Goal, len(sqlcEntries))
+	for index,entry := range sqlcEntries {
+		goals[index] = convertSqlcGoalToResource(entry)
 	}
 	return goals
 }
 
-func convertSqlcGoalToResource(sqlcEntry *sqlc.Goal) (goal resources.Goal) {
-	return resources.Goal{
+func convertSqlcGoalToResource(sqlcEntry *sqlc.Goal) (goal *resources.Goal) {
+	return &resources.Goal{
 		GoalID:      int(sqlcEntry.Goalid),
 		Author:      sqlcEntry.Author.String,
 		Deadline:    sqlcEntry.Duedate.String,
@@ -57,16 +57,16 @@ func convertSqlcGoalToResource(sqlcEntry *sqlc.Goal) (goal resources.Goal) {
 	}
 }
 
-func convertSqlcGoalToLogEntriesToResource(sqlcEntries []sqlc.GoalToLogEntry) []resources.Association {
-	var associations = make([]resources.Association, len(sqlcEntries))
-	for index := range sqlcEntries {
-		associations[index] = convertSqlcGoalToLogEntryToResource(sqlcEntries[index])
+func convertSqlcGoalToLogEntriesToResource(sqlcEntries []*sqlc.GoalToLogEntry) []*resources.Association {
+	var associations = make([]*resources.Association, len(sqlcEntries))
+	for index,entry := range sqlcEntries {
+		associations[index] = convertSqlcGoalToLogEntryToResource(entry)
 	}
 	return associations
 }
 
-func convertSqlcGoalToLogEntryToResource(sqlcEntry sqlc.GoalToLogEntry) (association resources.Association) {
-	return resources.Association{
+func convertSqlcGoalToLogEntryToResource(sqlcEntry *sqlc.GoalToLogEntry) (association *resources.Association) {
+	return &resources.Association{
 		GoalID:     int(sqlcEntry.Goalid),
 		LogEntryID: int(sqlcEntry.Logentryid),
 	}

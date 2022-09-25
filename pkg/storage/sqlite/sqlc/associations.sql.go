@@ -26,11 +26,11 @@ type CreateAssociationParams struct {
 	Logentryid int64 `json:"logentryid"`
 }
 
-func (q *Queries) CreateAssociation(ctx context.Context, arg CreateAssociationParams) (GoalToLogEntry, error) {
+func (q *Queries) CreateAssociation(ctx context.Context, arg CreateAssociationParams) (*GoalToLogEntry, error) {
 	row := q.db.QueryRowContext(ctx, createAssociation, arg.Goalid, arg.Logentryid)
 	var i GoalToLogEntry
 	err := row.Scan(&i.Goalid, &i.Logentryid)
-	return i, err
+	return &i, err
 }
 
 const getAssociations = `-- name: GetAssociations :many
@@ -42,19 +42,19 @@ ORDER BY
   GoalID
 `
 
-func (q *Queries) GetAssociations(ctx context.Context) ([]GoalToLogEntry, error) {
+func (q *Queries) GetAssociations(ctx context.Context) ([]*GoalToLogEntry, error) {
 	rows, err := q.db.QueryContext(ctx, getAssociations)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GoalToLogEntry
+	var items []*GoalToLogEntry
 	for rows.Next() {
 		var i GoalToLogEntry
 		if err := rows.Scan(&i.Goalid, &i.Logentryid); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, &i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -76,19 +76,19 @@ ORDER BY
   GoalID
 `
 
-func (q *Queries) GetAssociationsByGoalID(ctx context.Context, goalid int64) ([]GoalToLogEntry, error) {
+func (q *Queries) GetAssociationsByGoalID(ctx context.Context, goalid int64) ([]*GoalToLogEntry, error) {
 	rows, err := q.db.QueryContext(ctx, getAssociationsByGoalID, goalid)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GoalToLogEntry
+	var items []*GoalToLogEntry
 	for rows.Next() {
 		var i GoalToLogEntry
 		if err := rows.Scan(&i.Goalid, &i.Logentryid); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, &i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -110,19 +110,19 @@ ORDER BY
   GoalID
 `
 
-func (q *Queries) GetAssociationsByLogEntryID(ctx context.Context, logentryid int64) ([]GoalToLogEntry, error) {
+func (q *Queries) GetAssociationsByLogEntryID(ctx context.Context, logentryid int64) ([]*GoalToLogEntry, error) {
 	rows, err := q.db.QueryContext(ctx, getAssociationsByLogEntryID, logentryid)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GoalToLogEntry
+	var items []*GoalToLogEntry
 	for rows.Next() {
 		var i GoalToLogEntry
 		if err := rows.Scan(&i.Goalid, &i.Logentryid); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, &i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err

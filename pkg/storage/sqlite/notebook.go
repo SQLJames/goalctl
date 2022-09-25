@@ -34,14 +34,14 @@ func (sl Repository) GetNotebook(ctx context.Context, name string) (notebook res
 	return resources.Notebook{Notebookid: sqlcNotebook.Notebookid, Name: sqlcNotebook.Name}, err
 }
 
-func (sl Repository) GetNotebooks(ctx context.Context) ([]resources.Notebook, error) {
+func (sl Repository) GetNotebooks(ctx context.Context) ([]*resources.Notebook, error) {
 	sqlcEntries, err := sl.queries.GetNotebooks(ctx)
 	if err != nil {
 		return nil, err
 	}
-	var notebooks = make([]resources.Notebook, len(sqlcEntries))
+	var notebooks = make([]*resources.Notebook, len(sqlcEntries))
 	for index, sqlcEntry := range sqlcEntries {
-		notebooks[index] =  resources.Notebook{Notebookid: sqlcEntry.Notebookid, Name: sqlcEntry.Name}
+		notebooks[index] =  &resources.Notebook{Notebookid: sqlcEntry.Notebookid, Name: sqlcEntry.Name}
 	}
 	return notebooks, err
 }

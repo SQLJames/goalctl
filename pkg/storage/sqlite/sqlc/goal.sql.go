@@ -42,7 +42,7 @@ type CreateGoalParams struct {
 	Status      string         `json:"status"`
 }
 
-func (q *Queries) CreateGoal(ctx context.Context, arg CreateGoalParams) (Goal, error) {
+func (q *Queries) CreateGoal(ctx context.Context, arg CreateGoalParams) (*Goal, error) {
 	row := q.db.QueryRowContext(ctx, createGoal,
 		arg.Author,
 		arg.Duedate,
@@ -63,7 +63,7 @@ func (q *Queries) CreateGoal(ctx context.Context, arg CreateGoalParams) (Goal, e
 		&i.Priority,
 		&i.Status,
 	)
-	return i, err
+	return &i, err
 }
 
 const getGoals = `-- name: GetGoals :many
@@ -75,13 +75,13 @@ ORDER BY
   GoalID
 `
 
-func (q *Queries) GetGoals(ctx context.Context) ([]Goal, error) {
+func (q *Queries) GetGoals(ctx context.Context) ([]*Goal, error) {
 	rows, err := q.db.QueryContext(ctx, getGoals)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Goal
+	var items []*Goal
 	for rows.Next() {
 		var i Goal
 		if err := rows.Scan(
@@ -96,7 +96,7 @@ func (q *Queries) GetGoals(ctx context.Context) ([]Goal, error) {
 		); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, &i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
