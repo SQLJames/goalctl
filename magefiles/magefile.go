@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path"
@@ -55,11 +54,11 @@ func flags() string {
 }
 
 func ensureDirs() error {
-	fmt.Println("--> Ensuring output directories")
+	log.Println("--> Ensuring output directories")
 
 	for _, dir := range dirs {
 		if !fileExists(dir) {
-			fmt.Printf("    creating '%s'\n", dir)
+			log.Printf("    creating '%s'\n", dir)
 			if err := os.MkdirAll(dir, 0o750); err != nil {
 				return err
 			}
@@ -70,10 +69,10 @@ func ensureDirs() error {
 
 // Clean up after yourself
 func Clean() {
-	fmt.Println("--> Cleaning output directories")
+	log.Println("--> Cleaning output directories")
 
 	for _, dir := range dirs {
-		fmt.Printf("    removing '%s'\n", dir)
+		log.Printf("    removing '%s'\n", dir)
 		err := os.RemoveAll(dir)
 		if err != nil {
 			log.Fatal("error running clean command", err.Error())
@@ -83,7 +82,7 @@ func Clean() {
 
 // Vendor dependencies with go modules
 func Vendor() {
-	fmt.Println("--> Updating dependencies")
+	log.Println("--> Updating dependencies")
 	err := sh.Run(goexe, "mod", "tidy")
 	if err != nil {
 		log.Fatal("error running Vendor command", err.Error())
@@ -111,7 +110,7 @@ func Release() {
 	var waitGroup sync.WaitGroup
 	waitGroup.Add(len(targets))
 
-	fmt.Printf("--> Building '%s' for release\n", gitRoot())
+	log.Printf("--> Building '%s' for release\n", gitRoot())
 	for _, buildTarget := range targets {
 		buildTarget.SourceDir = gitRoot()
 		go func(buildTarget target) {
@@ -123,15 +122,15 @@ func Release() {
 			}
 
 			if cgoEnabled && runtime.GOOS != env["GOOS"] {
-				fmt.Printf("      CGO is enabled, skipping compilation of %s for %s\n", buildTarget.name(), env["GOOS"])
+				log.Printf("      CGO is enabled, skipping compilation of %s for %s\n", buildTarget.name(), env["GOOS"])
 
 				return
 			}
-			fmt.Printf("      Building %s\n", buildTarget.name())
+			log.Printf("      Building %s\n", buildTarget.name())
 
 			err := sh.RunWith(env, goexe, "build", "-o", path.Join(binaryPath, buildTarget.name()), "-ldflags="+flags(), buildTarget.SourceDir)
 			if err != nil {
-				fmt.Printf("compilation failed: %s\n", err.Error())
+				log.Printf("compilation failed: %s\n", err.Error())
 
 				return
 			}
@@ -144,7 +143,7 @@ func Release() {
 
 // StaticSecurity runs various static checkers to ensure you minimize security holes
 func Scan() (err error) {
-	fmt.Println("--> Scanning code")
+	log.Println("--> Scanning code")
 	err = confirmScanners()
 	if err != nil {
 		return err
@@ -160,10 +159,10 @@ func Scan() (err error) {
 func Test() error {
 	mg.SerialDeps(Vendor, ensureDirs)
 
-	fmt.Println("--> Testing codebase")
+	log.Println("--> Testing codebase")
 	results, err := sh.Output(goexe, "test", "-cover", "-e", "internal", "-e", "cache", "./...")
-	fmt.Print("    ")
-	fmt.Println(strings.Replace(results, "\n", "\n    ", -1))
+	log.Print("    ")
+	log.Println(strings.Replace(results, "\n", "\n    ", -1))
 
 	return err
 }
