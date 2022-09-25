@@ -40,7 +40,6 @@ func actionLink(cliContext *cli.Context) error {
 	}
 
 	for _, entry := range links {
-
 		_, err := storagelayer.CreateAssociation(context.TODO(), entry)
 		if err != nil {
 			log.Logger.Warn("unable to create association", "error", err.Error())

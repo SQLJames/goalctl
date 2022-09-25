@@ -19,7 +19,6 @@ func (sl Repository) CreateNotebook(ctx context.Context, name string) (resources
 	}
 	sqlcNotebook, err := sl.queries.CreateNotebook(ctx, name)
 	if err != nil && strings.Contains(err.Error(), "2067") {
-
 		return resources.Notebook{}, fmt.Errorf("a notebook resource with that name already exists, err: %s", err.Error())
 	}
 	if err != nil {

@@ -96,7 +96,6 @@ func Build() error {
 	}
 
 	return nil
-
 }
 
 // Release the application for all defined targets

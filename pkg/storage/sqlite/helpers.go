@@ -61,7 +61,6 @@ func convertSqlcGoalToLogEntriesToResource(sqlcEntries []sqlc.GoalToLogEntry) (a
 }
 
 func convertSqlcGoalToLogEntryToResource(sqlcEntry sqlc.GoalToLogEntry) (association resources.Association) {
-
 	return resources.Association{
 		GoalID:     int(sqlcEntry.Goalid),
 		LogEntryID: int(sqlcEntry.Logentryid),

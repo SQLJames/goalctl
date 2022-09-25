@@ -79,5 +79,4 @@ func modifyCLIDefaultVersion() {
 	cli.VersionPrinter = func(cCtx *cli.Context) {
 		fmt.Println(version.Version.CliPrinter())
 	}
-
 }
