@@ -7,13 +7,18 @@ on:
     branches:
       - main
 jobs:
-  build:
+  govulncheck:
+    name: govulncheck
     runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
     steps:
-      - uses: actions/checkout@v3
-      - name: Running govulncheck
-        uses: Templum/govulncheck-action@main
-        with:
-          vulncheck-version: latest
-          package: ./...
-          github-token: ${{ secrets.SECURITY_EVENTS }}
+    - uses: actions/checkout@v3
+    - name: Running govulncheck
+      uses: Templum/govulncheck-action@main
+      with:
+        vulncheck-version: latest
+        package: ./...
