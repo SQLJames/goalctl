@@ -22,7 +22,7 @@ type internalklogImplementation struct {
 	TraceLogger   logr.Logger
 }
 
-func NewInternalklog() *internalklogImplementation {
+func newInternalklog() *internalklogImplementation {
 	logger := klogr.NewWithOptions(klogr.WithFormat(klogr.FormatKlog)).
 		WithCallDepth(1).
 		WithValues("applicationName", info.GetApplicationName())

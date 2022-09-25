@@ -17,24 +17,24 @@ func actionLink(cliContext *cli.Context) error {
 	goalIds := removeDuplicate(cliContext.StringSlice(flags.GoalIDFlagName))
 	links := []resources.Association{}
 
-	for _, logentryId := range logentryIds {
+	for _, logentryID := range logentryIds {
 		for _, goalid := range goalIds {
 			goalidInt, err := strconv.Atoi(goalid)
 			if err != nil {
 				return errors.New("converting Goalid to int")
 			}
-			logentryIdInt, err := strconv.Atoi(logentryId)
+			logentryIDInt, err := strconv.Atoi(logentryID)
 			if err != nil {
 				return errors.New("onverting LogEntryId to int")
 			}
 			link := resources.Association{
 				GoalID:     goalidInt,
-				LogEntryID: logentryIdInt,
+				LogEntryID: logentryIDInt,
 			}
 			links = append(links, link)
 		}
 	}
-	storagelayer, err := storage.NewStorageLayer()
+	storagelayer, err := storage.NewVault()
 	if err != nil {
 		return err
 	}

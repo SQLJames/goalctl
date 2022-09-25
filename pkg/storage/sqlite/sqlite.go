@@ -3,9 +3,11 @@ package sqlite
 import (
 	"context"
 	"database/sql"
+	// embed used for the dll statements on db creation
 	_ "embed"
 	"fmt"
 
+	// go-sqlite required for embedded sqlite database
 	_ "github.com/glebarez/go-sqlite"
 	"github.com/sqljames/goalctl/pkg/info"
 	"github.com/sqljames/goalctl/pkg/storage/sqlite/sqlc"
@@ -23,12 +25,12 @@ type database struct {
 	Extension string
 }
 
-type SQLiteStorage struct {
+type Repository struct {
 	queries sqlc.Queries
 }
 
 //go:embed sqlc/schema/GoalToLogEntry.sql
-var GoalToLogEntryddl string
+var goalToLogEntryddl string
 
 //go:embed sqlc/schema/Goal.sql
 var goalddl string
@@ -39,7 +41,7 @@ var logentryddl string
 //go:embed sqlc/schema/Notebook.sql
 var notebookddl string
 
-var ddls []string = []string{logentryddl, notebookddl, goalddl, GoalToLogEntryddl}
+var ddls []string = []string{logentryddl, notebookddl, goalddl, goalToLogEntryddl}
 
 func newDB() (db *database, err error) {
 	location, err := util.MakeStorageLocation()
@@ -63,7 +65,7 @@ func (db *database) getDatabasePath() (databasePath string) {
 	return util.JoinPath(db.Location, db.getDatabaseFileName())
 }
 
-func NewSQLiteStorage() (storage *SQLiteStorage, err error) {
+func NewSQLiteStorage() (storage *Repository, err error) {
 	database, err := newDB()
 	if err != nil {
 		return nil, err
@@ -83,5 +85,5 @@ func NewSQLiteStorage() (storage *SQLiteStorage, err error) {
 		}
 	}
 
-	return &SQLiteStorage{queries: *sqlc.New(sqlDB)}, nil
+	return &Repository{queries: *sqlc.New(sqlDB)}, nil
 }

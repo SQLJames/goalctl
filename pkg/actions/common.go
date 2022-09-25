@@ -8,7 +8,7 @@ import (
 )
 
 func GetNotebooks() (notebookList []resources.Notebook, err error) {
-	storagelayer, err := storage.NewStorageLayer()
+	storagelayer, err := storage.NewVault()
 	if err != nil {
 		return nil, err
 	}
@@ -21,7 +21,7 @@ func GetNotebooks() (notebookList []resources.Notebook, err error) {
 }
 
 func GetEntriesForNotebook(notebookName string) (entries []resources.LogEntry, err error) {
-	storagelayer, err := storage.NewStorageLayer()
+	storagelayer, err := storage.NewVault()
 	if err != nil {
 		return nil, err
 	}
@@ -30,7 +30,7 @@ func GetEntriesForNotebook(notebookName string) (entries []resources.LogEntry, e
 }
 
 func GetGoalDetails() (details []resources.GoalDetail, err error) {
-	storagelayer, err := storage.NewStorageLayer()
+	storagelayer, err := storage.NewVault()
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +39,7 @@ func GetGoalDetails() (details []resources.GoalDetail, err error) {
 	for _, goal := range goals {
 		logEntries := []resources.LogEntry{}
 
-		associations, err := ListAssociationsByGoalId(goal.GoalID)
+		associations, err := ListAssociationsByGoalID(goal.GoalID)
 		if err != nil {
 			return nil, err
 		}
@@ -58,8 +58,8 @@ func GetGoalDetails() (details []resources.GoalDetail, err error) {
 	return journal.GoalDetails, err
 }
 
-func ListAssociationsByGoalId(goalid int) ([]resources.Association, error) {
-	storagelayer, err := storage.NewStorageLayer()
+func ListAssociationsByGoalID(goalid int) ([]resources.Association, error) {
+	storagelayer, err := storage.NewVault()
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func ListAssociationsByGoalId(goalid int) ([]resources.Association, error) {
 }
 
 func GetLogEntryByLogEntryID(logentryid int) (resources.LogEntry, error) {
-	storagelayer, err := storage.NewStorageLayer()
+	storagelayer, err := storage.NewVault()
 	if err != nil {
 		return resources.LogEntry{}, err
 	}

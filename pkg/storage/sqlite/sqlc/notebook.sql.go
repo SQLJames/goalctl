@@ -37,13 +37,13 @@ func (q *Queries) GetNotebook(ctx context.Context, name string) (Notebook, error
 	return i, err
 }
 
-const getNotebookIdByName = `-- name: GetNotebookIdByName :one
+const getNotebookIDByName = `-- name: GetNotebookIDByName :one
 SELECT NotebookID FROM Notebook
 WHERE name = ?
 `
 
-func (q *Queries) GetNotebookIdByName(ctx context.Context, name string) (int64, error) {
-	row := q.db.QueryRowContext(ctx, getNotebookIdByName, name)
+func (q *Queries) GetNotebookIDByName(ctx context.Context, name string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getNotebookIDByName, name)
 	var notebookid int64
 	err := row.Scan(&notebookid)
 	return notebookid, err

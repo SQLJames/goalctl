@@ -15,7 +15,7 @@ import (
 )
 
 func actionCreateNotebook(cliContext *cli.Context) error {
-	storagelayer, err := storage.NewStorageLayer()
+	storagelayer, err := storage.NewVault()
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func actionCreateNotebook(cliContext *cli.Context) error {
 }
 
 func actionCreateLogEntry(cliContext *cli.Context) error {
-	storagelayer, err := storage.NewStorageLayer()
+	storagelayer, err := storage.NewVault()
 	if err != nil {
 		return err
 	}
@@ -50,7 +50,7 @@ func actionCreateLogEntry(cliContext *cli.Context) error {
 }
 
 func actionCreateGoal(cliContext *cli.Context) error {
-	storagelayer, err := storage.NewStorageLayer()
+	storagelayer, err := storage.NewVault()
 	if err != nil {
 		return err
 	}

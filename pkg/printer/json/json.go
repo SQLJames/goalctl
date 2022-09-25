@@ -5,10 +5,10 @@ import (
 	"io"
 )
 
-type JsonPrinter struct {
+type JSONPrinter struct {
 }
 
-func (jp *JsonPrinter) Write(data interface{}, destination io.Writer) (err error) {
+func (jp *JSONPrinter) Write(data interface{}, destination io.Writer) (err error) {
 	enc := json.NewEncoder(destination)
 	enc.SetIndent("", "  ")
 	err = enc.Encode(data)

@@ -6,7 +6,7 @@ WHERE name = ?;
 SELECT * FROM Notebook
 ORDER BY name;
 
--- name: GetNotebookIdByName :one
+-- name: GetNotebookIDByName :one
 SELECT NotebookID FROM Notebook
 WHERE name = ?;
 

@@ -9,7 +9,7 @@ import (
 
 type Notebook interface {
 	CreateNotebook(ctx context.Context, name string) (resources.Notebook, error)
-	GetNotebookIdByName(ctx context.Context, name string) (int64, error)
+	GetNotebookIDByName(ctx context.Context, name string) (int64, error)
 	GetNotebook(ctx context.Context, name string) (resources.Notebook, error)
 	GetNotebooks(ctx context.Context) ([]resources.Notebook, error)
 	GetLogEntryByNotebook(ctx context.Context, name string) ([]resources.LogEntry, error)
@@ -30,17 +30,17 @@ type Associations interface {
 	GetAssociationsByLogEntryID(ctx context.Context, logentryid int) ([]resources.Association, error)
 }
 
-type StorageLayer interface {
+type Vault interface {
 	Notebook
 	LogEntry
 	Goal
 	Associations
 }
 
-func NewStorageLayer() (storageLayer StorageLayer, err error) {
-	storageLayer, err = sqlite.NewSQLiteStorage()
+func NewVault() (vault Vault, err error) {
+	vault, err = sqlite.NewSQLiteStorage()
 	if err != nil {
 		return nil, err
 	}
-	return storageLayer, nil
+	return vault, nil
 }

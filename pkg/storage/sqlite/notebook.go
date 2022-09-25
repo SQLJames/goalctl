@@ -11,7 +11,7 @@ import (
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 )
 
-func (sl SQLiteStorage) CreateNotebook(ctx context.Context, name string) (resources.Notebook, error) {
+func (sl Repository) CreateNotebook(ctx context.Context, name string) (resources.Notebook, error) {
 	log.Logger.Trace(fmt.Sprintf("notebook name provided %s", name))
 	if name == "" {
 		err := errors.New("notebook name can not be empty")
@@ -28,11 +28,11 @@ func (sl SQLiteStorage) CreateNotebook(ctx context.Context, name string) (resour
 	return resources.Notebook{Notebookid: sqlcNotebook.Notebookid, Name: sqlcNotebook.Name}, err
 }
 
-func (sl SQLiteStorage) GetNotebookIdByName(ctx context.Context, name string) (int64, error) {
-	return sl.queries.GetNotebookIdByName(ctx, name)
+func (sl Repository) GetNotebookIDByName(ctx context.Context, name string) (int64, error) {
+	return sl.queries.GetNotebookIDByName(ctx, name)
 }
 
-func (sl SQLiteStorage) GetNotebook(ctx context.Context, name string) (notebook resources.Notebook, err error) {
+func (sl Repository) GetNotebook(ctx context.Context, name string) (notebook resources.Notebook, err error) {
 	sqlcNotebook, err := sl.queries.GetNotebook(ctx, name)
 	if err != nil {
 		return resources.Notebook{}, err
@@ -40,7 +40,7 @@ func (sl SQLiteStorage) GetNotebook(ctx context.Context, name string) (notebook 
 	return resources.Notebook{Notebookid: sqlcNotebook.Notebookid, Name: sqlcNotebook.Name}, err
 }
 
-func (sl SQLiteStorage) GetNotebooks(ctx context.Context) (notebooks []resources.Notebook, err error) {
+func (sl Repository) GetNotebooks(ctx context.Context) (notebooks []resources.Notebook, err error) {
 	sqlcNotebooks, err := sl.queries.GetNotebooks(ctx)
 	if err != nil {
 		return nil, err

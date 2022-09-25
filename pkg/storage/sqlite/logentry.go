@@ -9,9 +9,9 @@ import (
 	"github.com/sqljames/goalctl/pkg/storage/sqlite/sqlc"
 )
 
-func (sl SQLiteStorage) CreateLogEntry(ctx context.Context, arg *resources.LogEntry, notebookName string) (*resources.LogEntry, error) {
-	NotebookId, err := sl.GetNotebookIdByName(ctx, notebookName)
-	if NotebookId == 0 {
+func (sl Repository) CreateLogEntry(ctx context.Context, arg *resources.LogEntry, notebookName string) (*resources.LogEntry, error) {
+	NotebookID, err := sl.GetNotebookIDByName(ctx, notebookName)
+	if NotebookID == 0 {
 		return nil, fmt.Errorf("notebook not created yet")
 	}
 	if err != nil {
@@ -28,7 +28,7 @@ func (sl SQLiteStorage) CreateLogEntry(ctx context.Context, arg *resources.LogEn
 		},
 		Note:        arg.Entry,
 		Createddate: arg.CreatedDate,
-		Notebookid:  NotebookId,
+		Notebookid:  NotebookID,
 	})
 	if err != nil {
 		return nil, err
@@ -39,7 +39,7 @@ func (sl SQLiteStorage) CreateLogEntry(ctx context.Context, arg *resources.LogEn
 	return arg, err
 }
 
-func (sl SQLiteStorage) GetLogEntryByCreatedDate(ctx context.Context, createddate string) (logEntries []resources.LogEntry, err error) {
+func (sl Repository) GetLogEntryByCreatedDate(ctx context.Context, createddate string) (logEntries []resources.LogEntry, err error) {
 	sqlcLogEntries, err := sl.queries.GetLogEntryByCreatedDate(ctx, createddate)
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func (sl SQLiteStorage) GetLogEntryByCreatedDate(ctx context.Context, createddat
 	return convertSqlcLogEntriesToResource(sqlcLogEntries), err
 }
 
-func (sl SQLiteStorage) GetLogEntryByNotebook(ctx context.Context, name string) ([]resources.LogEntry, error) {
+func (sl Repository) GetLogEntryByNotebook(ctx context.Context, name string) ([]resources.LogEntry, error) {
 	sqlcLogEntries, err := sl.queries.GetLogEntryByNotebook(ctx, name)
 	if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func (sl SQLiteStorage) GetLogEntryByNotebook(ctx context.Context, name string) 
 	return convertSqlcLogEntriesToResource(sqlcLogEntries), err
 }
 
-func (sl SQLiteStorage) GetLogEntryByLogEntryID(ctx context.Context, logentryid int64) (resources.LogEntry, error) {
+func (sl Repository) GetLogEntryByLogEntryID(ctx context.Context, logentryid int64) (resources.LogEntry, error) {
 	sqlcLogEntry, err := sl.queries.GetLogEntryByLogEntryID(ctx, logentryid)
 	if err != nil {
 		return resources.LogEntry{}, err

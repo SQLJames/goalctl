@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	benchmarkLogger = NewInternalklog()
+	benchmarkLogger = newInternalklog()
 )
 
 func BenchmarkInfoLogger(b *testing.B) {
