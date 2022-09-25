@@ -2,12 +2,17 @@ package util
 
 import (
 	"fmt"
+	"io/fs"
 	"os"
 	"path"
 	"path/filepath"
 
 	"github.com/sqljames/goalctl/pkg/info"
 	"github.com/sqljames/goalctl/pkg/log"
+)
+
+var (
+	folderPermissons fs.FileMode = 0o755
 )
 
 func GetHomeDir() (directory string, err error) {
@@ -26,7 +31,7 @@ func MakeStorageLocation() (storageLocation string, err error) {
 	}
 	applicationName := info.GetApplicationName()
 	storageLocation = path.Join(homedir, "."+applicationName)
-	err = os.MkdirAll(storageLocation, os.FileMode(0o755))
+	err = os.MkdirAll(storageLocation, folderPermissons)
 	if err != nil {
 		log.Logger.Error(err, "error creating storagelocation")
 		return "", err
@@ -53,8 +58,7 @@ func CreateifNotexist(file string) (err error) {
 }
 
 func FileExists(fileName string) (exists bool) {
-	_, err := os.Stat(fileName)
-	if err != nil {
+	if _, err := os.Stat(fileName); err != nil {
 		log.Logger.Trace("file exists")
 		return false
 	}
