@@ -16,9 +16,9 @@ func convertStringToSlice(delimitedString string) []string {
 }
 
 func convertSqlcLogEntriesToResource(sqlcEntries []*sqlc.LogEntry) (logEntries []*resources.LogEntry) {
-	var entries []*resources.LogEntry
-	for _, entry := range sqlcEntries {
-		entries = append(entries, convertSqlcLogEntryToResource(entry))
+	var entries = make([]*resources.LogEntry, len(sqlcEntries))
+	for index, entry := range sqlcEntries {
+		entries[index] = convertSqlcLogEntryToResource(entry)
 	}
 
 	return entries
@@ -38,7 +38,7 @@ func convertSqlcLogEntryToResource(sqlcEntry *sqlc.LogEntry) (logEnty *resources
 
 func convertSqlcGoalsToResource(sqlcEntries []*sqlc.Goal) []*resources.Goal {
 	var goals = make([]*resources.Goal, len(sqlcEntries))
-	for index,entry := range sqlcEntries {
+	for index, entry := range sqlcEntries {
 		goals[index] = convertSqlcGoalToResource(entry)
 	}
 	return goals
@@ -59,7 +59,7 @@ func convertSqlcGoalToResource(sqlcEntry *sqlc.Goal) (goal *resources.Goal) {
 
 func convertSqlcGoalToLogEntriesToResource(sqlcEntries []*sqlc.GoalToLogEntry) []*resources.Association {
 	var associations = make([]*resources.Association, len(sqlcEntries))
-	for index,entry := range sqlcEntries {
+	for index, entry := range sqlcEntries {
 		associations[index] = convertSqlcGoalToLogEntryToResource(entry)
 	}
 	return associations
