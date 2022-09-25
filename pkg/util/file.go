@@ -26,8 +26,8 @@ func MakeStorageLocation() (StorageLocation string, err error) {
 		return "", err
 	}
 	applicationName := info.GetApplicationName()
-	StorageLocation = path.Join(homedir, applicationName)
-	err = os.MkdirAll(StorageLocation, os.FileMode(0666))
+	StorageLocation = path.Join(homedir, "." + applicationName)
+	err = os.MkdirAll(StorageLocation, os.FileMode(0755))
 	if err != nil {
 		log.Logger.Error(err, "error creating storagelocation")
 		return "", err
