@@ -15,7 +15,7 @@ type GoalDetail struct {
 
 type Goal struct {
 	// GoalID Primary key of the goal struct
-	GoalID int `json:"goalID,omitempty"  toml:"goalID,omitempty"  xml:"goalID,omitempty"  yaml:"goalID,omitempty"`
+	GoalID int `json:"goalId,omitempty"  toml:"goalId,omitempty"  xml:"goalId,omitempty"  yaml:"goalId,omitempty"`
 	// Author of the goal
 	Author string `json:"author,omitempty"  toml:"author,omitempty"  xml:"author,omitempty"  yaml:"author,omitempty"`
 	// Deadline for the goal time format RFC3339
