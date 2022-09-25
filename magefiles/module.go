@@ -1,54 +1,32 @@
 package main
 
 import (
-	"bytes"
+	"bufio"
+	"log"
 	"os"
-	"strconv"
-)
-
-var (
-	slashSlash = []byte("//")
-	moduleStr  = []byte("module")
+	"strings"
 )
 
 // ModulePath returns the module path from the gomod file text.
-// If it cannot find a module path, it returns an empty string.
-// It is tolerant of unrelated problems in the go.mod file.
 func modulePath() string {
-	mod, err := os.ReadFile("go.mod")
+	file, err := os.Open("go.mod")
 	if err != nil {
-		return ""
+		log.Fatal(err)
 	}
-
-	for len(mod) > 0 {
-		line := mod
-		mod = nil
-		if i := bytes.IndexByte(line, '\n'); i >= 0 {
-			line, mod = line[:i], line[i+1:]
-		}
-		if i := bytes.Index(line, slashSlash); i >= 0 {
-			line = line[:i]
-		}
-		line = bytes.TrimSpace(line)
-		if !bytes.HasPrefix(line, moduleStr) {
-			continue
-		}
-		line = line[len(moduleStr):]
-		n := len(line)
-		line = bytes.TrimSpace(line)
-		if len(line) == n || len(line) == 0 {
-			continue
-		}
-
-		if line[0] == '"' || line[0] == '`' {
-			p, err := strconv.Unquote(string(line))
-			if err != nil {
-				return "" // malformed quoted string or multiline module path
-			}
-			return p
-		}
-
-		return string(line)
+	defer file.Close()
+	var lines []string
+	scanner := bufio.NewScanner(file)
+	// optionally, resize scanner's capacity for lines over 64K, see next example
+	for scanner.Scan() {
+		lines = append(lines, scanner.Text())
 	}
-	return "" // missing module path
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+	return parseFileLines(lines)
+}
+
+func parseFileLines(lines []string) (modulePath string) {
+	split := strings.Split(lines[0], " ")
+	return split[1]
 }
