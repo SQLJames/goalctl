@@ -19,8 +19,8 @@ type Printer interface {
 	Write(data interface{}, writer io.Writer) (err error)
 }
 
-func NewPrinter(c *cli.Context) (printer Printer) {
-	format := c.String(flags.OutputFormatFlagName)
+func NewPrinter(cliContext *cli.Context) (printer Printer) {
+	format := cliContext.String(flags.OutputFormatFlagName)
 	format = strings.ToLower(format)
 	if format == "" || !contains(SupportedFormats, format) {
 		log.Logger.Trace("format not defined or is unsupported, using default format.")

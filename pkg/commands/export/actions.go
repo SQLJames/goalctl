@@ -10,7 +10,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func actionExportJournal(c *cli.Context) error {
+func actionExportJournal(cliContext *cli.Context) error {
 	var journal resources.Journal
 	Allnotebooks, err := actions.GetNotebooks()
 	if err != nil {
@@ -29,9 +29,7 @@ func actionExportJournal(c *cli.Context) error {
 	}
 	journal.NoteBooks = Allnotebooks
 	journal.GoalDetails = GoalDetails
-
-	printer := printer.NewPrinter(c)
-	err = printer.Write(resources.Book{Journal: journal}, os.Stdout)
+	err = printer.NewPrinter(cliContext).Write(resources.Book{Journal: journal}, os.Stdout)
 	if err != nil {
 		log.Logger.Warn("issue Printing the data", "function", "CreateGoal", "error", err.Error())
 	}

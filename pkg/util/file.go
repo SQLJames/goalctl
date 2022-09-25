@@ -1,7 +1,6 @@
 package util
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"path"
@@ -20,19 +19,19 @@ func GetHomeDir() (directory string, err error) {
 	return dirname, nil
 }
 
-func MakeStorageLocation() (StorageLocation string, err error) {
+func MakeStorageLocation() (storageLocation string, err error) {
 	homedir, err := GetHomeDir()
 	if err != nil {
 		return "", err
 	}
 	applicationName := info.GetApplicationName()
-	StorageLocation = path.Join(homedir, "." + applicationName)
-	err = os.MkdirAll(StorageLocation, os.FileMode(0755))
+	storageLocation = path.Join(homedir, "."+applicationName)
+	err = os.MkdirAll(storageLocation, os.FileMode(0o755))
 	if err != nil {
 		log.Logger.Error(err, "error creating storagelocation")
 		return "", err
 	}
-	return StorageLocation, nil
+	return storageLocation, nil
 }
 
 func CreateifNotexist(file string) (err error) {
@@ -53,23 +52,18 @@ func CreateifNotexist(file string) (err error) {
 	return nil
 }
 
-func FileExists(fileName string) bool {
-	if _, err := os.Stat(fileName); err == nil {
+func FileExists(fileName string) (exists bool) {
+	_, err := os.Stat(fileName)
+	if err != nil {
 		log.Logger.Trace("file exists")
-		return true
-
-	} else if errors.Is(err, os.ErrNotExist) {
-		log.Logger.Trace("file not found")
 		return false
-
-	} else {
-		return false
-
 	}
+	log.Logger.Trace("file does not exists")
+	return true
 }
 
 func JoinPath(basePath, leaf string) (fullPath string) {
-	path := path.Join(basePath, leaf)
-	log.Logger.Trace(fmt.Sprintf("path is %s", path))
-	return path
+	joinedPath := path.Join(basePath, leaf)
+	log.Logger.Trace(fmt.Sprintf("path is %s", joinedPath))
+	return joinedPath
 }

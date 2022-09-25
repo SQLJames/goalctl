@@ -51,7 +51,6 @@ func installIfMissing(executableName, installURL string) (err error) {
 		if err != nil {
 			return err
 		}
-		//fmt.Printf("%v installed...\n", executableName)
 	}
 	return nil
 }

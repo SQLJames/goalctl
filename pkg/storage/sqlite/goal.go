@@ -8,8 +8,8 @@ import (
 	"github.com/sqljames/goalctl/pkg/storage/sqlite/sqlc"
 )
 
-func (SL SQLiteStorage) CreateGoal(ctx context.Context, arg resources.Goal) (resources.Goal, error) {
-	sqlcGoal, err := SL.queries.CreateGoal(ctx, sqlc.CreateGoalParams{
+func (sl SQLiteStorage) CreateGoal(ctx context.Context, arg *resources.Goal) (*resources.Goal, error) {
+	sqlcGoal, err := sl.queries.CreateGoal(ctx, sqlc.CreateGoalParams{
 		Author: sql.NullString{
 			String: arg.Author,
 			Valid:  true,
@@ -25,14 +25,14 @@ func (SL SQLiteStorage) CreateGoal(ctx context.Context, arg resources.Goal) (res
 		Status:      arg.Status,
 	})
 	if err != nil {
-		return resources.Goal{}, err
+		return nil, err
 	}
 	arg.GoalID = int(sqlcGoal.Goalid)
 	return arg, err
 }
 
-func (SL SQLiteStorage) GetGoals(ctx context.Context) ([]resources.Goal, error) {
-	sqlcGoals, err := SL.queries.GetGoals(ctx)
+func (sl SQLiteStorage) GetGoals(ctx context.Context) ([]resources.Goal, error) {
+	sqlcGoals, err := sl.queries.GetGoals(ctx)
 	if err != nil {
 		return nil, err
 	}

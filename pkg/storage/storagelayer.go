@@ -15,12 +15,12 @@ type Notebook interface {
 	GetLogEntryByNotebook(ctx context.Context, name string) ([]resources.LogEntry, error)
 }
 type LogEntry interface {
-	CreateLogEntry(ctx context.Context, arg resources.LogEntry, notebookName string) (resources.LogEntry, error)
+	CreateLogEntry(ctx context.Context, arg *resources.LogEntry, notebookName string) (*resources.LogEntry, error)
 	GetLogEntryByCreatedDate(ctx context.Context, createddate string) ([]resources.LogEntry, error)
 	GetLogEntryByLogEntryID(ctx context.Context, logentryid int64) (resources.LogEntry, error)
 }
 type Goal interface {
-	CreateGoal(ctx context.Context, arg resources.Goal) (resources.Goal, error)
+	CreateGoal(ctx context.Context, arg *resources.Goal) (*resources.Goal, error)
 	GetGoals(ctx context.Context) ([]resources.Goal, error)
 }
 type Associations interface {
@@ -37,10 +37,10 @@ type StorageLayer interface {
 	Associations
 }
 
-func NewStorageLayer() (SL StorageLayer, err error) {
-	Storage, err := sqlite.NewSQLiteStorage()
+func NewStorageLayer() (storageLayer StorageLayer, err error) {
+	storageLayer, err = sqlite.NewSQLiteStorage()
 	if err != nil {
 		return nil, err
 	}
-	return Storage, nil
+	return storageLayer, nil
 }

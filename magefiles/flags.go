@@ -10,13 +10,13 @@ type ldflags map[string]string
 
 // Build the LDFlags for the given package
 func (ldf ldflags) Build(packageName string) string {
-	var b strings.Builder
+	var builder strings.Builder
 
 	for k, v := range ldf {
-		fmt.Fprintf(&b, `-X "%s/%s=%s" `, packageName, k, v)
+		fmt.Fprintf(&builder, `-X "%s/%s=%s" `, packageName, k, v)
 	}
 
-	return b.String()
+	return builder.String()
 }
 
 // String returns the LDFlags for the detected ModulePath.

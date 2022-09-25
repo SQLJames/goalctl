@@ -11,47 +11,44 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func actionListNotebooks(c *cli.Context) error {
-	NotebookList, err := actions.GetNotebooks()
+func actionListNotebooks(cliContext *cli.Context) error {
+	notebookList, err := actions.GetNotebooks()
 	if err != nil {
 		log.Logger.Error(err, "Error getting notebooks")
 	}
-	printer := printer.NewPrinter(c)
-	err = printer.Write(NotebookList, os.Stdout)
+	err = printer.NewPrinter(cliContext).Write(notebookList, os.Stdout)
 	if err != nil {
 		log.Logger.Warn("issue Printing the data", "function", "ListNotebooks", "error", err.Error())
 	}
 	return err
 }
 
-func actionListEntries(c *cli.Context) error {
-	NotebookEntries, err := actions.GetEntriesForNotebook(c.String(flags.NameFlagName))
+func actionListEntries(cliContext *cli.Context) error {
+	NotebookEntries, err := actions.GetEntriesForNotebook(cliContext.String(flags.NameFlagName))
 	if err != nil {
 		log.Logger.Error(err, err.Error())
 		return err
 	}
 
-	NB := resources.Notebook{
-		Name:    c.String(flags.NameFlagName),
+	notebook := resources.Notebook{
+		Name:    cliContext.String(flags.NameFlagName),
 		Entries: NotebookEntries,
 	}
 	log.Logger.Trace("Created notebook resource")
-	printer := printer.NewPrinter(c)
-	err = printer.Write(NB, os.Stdout)
+	err = printer.NewPrinter(cliContext).Write(notebook, os.Stdout)
 	if err != nil {
 		log.Logger.Warn("issue Printing the data", "function", "ListEntries", "error", err.Error())
 	}
 	return err
 }
 
-func actionListGoals(c *cli.Context) error {
+func actionListGoals(cliContext *cli.Context) error {
 	goals, err := actions.GetGoalDetails()
 	if err != nil {
 		log.Logger.Error(err, err.Error())
 		return err
 	}
-	printer := printer.NewPrinter(c)
-	err = printer.Write(goals, os.Stdout)
+	err = printer.NewPrinter(cliContext).Write(goals, os.Stdout)
 	if err != nil {
 		log.Logger.Warn("issue Printing the data", "function", "ListGoals", "error", err.Error())
 	}

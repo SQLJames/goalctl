@@ -37,13 +37,13 @@ func NewApp() *cli.App {
 	return app
 }
 
-func beforeTasks(c *cli.Context) error {
+func beforeTasks(cliContext *cli.Context) error {
 	taskList := []func(*cli.Context) error{
 		instrumentLoggingFlags,
 	}
 
 	for _, t := range taskList {
-		if err := t(c); err != nil {
+		if err := t(cliContext); err != nil {
 			return err
 		}
 	}
@@ -52,21 +52,21 @@ func beforeTasks(c *cli.Context) error {
 }
 
 // Care of: https://github.com/physcat/klog-cli/blob/main/main.go
-func instrumentLoggingFlags(c *cli.Context) error {
+func instrumentLoggingFlags(cliContext *cli.Context) error {
 	// Command line flags always overwrite configuration files
-	first := altsrc.InitInputSourceWithContext(c.App.Flags, altsrc.NewYamlSourceFromFlagFunc("config"))
-	err := first(c)
+	first := altsrc.InitInputSourceWithContext(cliContext.App.Flags, altsrc.NewYamlSourceFromFlagFunc("config"))
+	err := first(cliContext)
 	if err != nil {
 		log.Logger.Error(err, err.Error())
 	}
 
 	// The second config map will not overwrite the first
-	second := altsrc.InitInputSourceWithContext(c.App.Flags, altsrc.NewYamlSourceFromFlagFunc("global-config"))
-	err = second(c)
+	second := altsrc.InitInputSourceWithContext(cliContext.App.Flags, altsrc.NewYamlSourceFromFlagFunc("global-config"))
+	err = second(cliContext)
 	if err != nil {
 		log.Logger.Error(err, err.Error())
 	}
-	err = log.InitializeLogger(c.Int("verbosity"))
+	err = log.InitializeLogger(cliContext.Int("verbosity"))
 	return err
 }
 

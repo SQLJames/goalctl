@@ -17,12 +17,12 @@ func convertStringToSlice(delimitedString string) []string {
 
 func convertSqlcLogEntriesToResource(sqlcEntries []sqlc.LogEntry) (logEntries []resources.LogEntry) {
 	for _, sqlcLogEntry := range sqlcEntries {
-		logEntries = append(logEntries, convertSqlcLogEntryToResource(sqlcLogEntry))
+		logEntries = append(logEntries, convertSqlcLogEntryToResource(&sqlcLogEntry))
 	}
 	return logEntries
 }
 
-func convertSqlcLogEntryToResource(sqlcEntry sqlc.LogEntry) (logEnty resources.LogEntry) {
+func convertSqlcLogEntryToResource(sqlcEntry *sqlc.LogEntry) (logEnty resources.LogEntry) {
 
 	return resources.LogEntry{
 		LogEntryID:  sqlcEntry.Logentryid,
@@ -34,14 +34,14 @@ func convertSqlcLogEntryToResource(sqlcEntry sqlc.LogEntry) (logEnty resources.L
 	}
 }
 
-func convertSqlcGoalsToResource(sqlcEntries []sqlc.Goal) (Goals []resources.Goal) {
-	for _, sqlc := range sqlcEntries {
-		Goals = append(Goals, convertSqlcGoalToResource(sqlc))
+func convertSqlcGoalsToResource(sqlcEntries []sqlc.Goal) (goals []resources.Goal) {
+	for index := range sqlcEntries {
+		goals = append(goals, convertSqlcGoalToResource(&sqlcEntries[index]))
 	}
-	return Goals
+	return goals
 }
 
-func convertSqlcGoalToResource(sqlcEntry sqlc.Goal) (Goal resources.Goal) {
+func convertSqlcGoalToResource(sqlcEntry *sqlc.Goal) (goal resources.Goal) {
 
 	return resources.Goal{
 		GoalID:      int(sqlcEntry.Goalid),
@@ -55,14 +55,14 @@ func convertSqlcGoalToResource(sqlcEntry sqlc.Goal) (Goal resources.Goal) {
 	}
 }
 
-func convertSqlcGoalToLogEntriesToResource(sqlcEntries []sqlc.GoalToLogEntry) (Associations []resources.Association) {
+func convertSqlcGoalToLogEntriesToResource(sqlcEntries []sqlc.GoalToLogEntry) (associations []resources.Association) {
 	for _, sqlc := range sqlcEntries {
-		Associations = append(Associations, convertSqlcGoalToLogEntryToResource(sqlc))
+		associations = append(associations, convertSqlcGoalToLogEntryToResource(sqlc))
 	}
-	return Associations
+	return associations
 }
 
-func convertSqlcGoalToLogEntryToResource(sqlcEntry sqlc.GoalToLogEntry) (Association resources.Association) {
+func convertSqlcGoalToLogEntryToResource(sqlcEntry sqlc.GoalToLogEntry) (association resources.Association) {
 
 	return resources.Association{
 		GoalID:     int(sqlcEntry.Goalid),

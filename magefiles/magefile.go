@@ -37,17 +37,17 @@ func getGoExe() (goexe string) {
 }
 
 func flags() string {
-	f := ldflags{}
+	pkgFlags := ldflags{}
 
-	f["pkg/info.applicationName"] = filepath.Base(modulePath())
-	f["pkg/version.buildDate"] = time.Now().Format(time.RFC3339)
-	f["pkg/version.release"] = getRelease()
-	f["pkg/version.buildTag"] = gitTag()
-	f["pkg/version.commitHash"] = gitCommitHash()
-	f["pkg/version.buildVersion"] = getVersion()
-	f["pkg/version.buildBranch"] = gitBranch()
+	pkgFlags["pkg/info.applicationName"] = filepath.Base(modulePath())
+	pkgFlags["pkg/version.buildDate"] = time.Now().Format(time.RFC3339)
+	pkgFlags["pkg/version.release"] = getRelease()
+	pkgFlags["pkg/version.buildTag"] = gitTag()
+	pkgFlags["pkg/version.commitHash"] = gitCommitHash()
+	pkgFlags["pkg/version.buildVersion"] = getVersion()
+	pkgFlags["pkg/version.buildBranch"] = gitBranch()
 
-	return f.String()
+	return pkgFlags.String()
 }
 
 func ensureDirs() error {
@@ -56,7 +56,7 @@ func ensureDirs() error {
 	for _, dir := range dirs {
 		if !fileExists(dir) {
 			fmt.Printf("    creating '%s'\n", dir)
-			if err := os.MkdirAll(dir, 0750); err != nil {
+			if err := os.MkdirAll(dir, 0o750); err != nil {
 				return err
 			}
 		}
@@ -105,36 +105,35 @@ func Release() error {
 
 	cgoEnabled := os.Getenv("CGO_ENABLED") == "1"
 
-	var wg sync.WaitGroup
-	wg.Add(len(targets))
+	var waitGroup sync.WaitGroup
+	waitGroup.Add(len(targets))
 
 	fmt.Printf("--> Building '%s' for release\n", gitRoot())
-	for _, t := range targets {
-		t.SourceDir = gitRoot()
-		go func(t target) {
-			defer wg.Done()
+	for _, buildTarget := range targets {
+		buildTarget.SourceDir = gitRoot()
+		go func(buildTarget target) {
+			defer waitGroup.Done()
 
 			env := map[string]string{
-				"GOOS":   t.GOOS,
-				"GOARCH": t.GOARCH,
+				"GOOS":   buildTarget.GOOS,
+				"GOARCH": buildTarget.GOARCH,
 			}
 
 			if cgoEnabled && runtime.GOOS != env["GOOS"] {
-				fmt.Printf("      CGO is enabled, skipping compilation of %s for %s\n", t.name(), env["GOOS"])
+				fmt.Printf("      CGO is enabled, skipping compilation of %s for %s\n", buildTarget.name(), env["GOOS"])
 				return
 			}
-			fmt.Printf("      Building %s\n", t.name())
+			fmt.Printf("      Building %s\n", buildTarget.name())
 
-			err := sh.RunWith(env, goexe, "build", "-o", path.Join(binaryPath, t.name()), "-ldflags="+flags(), t.SourceDir)
-			//err := sh.RunWith(env, goexe, "build", "-o", path.Join(binaryPath, t.Name()), t.SourceDir)
+			err := sh.RunWith(env, goexe, "build", "-o", path.Join(binaryPath, buildTarget.name()), "-ldflags="+flags(), buildTarget.SourceDir)
 			if err != nil {
 				fmt.Printf("compilation failed: %s\n", err.Error())
 				return
 			}
-		}(t)
+		}(buildTarget)
 	}
 
-	wg.Wait()
+	waitGroup.Wait()
 
 	return nil
 }

@@ -12,8 +12,6 @@ import (
 	"k8s.io/klog/v2/klogr"
 )
 
-var ()
-
 type internalklogImplementation struct {
 	PanicLogger   logr.Logger
 	FatalLogger   logr.Logger
@@ -57,7 +55,6 @@ func (k *internalklogImplementation) Warn(message string, keysAndValues ...inter
 
 func (k *internalklogImplementation) Info(message string, keysAndValues ...interface{}) {
 	k.InfoLogger.V(1).Info(message, keysAndValues...)
-	//klog.V(1).InfoSDepth(1, message, append(keysAndValues, "applicationName", info.GetApplicationName(), "level", "Info")...)
 }
 func (k *internalklogImplementation) Debug(message string, keysAndValues ...interface{}) {
 	k.DebugLogger.V(2).Info(message, keysAndValues...)
@@ -67,18 +64,14 @@ func (k *internalklogImplementation) Trace(message string, keysAndValues ...inte
 }
 
 // Care of: https://github.com/physcat/klog-cli/blob/main/main.go
-func InitializeLogger(LogLevel int) error {
+func InitializeLogger(logLevel int) error {
 	fs := flag.NewFlagSet("", flag.PanicOnError)
 	klog.InitFlags(fs)
 	klog.EnableContextualLogging(true)
-	err := fs.Set("v", setLogLevel(LogLevel))
+	err := fs.Set("v",strconv.Itoa(logLevel))
 	if err != nil {
 		log.Println("msg", "issue setting verbosity flag", "error", err.Error())
 	}
 	return nil
 }
-func setLogLevel(LogLevel int) (value string) {
-	value = strconv.Itoa(LogLevel)
-	//PackageLogLevel = LogLevel
-	return value
-}
+

@@ -12,9 +12,9 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func actionLink(c *cli.Context) error {
-	logentryIds := removeDuplicate(c.StringSlice(flags.LogEntryIDFlagName))
-	goalIds := removeDuplicate(c.StringSlice(flags.GoalIDFlagName))
+func actionLink(cliContext *cli.Context) error {
+	logentryIds := removeDuplicate(cliContext.StringSlice(flags.LogEntryIDFlagName))
+	goalIds := removeDuplicate(cliContext.StringSlice(flags.GoalIDFlagName))
 	links := []resources.Association{}
 
 	for _, logentryId := range logentryIds {

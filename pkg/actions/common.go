@@ -7,7 +7,7 @@ import (
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 )
 
-func GetNotebooks() (NotebookList []resources.Notebook, err error) {
+func GetNotebooks() (notebookList []resources.Notebook, err error) {
 	storagelayer, err := storage.NewStorageLayer()
 	if err != nil {
 		return nil, err
@@ -20,16 +20,16 @@ func GetNotebooks() (NotebookList []resources.Notebook, err error) {
 	return notebooks, nil
 }
 
-func GetEntriesForNotebook(NotebookName string) (entries []resources.LogEntry, err error) {
+func GetEntriesForNotebook(notebookName string) (entries []resources.LogEntry, err error) {
 	storagelayer, err := storage.NewStorageLayer()
 	if err != nil {
 		return nil, err
 	}
-	return storagelayer.GetLogEntryByNotebook(context.TODO(), NotebookName)
+	return storagelayer.GetLogEntryByNotebook(context.TODO(), notebookName)
 
 }
 
-func GetGoalDetails() (Details []resources.GoalDetail, err error) {
+func GetGoalDetails() (details []resources.GoalDetail, err error) {
 	storagelayer, err := storage.NewStorageLayer()
 	if err != nil {
 		return nil, err

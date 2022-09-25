@@ -41,7 +41,7 @@ var notebookddl string
 
 var ddls []string = []string{logentryddl, notebookddl, goalddl, GoalToLogEntryddl}
 
-func newDB() (DB *database, err error) {
+func newDB() (db *database, err error) {
 	location, err := util.MakeStorageLocation()
 	if err != nil {
 		return nil, err
@@ -54,13 +54,13 @@ func newDB() (DB *database, err error) {
 }
 
 // getDatabaseFileName gets just the file name and extension of the database
-func (DB *database) getDatabaseFileName() (databaseFileName string) {
-	return fmt.Sprintf("%s.%s", DB.Name, DB.Extension)
+func (db *database) getDatabaseFileName() (databaseFileName string) {
+	return fmt.Sprintf("%s.%s", db.Name, db.Extension)
 }
 
 // getDatabasePath returns the full file path to the database file
-func (DB *database) getDatabasePath() (databasePath string) {
-	return util.JoinPath(DB.Location, DB.getDatabaseFileName())
+func (db *database) getDatabasePath() (databasePath string) {
+	return util.JoinPath(db.Location, db.getDatabaseFileName())
 }
 
 func NewSQLiteStorage() (storage *SQLiteStorage, err error) {
@@ -70,18 +70,18 @@ func NewSQLiteStorage() (storage *SQLiteStorage, err error) {
 	}
 	CreateSchema := !util.FileExists(database.getDatabasePath())
 
-	db, err := sql.Open("sqlite", fmt.Sprintf("%s?_pragma=busy_timeout(%d000)&_pragma=journal_mode(WAL)", database.getDatabasePath(), timeoutInSeconds))
+	sqlDB, err := sql.Open("sqlite", fmt.Sprintf("%s?_pragma=busy_timeout(%d000)&_pragma=journal_mode(WAL)", database.getDatabasePath(), timeoutInSeconds))
 	if err != nil {
 		return nil, err
 	}
 	if CreateSchema {
 		// create tables
 		for _, ddl := range ddls {
-			if _, err := db.ExecContext(context.Background(), ddl); err != nil {
+			if _, err := sqlDB.ExecContext(context.Background(), ddl); err != nil {
 				return nil, err
 			}
 		}
 	}
 
-	return &SQLiteStorage{queries: *sqlc.New(db)}, nil
+	return &SQLiteStorage{queries: *sqlc.New(sqlDB)}, nil
 }
