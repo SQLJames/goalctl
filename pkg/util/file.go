@@ -43,12 +43,7 @@ func CreateifNotexist(file string) (err error) {
 	cleanedFile := filepath.Clean(file)
 	if !FileExists(cleanedFile) {
 		file, err := os.Create(cleanedFile)
-		defer func() {
-			if err := file.Close(); err != nil {
-				log.Logger.Warn("issue closing file", "fileName", file.Name(), "error", err.Error())
-			}
-		}()
-
+		defer closeFile(file)
 		if err != nil {
 			log.Logger.Error(err, "unable to create file")
 			return err
@@ -70,4 +65,10 @@ func JoinPath(basePath, leaf string) (fullPath string) {
 	joinedPath := path.Join(basePath, leaf)
 	log.Logger.Trace(fmt.Sprintf("path is %s", joinedPath))
 	return joinedPath
+}
+
+func closeFile(f *os.File) {
+	if err := f.Close(); err != nil {
+		log.Logger.Warn("issue closing file", "fileName", f.Name(), "error", err.Error())
+	}
 }

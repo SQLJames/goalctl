@@ -36,14 +36,16 @@ func GetGoalDetails() (details []resources.GoalDetail, err error) {
 	goals, err := storagelayer.GetGoals(context.TODO())
 	var journal resources.Journal
 	for _, goal := range goals {
-		logEntries := []*resources.LogEntry{}
-
-		associations, err := ListAssociationsByGoalID(goal.GoalID)
+		var associations []*resources.Association
+		associations, err = ListAssociationsByGoalID(goal.GoalID)
 		if err != nil {
 			return nil, err
 		}
+
+		var logEntries = make([]*resources.LogEntry, len(associations))
 		for _, association := range associations {
-			entry, err := GetLogEntryByLogEntryID(association.LogEntryID)
+			var entry *resources.LogEntry
+			entry, err = GetLogEntryByLogEntryID(association.LogEntryID)
 			if err != nil {
 				return nil, err
 			}

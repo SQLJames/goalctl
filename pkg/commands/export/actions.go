@@ -17,7 +17,8 @@ func actionExportJournal(cliContext *cli.Context) error {
 		return err
 	}
 	for index, NotebookObject := range Allnotebooks {
-		entries, err := actions.GetEntriesForNotebook(NotebookObject.Name)
+		var entries []*resources.LogEntry
+		entries, err = actions.GetEntriesForNotebook(NotebookObject.Name)
 		if err != nil {
 			return err
 		}
