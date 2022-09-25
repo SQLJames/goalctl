@@ -28,15 +28,19 @@ func NewPrinter(cliContext *cli.Context) (printer Printer) {
 	switch format {
 	case SupportedFormats[0]:
 		log.Logger.Trace("Returning json printer")
+
 		return &jsonprinter.JSONPrinter{}
 	case SupportedFormats[1]:
 		log.Logger.Trace("Returning toml printer")
+
 		return &tomlprinter.TomlPrinter{}
 	case SupportedFormats[2]:
 		log.Logger.Trace("Returning xml printer")
+
 		return &xmlprinter.XMLPrinter{}
 	default:
 		log.Logger.Trace("Returning yaml printer")
+		
 		return &yamlprinter.YamlPrinter{}
 	}
 }
