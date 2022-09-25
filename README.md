@@ -13,7 +13,7 @@ You can also run the export command to export all the information to a format of
 The storage engine is running on an embedded sqlite https://github.com/glebarez/go-sqlite
 This data is stored in your homedirectory under the goalctl folder
 
-## Build
+## Build 
 To build the application we are using mage in a zero install model. You can see some of the common commands in the makefile.
 SQLC is handling our database code generation, so if there are any updates to schema or queries you will need to run the `sqlc generate`
 command on the folder `pkg\storage\sqlite\sqlc`
