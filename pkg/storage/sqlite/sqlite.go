@@ -41,7 +41,7 @@ var logentryddl string
 //go:embed sqlc/schema/Notebook.sql
 var notebookddl string
 
-var ddls []string = []string{logentryddl, notebookddl, goalddl, goalToLogEntryddl}
+var ddls = []string{logentryddl, notebookddl, goalddl, goalToLogEntryddl}
 
 func newDB() (db *database, err error) {
 	location, err := util.MakeStorageLocation()

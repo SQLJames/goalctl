@@ -12,11 +12,11 @@ type Notebook interface {
 	GetNotebookIDByName(ctx context.Context, name string) (int64, error)
 	GetNotebook(ctx context.Context, name string) (resources.Notebook, error)
 	GetNotebooks(ctx context.Context) ([]resources.Notebook, error)
-	GetLogEntryByNotebook(ctx context.Context, name string) ([]resources.LogEntry, error)
+	GetLogEntryByNotebook(ctx context.Context, name string) (*[]resources.LogEntry, error)
 }
 type LogEntry interface {
 	CreateLogEntry(ctx context.Context, arg *resources.LogEntry, notebookName string) (*resources.LogEntry, error)
-	GetLogEntryByCreatedDate(ctx context.Context, createddate string) ([]resources.LogEntry, error)
+	GetLogEntryByCreatedDate(ctx context.Context, createddate string) (*[]resources.LogEntry, error)
 	GetLogEntryByLogEntryID(ctx context.Context, logentryid int64) (resources.LogEntry, error)
 }
 type Goal interface {

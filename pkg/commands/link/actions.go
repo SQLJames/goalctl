@@ -2,7 +2,7 @@ package link
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/sqljames/goalctl/pkg/flags"
@@ -21,11 +21,11 @@ func actionLink(cliContext *cli.Context) error {
 		for _, goalid := range goalIds {
 			goalidInt, err := strconv.Atoi(goalid)
 			if err != nil {
-				return errors.New("converting Goalid to int")
+				return fmt.Errorf("converting GoalID to Int, GoalID: %s", goalid)
 			}
 			logentryIDInt, err := strconv.Atoi(logentryID)
 			if err != nil {
-				return errors.New("onverting LogEntryId to int")
+				return fmt.Errorf("converting LogEntryId to Int, LogEntryId: %s", logentryID)
 			}
 			link := resources.Association{
 				GoalID:     goalidInt,

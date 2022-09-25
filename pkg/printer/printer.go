@@ -13,7 +13,7 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var SupportedFormats []string = []string{"json", "toml", "xml", "yaml"}
+var SupportedFormats = []string{"json", "toml", "xml", "yaml"}
 
 type Printer interface {
 	Write(data interface{}, writer io.Writer) (err error)

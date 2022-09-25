@@ -15,11 +15,14 @@ func convertStringToSlice(delimitedString string) []string {
 	return strings.Split(delimitedString, delimiter)
 }
 
-func convertSqlcLogEntriesToResource(sqlcEntries []sqlc.LogEntry) (logEntries []resources.LogEntry) {
-	for _, sqlcLogEntry := range sqlcEntries {
-		logEntries = append(logEntries, convertSqlcLogEntryToResource(&sqlcLogEntry))
+func convertSqlcLogEntriesToResource(sqlcEntries *[]sqlc.LogEntry) (logEntries *[]resources.LogEntry) {
+	var entries []resources.LogEntry
+	for _, entry := range *sqlcEntries {
+		entries = append(entries, convertSqlcLogEntryToResource(&entry))
 	}
-	return logEntries
+
+	return &entries
+
 }
 
 func convertSqlcLogEntryToResource(sqlcEntry *sqlc.LogEntry) (logEnty resources.LogEntry) {
@@ -33,9 +36,10 @@ func convertSqlcLogEntryToResource(sqlcEntry *sqlc.LogEntry) (logEnty resources.
 	}
 }
 
-func convertSqlcGoalsToResource(sqlcEntries []sqlc.Goal) (goals []resources.Goal) {
+func convertSqlcGoalsToResource(sqlcEntries []sqlc.Goal) []resources.Goal {
+	var goals = make([]resources.Goal, len(sqlcEntries))
 	for index := range sqlcEntries {
-		goals = append(goals, convertSqlcGoalToResource(&sqlcEntries[index]))
+		goals[index] = convertSqlcGoalToResource(&sqlcEntries[index])
 	}
 	return goals
 }
@@ -53,9 +57,10 @@ func convertSqlcGoalToResource(sqlcEntry *sqlc.Goal) (goal resources.Goal) {
 	}
 }
 
-func convertSqlcGoalToLogEntriesToResource(sqlcEntries []sqlc.GoalToLogEntry) (associations []resources.Association) {
-	for _, sqlc := range sqlcEntries {
-		associations = append(associations, convertSqlcGoalToLogEntryToResource(sqlc))
+func convertSqlcGoalToLogEntriesToResource(sqlcEntries []sqlc.GoalToLogEntry) []resources.Association {
+	var associations = make([]resources.Association, len(sqlcEntries))
+	for index := range sqlcEntries {
+		associations[index] = convertSqlcGoalToLogEntryToResource(sqlcEntries[index])
 	}
 	return associations
 }

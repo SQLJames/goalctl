@@ -28,5 +28,6 @@ func modulePath() string {
 
 func parseFileLines(lines []string) (modulePath string) {
 	split := strings.Split(lines[0], " ")
+	
 	return split[1]
 }

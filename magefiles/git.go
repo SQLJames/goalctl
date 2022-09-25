@@ -12,10 +12,11 @@ func gitTag() string {
 	var err error
 	tagOrBranch, ok := os.LookupEnv("CI_COMMIT_REF_NAME")
 	if !ok {
-		tagOrBranch, err = shellout("git", "describe", "--tags", "--always")
+		tagOrBranch, err = gitShellOut("describe", "--tags", "--always")
 		if err != nil {
-			ee, ok := errors.Cause(err).(*exec.ExitError)
-			if ok && ee.Exited() {
+			var exitError exec.ExitError
+			ok := errors.As(err, &exitError)
+			if ok && exitError.Exited() {
 				// probably no git tag
 				return "dev"
 			}
@@ -31,7 +32,7 @@ func gitCommitHash() string {
 
 	hash, ok := os.LookupEnv("CI_COMMIT_SHA")
 	if !ok {
-		hash, err = shellout("git", "rev-parse", "HEAD")
+		hash, err = gitShellOut("rev-parse", "HEAD")
 		if err != nil {
 			return ""
 		}
@@ -41,7 +42,7 @@ func gitCommitHash() string {
 }
 
 func gitBranch() string {
-	branch, err := shellout("git", "rev-parse", "--abbrev-ref", "HEAD")
+	branch, err := gitShellOut("rev-parse", "--abbrev-ref", "HEAD")
 	if err != nil {
 		return err.Error()
 	}
@@ -51,10 +52,21 @@ func gitBranch() string {
 
 // gitRoot returns the root directory from the git repo
 func gitRoot() string {
-	directory, err := shellout("git", "rev-parse", "--show-toplevel")
+	directory, err := gitShellOut("rev-parse", "--show-toplevel")
 	if err != nil {
 		return ""
 	}
 	directory = strings.TrimSpace(directory)
 	return directory
+}
+
+func gitShellOut(args ...string) (string, error) {
+	c := exec.Command("git", args...)
+	c.Env = os.Environ()
+	c.Stderr = os.Stderr
+	b, err := c.Output()
+	if err != nil {
+		return "", errors.Wrapf(err, `failed to run %v %q`, "git", args)
+	}
+	return string(b), nil
 }

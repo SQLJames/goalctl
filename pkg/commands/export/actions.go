@@ -21,7 +21,7 @@ func actionExportJournal(cliContext *cli.Context) error {
 		if err != nil {
 			return err
 		}
-		Allnotebooks[index].Entries = entries
+		Allnotebooks[index].Entries = *entries
 	}
 	GoalDetails, err := actions.GetGoalDetails()
 	if err != nil {

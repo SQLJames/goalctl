@@ -99,7 +99,7 @@ func Build() error {
 }
 
 // Release the application for all defined targets
-func Release() error {
+func Release() {
 	mg.SerialDeps(Vendor, ensureDirs)
 
 	cgoEnabled := os.Getenv("CGO_ENABLED") == "1"
@@ -120,6 +120,7 @@ func Release() error {
 
 			if cgoEnabled && runtime.GOOS != env["GOOS"] {
 				fmt.Printf("      CGO is enabled, skipping compilation of %s for %s\n", buildTarget.name(), env["GOOS"])
+				
 				return
 			}
 			fmt.Printf("      Building %s\n", buildTarget.name())
@@ -127,6 +128,7 @@ func Release() error {
 			err := sh.RunWith(env, goexe, "build", "-o", path.Join(binaryPath, buildTarget.name()), "-ldflags="+flags(), buildTarget.SourceDir)
 			if err != nil {
 				fmt.Printf("compilation failed: %s\n", err.Error())
+				
 				return
 			}
 		}(buildTarget)
@@ -134,7 +136,6 @@ func Release() error {
 
 	waitGroup.Wait()
 
-	return nil
 }
 
 // StaticSecurity runs various static checkers to ensure you minimize security holes

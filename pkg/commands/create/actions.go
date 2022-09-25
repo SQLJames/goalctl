@@ -2,6 +2,7 @@ package create
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"time"
 
@@ -18,6 +19,10 @@ func actionCreateNotebook(cliContext *cli.Context) error {
 	storagelayer, err := storage.NewVault()
 	if err != nil {
 		return err
+	}
+
+	if cliContext.String(flags.NameFlagName) == "" {
+		return fmt.Errorf("notebook name cannot be empty, provided %s", cliContext.String(flags.NameFlagName))
 	}
 
 	row, err := storagelayer.CreateNotebook(context.TODO(), cliContext.String(flags.NameFlagName))

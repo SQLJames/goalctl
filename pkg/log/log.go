@@ -1,7 +1,7 @@
 package log
 
 var (
-	Logger logger = newLogger()
+	Logger = newLogger()
 )
 
 type logger interface {

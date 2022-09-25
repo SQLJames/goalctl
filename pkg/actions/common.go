@@ -20,7 +20,7 @@ func GetNotebooks() (notebookList []resources.Notebook, err error) {
 	return notebooks, nil
 }
 
-func GetEntriesForNotebook(notebookName string) (entries []resources.LogEntry, err error) {
+func GetEntriesForNotebook(notebookName string) (entries *[]resources.LogEntry, err error) {
 	storagelayer, err := storage.NewVault()
 	if err != nil {
 		return nil, err
