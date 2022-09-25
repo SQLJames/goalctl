@@ -23,7 +23,6 @@ func convertSqlcLogEntriesToResource(sqlcEntries []sqlc.LogEntry) (logEntries []
 }
 
 func convertSqlcLogEntryToResource(sqlcEntry *sqlc.LogEntry) (logEnty resources.LogEntry) {
-
 	return resources.LogEntry{
 		LogEntryID:  sqlcEntry.Logentryid,
 		Author:      sqlcEntry.Author.String,
@@ -42,7 +41,6 @@ func convertSqlcGoalsToResource(sqlcEntries []sqlc.Goal) (goals []resources.Goal
 }
 
 func convertSqlcGoalToResource(sqlcEntry *sqlc.Goal) (goal resources.Goal) {
-
 	return resources.Goal{
 		GoalID:      int(sqlcEntry.Goalid),
 		Author:      sqlcEntry.Author.String,

@@ -38,7 +38,6 @@ func gitCommitHash() string {
 	}
 
 	return strings.TrimSpace(hash)
-
 }
 
 func gitBranch() string {

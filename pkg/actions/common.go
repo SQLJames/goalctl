@@ -26,7 +26,6 @@ func GetEntriesForNotebook(notebookName string) (entries []resources.LogEntry, e
 		return nil, err
 	}
 	return storagelayer.GetLogEntryByNotebook(context.TODO(), notebookName)
-
 }
 
 func GetGoalDetails() (details []resources.GoalDetail, err error) {
