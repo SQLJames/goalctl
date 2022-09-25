@@ -3,7 +3,6 @@ package sqlite
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 	"github.com/sqljames/goalctl/pkg/storage/sqlite/sqlc"
@@ -11,11 +10,15 @@ import (
 
 func (sl Repository) CreateLogEntry(ctx context.Context, arg *resources.LogEntry, notebookName string) (*resources.LogEntry, error) {
 	NotebookID, err := sl.GetNotebookIDByName(ctx, notebookName)
-	if NotebookID == 0 {
-		return nil, fmt.Errorf("CreateLogEntry: notebook doesn't exist, please create it first. notebookName: %s", notebookName)
-	}
-	if err != nil {
+	if NotebookID != 0 && err != nil {
 		return nil, err
+	}
+	if NotebookID == 0 {
+		notebook, err := sl.CreateNotebook(ctx, notebookName)
+		if err != nil {
+			return nil, err
+		}
+		NotebookID = notebook.Notebookid
 	}
 	Entry, err := sl.queries.CreateLogEntry(ctx, sqlc.CreateLogEntryParams{
 		Author: sql.NullString{

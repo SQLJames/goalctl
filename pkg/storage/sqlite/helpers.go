@@ -22,7 +22,6 @@ func convertSqlcLogEntriesToResource(sqlcEntries []*sqlc.LogEntry) (logEntries [
 	}
 
 	return entries
-
 }
 
 func convertSqlcLogEntryToResource(sqlcEntry *sqlc.LogEntry) (logEnty *resources.LogEntry) {

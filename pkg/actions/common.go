@@ -8,10 +8,7 @@ import (
 )
 
 func GetNotebooks() (notebookList []*resources.Notebook, err error) {
-	storagelayer, err := storage.NewVault()
-	if err != nil {
-		return nil, err
-	}
+	storagelayer := storage.NewVault()
 	notebooks, err := storagelayer.GetNotebooks(context.TODO())
 	if err != nil {
 		return nil, err
@@ -21,18 +18,12 @@ func GetNotebooks() (notebookList []*resources.Notebook, err error) {
 }
 
 func GetEntriesForNotebook(notebookName string) (entries []*resources.LogEntry, err error) {
-	storagelayer, err := storage.NewVault()
-	if err != nil {
-		return nil, err
-	}
+	storagelayer := storage.NewVault()
 	return storagelayer.GetLogEntryByNotebook(context.TODO(), notebookName)
 }
 
 func GetGoalDetails() (details []resources.GoalDetail, err error) {
-	storagelayer, err := storage.NewVault()
-	if err != nil {
-		return nil, err
-	}
+	storagelayer := storage.NewVault()
 	goals, err := storagelayer.GetGoals(context.TODO())
 	var journal resources.Journal
 	for _, goal := range goals {
@@ -60,17 +51,11 @@ func GetGoalDetails() (details []resources.GoalDetail, err error) {
 }
 
 func ListAssociationsByGoalID(goalid int) ([]*resources.Association, error) {
-	storagelayer, err := storage.NewVault()
-	if err != nil {
-		return nil, err
-	}
+	storagelayer := storage.NewVault()
 	return storagelayer.GetAssociationsByGoalID(context.TODO(), goalid)
 }
 
 func GetLogEntryByLogEntryID(logentryid int) (*resources.LogEntry, error) {
-	storagelayer, err := storage.NewVault()
-	if err != nil {
-		return nil, err
-	}
+	storagelayer := storage.NewVault()
 	return storagelayer.GetLogEntryByLogEntryID(context.TODO(), int64(logentryid))
 }

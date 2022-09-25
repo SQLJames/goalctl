@@ -21,11 +21,11 @@ func actionLink(cliContext *cli.Context) error {
 		for _, goalid := range goalIds {
 			goalidInt, err := strconv.Atoi(goalid)
 			if err != nil {
-				return fmt.Errorf("converting GoalID to Int, GoalID: %s", goalid)
+				return fmt.Errorf("converting GoalID: %w", err)
 			}
 			logentryIDInt, err := strconv.Atoi(logentryID)
 			if err != nil {
-				return fmt.Errorf("converting LogEntryId to Int, LogEntryId: %s", logentryID)
+				return fmt.Errorf("converting logentryID: %w", err)
 			}
 			link := resources.Association{
 				GoalID:     goalidInt,
@@ -34,11 +34,7 @@ func actionLink(cliContext *cli.Context) error {
 			links = append(links, link)
 		}
 	}
-	storagelayer, err := storage.NewVault()
-	if err != nil {
-		return err
-	}
-
+	storagelayer := storage.NewVault()
 	for _, entry := range links {
 		_, err := storagelayer.CreateAssociation(context.TODO(), entry)
 		if err != nil {

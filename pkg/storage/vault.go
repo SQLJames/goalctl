@@ -37,10 +37,7 @@ type Vault interface {
 	Associations
 }
 
-func NewVault() (vault Vault, err error) {
-	vault, err = sqlite.NewSQLiteStorage()
-	if err != nil {
-		return nil, err
-	}
-	return vault, nil
+func NewVault() (vault Vault) {
+
+	return sqlite.NewSQLiteStorage()
 }

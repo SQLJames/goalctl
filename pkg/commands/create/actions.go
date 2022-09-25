@@ -2,7 +2,6 @@ package create
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"time"
 
@@ -15,14 +14,16 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func actionCreateNotebook(cliContext *cli.Context) error {
-	storagelayer, err := storage.NewVault()
-	if err != nil {
-		return err
-	}
+type emptryStringErr struct{}
 
+func (empty *emptryStringErr) Error() string {
+	return "string can not be empty"
+}
+func actionCreateNotebook(cliContext *cli.Context) error {
+    storagelayer := storage.NewVault()
 	if cliContext.String(flags.NameFlagName) == "" {
-		return fmt.Errorf("notebook name cannot be empty, provided %s", cliContext.String(flags.NameFlagName))
+		log.Logger.Error(&emptryStringErr{}, "Error creating notebook", "function", "actionCreateNotebook")
+		return &emptryStringErr{}
 	}
 
 	row, err := storagelayer.CreateNotebook(context.TODO(), cliContext.String(flags.NameFlagName))
@@ -37,10 +38,7 @@ func actionCreateNotebook(cliContext *cli.Context) error {
 }
 
 func actionCreateLogEntry(cliContext *cli.Context) error {
-	storagelayer, err := storage.NewVault()
-	if err != nil {
-		return err
-	}
+	storagelayer := storage.NewVault()	
 	le := resources.NewLogEntry(cliContext.String(flags.EntryTextFlagName), cliContext.StringSlice(flags.TagsFlagName))
 
 	row, err := storagelayer.CreateLogEntry(context.TODO(), le, cliContext.String(flags.NameFlagName))
@@ -55,12 +53,12 @@ func actionCreateLogEntry(cliContext *cli.Context) error {
 }
 
 func actionCreateGoal(cliContext *cli.Context) error {
-	storagelayer, err := storage.NewVault()
-	if err != nil {
-		return err
-	}
-
-	goal := resources.NewGoal(cliContext.String(flags.NameFlagName), cliContext.Timestamp(flags.DueDateFlagName).UTC().Format(time.RFC3339), cliContext.String(flags.EntryTextFlagName), cliContext.Int(flags.PriorityFlagName))
+	storagelayer := storage.NewVault()
+	goal := resources.NewGoal(
+		cliContext.String(flags.NameFlagName),
+		cliContext.Timestamp(flags.DueDateFlagName).UTC().Format(time.RFC3339),
+		cliContext.String(flags.EntryTextFlagName),
+		cliContext.Int(flags.PriorityFlagName))
 
 	row, err := storagelayer.CreateGoal(context.TODO(), goal)
 	if err != nil {

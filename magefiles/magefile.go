@@ -138,7 +138,6 @@ func Release() {
 	}
 
 	waitGroup.Wait()
-
 }
 
 // StaticSecurity runs various static checkers to ensure you minimize security holes

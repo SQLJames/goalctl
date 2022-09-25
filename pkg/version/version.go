@@ -8,9 +8,9 @@ import (
 	"github.com/sqljames/goalctl/pkg/info"
 )
 
-// These variables are usually defined via LDFLags at compile-time
+// These variables are usually defined via LDFLags at compile-time.
 var (
-	// Version is the default version of the package/tool
+	// Version is the default version of the package/tool.
 	Version = Info{
 		applicationName: applicationName,
 		release:         release,
@@ -24,7 +24,6 @@ var (
 		buildBranch:     buildBranch,
 		goVersion:       runtime.Version(),
 	}
-	// Name of application
 	applicationName = info.GetApplicationName()
 	commitHash      = "unknown"
 	buildDate       = "unknown"
@@ -34,7 +33,7 @@ var (
 	buildBranch     = "unknown"
 )
 
-// Info contains all the versioning information for a package/tool
+// Info contains all the versioning information for a package/tool.
 type Info struct {
 	applicationName string
 	release         string

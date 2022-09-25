@@ -3,6 +3,7 @@ package sqlite
 import (
 	"context"
 	"database/sql"
+
 	// embed used for the dll statements on db creation
 	_ "embed"
 	"fmt"
@@ -10,6 +11,7 @@ import (
 	// go-sqlite required for embedded sqlite database
 	_ "github.com/glebarez/go-sqlite"
 	"github.com/sqljames/goalctl/pkg/info"
+	"github.com/sqljames/goalctl/pkg/log"
 	"github.com/sqljames/goalctl/pkg/storage/sqlite/sqlc"
 	"github.com/sqljames/goalctl/pkg/util"
 )
@@ -65,25 +67,28 @@ func (db *database) getDatabasePath() (databasePath string) {
 	return util.JoinPath(db.Location, db.getDatabaseFileName())
 }
 
-func NewSQLiteStorage() (storage *Repository, err error) {
+func NewSQLiteStorage() (storage *Repository) {
 	database, err := newDB()
 	if err != nil {
-		return nil, err
+		log.Logger.Fatal(err, "error opening database")
+		return nil
 	}
 	CreateSchema := !util.FileExists(database.getDatabasePath())
 
 	sqlDB, err := sql.Open("sqlite", fmt.Sprintf("%s?_pragma=busy_timeout(%d000)&_pragma=journal_mode(WAL)", database.getDatabasePath(), timeoutInSeconds))
 	if err != nil {
-		return nil, err
+		log.Logger.Fatal(err, "error opening database")
+		return nil
 	}
 	if CreateSchema {
 		// create tables
 		for _, ddl := range ddls {
 			if _, err := sqlDB.ExecContext(context.Background(), ddl); err != nil {
-				return nil, err
+				log.Logger.Fatal(err, "error creating the database tables")
+				return nil
 			}
 		}
 	}
 
-	return &Repository{queries: *sqlc.New(sqlDB)}, nil
+	return &Repository{queries: *sqlc.New(sqlDB)}
 }
