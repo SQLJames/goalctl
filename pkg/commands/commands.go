@@ -66,7 +66,7 @@ func instrumentLoggingFlags(cliContext *cli.Context) error {
 	if err != nil {
 		log.Logger.Error(err, err.Error())
 	}
-	err = log.InitializeLogger(cliContext.Int("verbosity"))
+	log.InitializeLogger(cliContext.Int("verbosity"))
 	return err
 }
 

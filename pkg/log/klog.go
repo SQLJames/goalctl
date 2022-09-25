@@ -2,7 +2,6 @@ package log
 
 import (
 	"flag"
-	"log"
 	"os"
 	"strconv"
 
@@ -26,6 +25,7 @@ func newInternalklog() *internalklogImplementation {
 	logger := klogr.NewWithOptions(klogr.WithFormat(klogr.FormatKlog)).
 		WithCallDepth(1).
 		WithValues("applicationName", info.GetApplicationName())
+
 	return &internalklogImplementation{
 		PanicLogger:   logger.WithName("Panic"),
 		FatalLogger:   logger.WithName("Fatal"),
@@ -64,14 +64,13 @@ func (k *internalklogImplementation) Trace(message string, keysAndValues ...inte
 }
 
 // Care of: https://github.com/physcat/klog-cli/blob/main/main.go
-func InitializeLogger(logLevel int) error {
+func InitializeLogger(logLevel int) {
 	fs := flag.NewFlagSet("", flag.PanicOnError)
 	klog.InitFlags(fs)
 	klog.EnableContextualLogging(true)
-	err := fs.Set("v",strconv.Itoa(logLevel))
-	if err != nil {
-		log.Println("msg", "issue setting verbosity flag", "error", err.Error())
-	}
-	return nil
-}
 
+	err := fs.Set("v", strconv.Itoa(logLevel))
+	if err != nil {
+		Logger.Warn("issue setting verbosity flag", "error", err.Error())
+	}
+}
