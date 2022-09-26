@@ -12,25 +12,19 @@ import (
 
 func actionExportJournal(cliContext *cli.Context) error {
 	var journal resources.Journal
-	Allnotebooks, err := actions.GetNotebooks()
-	if err != nil {
-		return err
-	}
+	Allnotebooks := actions.GetNotebooks()
+
 	for index, NotebookObject := range Allnotebooks {
-		var entries []*resources.LogEntry
-		entries, err = actions.GetEntriesForNotebook(NotebookObject.Name)
-		if err != nil {
-			return err
-		}
+		entries := actions.GetEntriesForNotebook(NotebookObject.Name)
+
 		Allnotebooks[index].Entries = entries
 	}
-	GoalDetails, err := actions.GetGoalDetails()
-	if err != nil {
-		return err
-	}
+	GoalDetails := actions.GetGoalDetails()
+
 	journal.NoteBooks = Allnotebooks
 	journal.GoalDetails = GoalDetails
-	err = printer.NewPrinter(cliContext).Write(resources.Book{Journal: journal}, os.Stdout)
+
+	err := printer.NewPrinter(cliContext).Write(resources.Book{Journal: journal}, os.Stdout)
 	if err != nil {
 		log.Logger.Warn("issue Printing the data", "function", "CreateGoal", "error", err.Error())
 	}

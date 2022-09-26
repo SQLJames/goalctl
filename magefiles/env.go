@@ -16,6 +16,7 @@ func getVersion() string {
 
 func getRelease() string {
 	v := "RELEASE"
+	
 	value, set := os.LookupEnv(v)
 	if set {
 		return value

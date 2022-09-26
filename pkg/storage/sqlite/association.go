@@ -3,29 +3,46 @@ package sqlite
 import (
 	"context"
 
+	"github.com/sqljames/goalctl/pkg/log"
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 	"github.com/sqljames/goalctl/pkg/storage/sqlite/sqlc"
 )
 
-func (sl Repository) CreateAssociation(ctx context.Context, arg resources.Association) (resources.Association, error) {
+func (sl Repository) CreateAssociation(ctx context.Context, arg resources.Association) resources.Association {
 	_, err := sl.queries.CreateAssociation(ctx, sqlc.CreateAssociationParams{
 		Goalid:     int64(arg.GoalID),
 		Logentryid: int64(arg.LogEntryID),
 	})
-	return arg, err
+	if err != nil {
+		log.Logger.Fatal(err, "error running query")
+	}
+
+	return arg
 }
 
-func (sl Repository) GetAssociations(ctx context.Context) ([]*resources.Association, error) {
+func (sl Repository) GetAssociations(ctx context.Context) []*resources.Association {
 	associations, err := sl.queries.GetAssociations(ctx)
-	return convertSqlcGoalToLogEntriesToResource(associations), err
+	if err != nil {
+		log.Logger.Fatal(err, "error running query")
+	}
+
+	return convertSqlcGoalToLogEntriesToResource(associations)
 }
 
-func (sl Repository) GetAssociationsByGoalID(ctx context.Context, goalid int) ([]*resources.Association, error) {
+func (sl Repository) GetAssociationsByGoalID(ctx context.Context, goalid int) []*resources.Association {
 	associations, err := sl.queries.GetAssociationsByGoalID(ctx, int64(goalid))
-	return convertSqlcGoalToLogEntriesToResource(associations), err
+	if err != nil {
+		log.Logger.Fatal(err, "error running query")
+	}
+
+	return convertSqlcGoalToLogEntriesToResource(associations)
 }
 
-func (sl Repository) GetAssociationsByLogEntryID(ctx context.Context, logentryid int) ([]*resources.Association, error) {
+func (sl Repository) GetAssociationsByLogEntryID(ctx context.Context, logentryid int) []*resources.Association {
 	associations, err := sl.queries.GetAssociationsByLogEntryID(ctx, int64(logentryid))
-	return convertSqlcGoalToLogEntriesToResource(associations), err
+	if err != nil {
+		log.Logger.Fatal(err, "error running query")
+	}
+
+	return convertSqlcGoalToLogEntriesToResource(associations)
 }

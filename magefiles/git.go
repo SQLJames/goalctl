@@ -10,6 +10,7 @@ import (
 
 func gitTag() string {
 	var err error
+	
 	tagOrBranch, ok := os.LookupEnv("CI_COMMIT_REF_NAME")
 	if !ok {
 		tagOrBranch, err = gitShellOut("describe", "--tags", "--always")
@@ -50,7 +51,7 @@ func gitBranch() string {
 	return branch
 }
 
-// gitRoot returns the root directory from the git repo
+// gitRoot returns the root directory from the git repo.
 func gitRoot() string {
 	directory, err := gitShellOut("rev-parse", "--show-toplevel")
 	if err != nil {

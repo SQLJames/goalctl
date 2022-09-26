@@ -15,6 +15,7 @@ func (yp *YamlPrinter) Write(data interface{}, destination io.Writer) (err error
 	if err != nil {
 		return err
 	}
+	
 	_, err = destination.Write(bytes)
 	if err != nil {
 		log.Logger.Warn("issue writing data out to destination.",  "error", err.Error())

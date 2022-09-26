@@ -26,6 +26,7 @@ func (s *scanner) getInstallURL() (installURL string) {
 func runStaticScanners() (err error) {
 	for _, scanner := range scanners {
 		log.Printf("--> Running Scanner: %s\n", scanner.command)
+		
 		if err := sh.RunV(scanner.command, scanner.runArgs...); err != nil {
 			return err
 		}

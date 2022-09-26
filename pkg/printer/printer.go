@@ -20,11 +20,8 @@ type Printer interface {
 }
 
 func NewPrinter(cliContext *cli.Context) (printer Printer) {
-	format := cliContext.String(flags.OutputFormatFlagName)
-	format = strings.ToLower(format)
-	if format == "" || !contains(SupportedFormats, format) {
-		log.Logger.Trace("format not defined or is unsupported, using default format.")
-	}
+	format := strings.ToLower(cliContext.String(flags.OutputFormatFlagName))
+
 	switch format {
 	case SupportedFormats[0]:
 		log.Logger.Trace("Returning json printer")
@@ -40,16 +37,7 @@ func NewPrinter(cliContext *cli.Context) (printer Printer) {
 		return &xmlprinter.XMLPrinter{}
 	default:
 		log.Logger.Trace("Returning yaml printer")
-		
+
 		return &yamlprinter.YamlPrinter{}
 	}
-}
-
-func contains(list []string, value string) (supportedFormat bool) {
-	for _, listitem := range list {
-		if value == listitem {
-			return true
-		}
-	}
-	return false
 }

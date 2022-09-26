@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	"github.com/sqljames/goalctl/pkg/flags"
-	"github.com/sqljames/goalctl/pkg/log"
 	"github.com/sqljames/goalctl/pkg/storage"
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 	"github.com/urfave/cli/v2"
@@ -34,12 +33,10 @@ func actionLink(cliContext *cli.Context) error {
 			links = append(links, link)
 		}
 	}
+
 	storagelayer := storage.NewVault()
 	for _, entry := range links {
-		_, err := storagelayer.CreateAssociation(context.TODO(), entry)
-		if err != nil {
-			log.Logger.Warn("unable to create association", "error", err.Error())
-		}
+		storagelayer.CreateAssociation(context.TODO(), entry)
 	}
 
 	return nil
@@ -48,9 +45,11 @@ func actionLink(cliContext *cli.Context) error {
 func removeDuplicate[T string | int](sliceList []T) []T {
 	allKeys := make(map[T]bool)
 	list := []T{}
+	
 	for _, item := range sliceList {
 		if _, value := allKeys[item]; !value {
 			allKeys[item] = true
+
 			list = append(list, item)
 		}
 	}

@@ -24,5 +24,6 @@ func (yp *XMLPrinter) Write(data interface{}, destination io.Writer) (err error)
 	if err != nil {
 		log.Logger.Warn("issue writing data out to destination.", "error", err.Error())
 	}
-	return nil
+	
+	return err
 }

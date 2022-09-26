@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/fs"
 	"log"
 	"os"
 	"path"
@@ -15,7 +16,8 @@ import (
 )
 
 const (
-	devRelease string = "dev"
+	devRelease        string      = "dev"
+	folderPermissions fs.FileMode = 0o750
 )
 
 var (
@@ -59,7 +61,8 @@ func ensureDirs() error {
 	for _, dir := range dirs {
 		if !fileExists(dir) {
 			log.Printf("    creating '%s'\n", dir)
-			if err := os.MkdirAll(dir, 0o750); err != nil {
+
+			if err := os.MkdirAll(dir, folderPermissions); err != nil {
 				return err
 			}
 		}
@@ -67,7 +70,7 @@ func ensureDirs() error {
 	return nil
 }
 
-// Clean up after yourself
+// Clean up after yourself.
 func Clean() {
 	log.Println("--> Cleaning output directories")
 
@@ -80,7 +83,7 @@ func Clean() {
 	}
 }
 
-// Vendor dependencies with go modules
+// Vendor dependencies with go modules.
 func Vendor() {
 	log.Println("--> Updating dependencies")
 	err := sh.Run(goexe, "mod", "tidy")
@@ -89,7 +92,7 @@ func Vendor() {
 	}
 }
 
-// Build the application for local running
+// Build the application for local running.
 func Build() error {
 	mg.SerialDeps(Vendor, ensureDirs)
 
@@ -101,16 +104,16 @@ func Build() error {
 	return nil
 }
 
-// Release the application for all defined targets
+// Release the application for all defined targets.
 func Release() {
-	mg.SerialDeps(Vendor, ensureDirs)
-
-	cgoEnabled := os.Getenv("CGO_ENABLED") == "1"
-
 	var waitGroup sync.WaitGroup
-	waitGroup.Add(len(targets))
 
+	mg.SerialDeps(Vendor, ensureDirs)
+	waitGroup.Add(len(targets))
+	cgoEnabled := os.Getenv("CGO_ENABLED") == "1"
+	
 	log.Printf("--> Building '%s' for release\n", gitRoot())
+
 	for _, buildTarget := range targets {
 		buildTarget.SourceDir = gitRoot()
 		go func(buildTarget target) {
@@ -126,6 +129,7 @@ func Release() {
 
 				return
 			}
+
 			log.Printf("      Building %s\n", buildTarget.name())
 
 			err := sh.RunWith(env, goexe, "build", "-o", path.Join(binaryPath, buildTarget.name()), "-ldflags="+flags(), buildTarget.SourceDir)
@@ -140,7 +144,7 @@ func Release() {
 	waitGroup.Wait()
 }
 
-// StaticSecurity runs various static checkers to ensure you minimize security holes
+// Scan runs various static checkers to ensure you minimize security holes and have good formatting.
 func Scan() (err error) {
 	log.Println("--> Scanning code")
 	err = confirmScanners()
@@ -159,8 +163,9 @@ func Test() error {
 	mg.SerialDeps(Vendor, ensureDirs)
 
 	log.Println("--> Testing codebase")
+
 	results, err := sh.Output(goexe, "test", "-cover", "-e", "internal", "-e", "cache", "./...")
-	log.Print("    ")
+
 	log.Println(strings.ReplaceAll(results, "\n", "\n    "))
 
 	return err

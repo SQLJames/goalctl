@@ -12,6 +12,7 @@ func parseVersion(ver string) (version *semver.Version, err error) {
 	if err != nil {
 		return nil, fmt.Errorf("parsing version: %w", err)
 	}
+
 	return version, nil
 }
 
@@ -22,10 +23,12 @@ func UpgradeAvailable(remoteVersion string) (upgradeAvailable bool, err error) {
 	if err != nil {
 		return false, err
 	}
+
 	semVerCurrent, err := parseVersion(buildVersion)
 	if err != nil {
 		return false, err
 	}
+
 	upgradeAvailable, _ = constraint.Validate(semVerCurrent)
 	return upgradeAvailable, nil
 }
