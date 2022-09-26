@@ -6,29 +6,30 @@ import (
 	"github.com/Masterminds/semver"
 )
 
-//parseVersion takes in a version string and then parses it to a Version object
-func parseVersion(ver string) (Version *semver.Version, err error) {
-	v, err := semver.NewVersion(ver)
+// parseVersion takes in a version string and then parses it to a Version object.
+func parseVersion(ver string) (version *semver.Version, err error) {
+	version, err = semver.NewVersion(ver)
 	if err != nil {
-		return nil, &customError{
-			message: "Parsing Version",
-			err:     err,
-		}
+		return nil, fmt.Errorf("parsing version: %w", err)
 	}
-	return v, nil
+
+	return version, nil
 }
 
-//UpgradeAvailable checks the version of the binary against a semantic version string
-//returns true if binary version is older than the semantic version
-func UpgradeAvailable(remoteVersion string) (UpgradeAvailable bool, err error) {
+// UpgradeAvailable checks the version of the binary against a semantic version string.
+// returns true if binary version is older than the semantic version.
+func UpgradeAvailable(remoteVersion string) (upgradeAvailable bool, err error) {
 	constraint, err := semver.NewConstraint(fmt.Sprintf("<%s", remoteVersion))
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("semver NewConstraint: %w", err)
 	}
+
 	semVerCurrent, err := parseVersion(buildVersion)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("parseVersion: %w", err)
 	}
-	UpgradeAvailable, _ = constraint.Validate(semVerCurrent)
-	return UpgradeAvailable, nil
+
+	upgradeAvailable, _ = constraint.Validate(semVerCurrent)
+
+	return upgradeAvailable, nil
 }

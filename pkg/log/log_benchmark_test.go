@@ -1,11 +1,13 @@
-package log
+package log_test
 
 import (
 	"testing"
+
+	"github.com/sqljames/goalctl/pkg/log"
 )
 
 var (
-	benchmarkLogger = NewInternalklog()
+	benchmarkLogger = log.Logger.ILog
 )
 
 func BenchmarkInfoLogger(b *testing.B) {
@@ -13,9 +15,7 @@ func BenchmarkInfoLogger(b *testing.B) {
 }
 
 func Info(b *testing.B) {
-
 	for i := 0; i < b.N; i++ {
 		benchmarkLogger.Info("test", "method", "GET", "URL", "/metrics")
 	}
-
 }

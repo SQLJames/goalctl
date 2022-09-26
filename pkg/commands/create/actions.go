@@ -2,6 +2,7 @@ package create
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"time"
 
@@ -14,59 +15,57 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func actionCreateNotebook(c *cli.Context) error {
-	storagelayer, err := storage.NewStorageLayer()
-	if err != nil {
-		return err
+type emptryStringError struct{}
+
+func (empty *emptryStringError) Error() string {
+	return "string can not be empty"
+}
+func actionCreateNotebook(cliContext *cli.Context) error {
+	if cliContext.String(flags.NameFlagName) == "" {
+		log.Logger.ILog.Error(&emptryStringError{}, "Error creating notebook", "function", "actionCreateNotebook")
+
+		return &emptryStringError{}
 	}
 
-	row, err := storagelayer.CreateNotebook(context.TODO(), c.String(flags.NameFlagName))
+	storagelayer := storage.NewVault()
+	row := storagelayer.Storage.CreateNotebook(context.TODO(), cliContext.String(flags.NameFlagName))
+
+	err := printer.NewPrinter(cliContext).Writer.Write(row, os.Stdout)
 	if err != nil {
-		return err
+		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateNotebook", "error", err.Error())
 	}
-	printer := printer.NewPrinter(c)
-	err = printer.Write(row, os.Stdout)
-	if err != nil {
-		log.Logger.Warn("issue Printing the data", "function", "CreateNotebook", "error", err.Error())
-	}
-	return err
+	
+	return fmt.Errorf("printer: %w", err)
 }
 
-func actionCreateLogEntry(c *cli.Context) error {
-	storagelayer, err := storage.NewStorageLayer()
-	if err != nil {
-		return err
-	}
-	le := resources.NewLogEntry(c.String(flags.EntryTextFlagName), c.StringSlice(flags.TagsFlagName))
+func actionCreateLogEntry(cliContext *cli.Context) error {
+	storagelayer := storage.NewVault()
+	le := resources.NewLogEntry(cliContext.String(flags.EntryTextFlagName), cliContext.StringSlice(flags.TagsFlagName))
 
-	row, err := storagelayer.CreateLogEntry(context.TODO(), *le, c.String(flags.NameFlagName))
+	row := storagelayer.Storage.CreateLogEntry(context.TODO(), le, cliContext.String(flags.NameFlagName))
+
+	err := printer.NewPrinter(cliContext).Writer.Write(row, os.Stdout)
 	if err != nil {
-		return err
+		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateLogEntry", "error", err.Error())
 	}
-	printer := printer.NewPrinter(c)
-	err = printer.Write(row, os.Stdout)
-	if err != nil {
-		log.Logger.Warn("issue Printing the data", "function", "CreateLogEntry", "error", err.Error())
-	}
-	return err
+
+	return fmt.Errorf("printer: %w", err)
 }
 
-func actionCreateGoal(c *cli.Context) error {
-	storagelayer, err := storage.NewStorageLayer()
+func actionCreateGoal(cliContext *cli.Context) error {
+	storagelayer := storage.NewVault()
+	goal := resources.NewGoal(
+		cliContext.String(flags.NameFlagName),
+		cliContext.Timestamp(flags.DueDateFlagName).UTC().Format(time.RFC3339),
+		cliContext.String(flags.EntryTextFlagName),
+		cliContext.Int(flags.PriorityFlagName))
+
+	row := storagelayer.Storage.CreateGoal(context.TODO(), goal)
+
+	err := printer.NewPrinter(cliContext).Writer.Write(row, os.Stdout)
 	if err != nil {
-		return err
+		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateGoal", "error", err.Error())
 	}
 
-	goal := resources.NewGoal(c.String(flags.NameFlagName), c.Timestamp(flags.DueDateFlagName).UTC().Format(time.RFC3339), c.String(flags.EntryTextFlagName), c.Int(flags.PriorityFlagName))
-
-	row, err := storagelayer.CreateGoal(context.TODO(), *goal)
-	if err != nil {
-		return err
-	}
-	printer := printer.NewPrinter(c)
-	err = printer.Write(row, os.Stdout)
-	if err != nil {
-		log.Logger.Warn("issue Printing the data", "function", "CreateGoal", "error", err.Error())
-	}
-	return err
+	return fmt.Errorf("printer: %w", err)
 }

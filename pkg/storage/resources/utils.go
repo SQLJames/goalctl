@@ -7,19 +7,16 @@ import (
 	"github.com/sqljames/goalctl/pkg/log"
 )
 
-func NewGoal(goal string, dueDate string, details string, priority int) *Goal {
+func NewGoal(goal, dueDate, details string, priority int) *Goal {
 	dueTime, err := time.Parse(time.RFC3339, dueDate)
 	if err != nil {
-		log.Logger.Error(err, "Unable to get current os user, setting Author to `self`")
+		log.Logger.ILog.Error(err, "Unable to parse due time , getting current time.")
+
 		dueTime = time.Now().UTC()
 	}
-	user, err := user.Current()
-	if err != nil {
-		log.Logger.Error(err, "Unable to get current os user, setting Author to `self`")
-		user.Username = "self"
-	}
+
 	return &Goal{
-		Author:      user.Username,
+		Author:      getCurrentUser(),
 		Deadline:    dueTime.Format(time.RFC3339),
 		CreatedDate: time.Now().UTC().Format(time.RFC3339),
 		Goal:        goal,
@@ -30,15 +27,21 @@ func NewGoal(goal string, dueDate string, details string, priority int) *Goal {
 }
 
 func NewLogEntry(entryText string, tags []string) *LogEntry {
-	user, err := user.Current()
-	if err != nil {
-		log.Logger.Error(err, "Unable to get current os user, setting Author to `self`")
-		user.Username = "self"
-	}
 	return &LogEntry{
-		Author:      user.Username,
+		Author:      getCurrentUser(),
 		Tags:        tags,
 		CreatedDate: time.Now().UTC().Format(time.RFC3339),
 		Entry:       entryText,
 	}
+}
+
+func getCurrentUser() (username string) {
+	currentUser, err := user.Current()
+	if err != nil {
+		log.Logger.ILog.Error(err, "Unable to get current os user, setting Author to `self`")
+
+		currentUser.Username = "self"
+	}
+
+	return currentUser.Username
 }

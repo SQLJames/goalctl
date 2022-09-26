@@ -2,18 +2,20 @@ package jsonprinter
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 )
 
-type JsonPrinter struct {
+type JSONPrinter struct {
 }
 
-func (jp *JsonPrinter) Write(data interface{}, destination io.Writer) (err error) {
+func (jp *JSONPrinter) Write(data interface{}, destination io.Writer) (err error) {
 	enc := json.NewEncoder(destination)
 	enc.SetIndent("", "  ")
+
 	err = enc.Encode(data)
 	if err != nil {
-		return err
+		return fmt.Errorf("json: %w", err)
 	}
 
 	return nil

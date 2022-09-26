@@ -2,51 +2,53 @@ package sqlite
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"strings"
 
 	"github.com/sqljames/goalctl/pkg/log"
-
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 )
 
-func (SL SQLiteStorage) CreateNotebook(ctx context.Context, name string) (resources.Notebook, error) {
-	log.Logger.Trace(fmt.Sprintf("notebook name provided %s", name))
-	if name == "" {
-		err := errors.New("notebook name can not be empty")
-		log.Logger.Error(err, "I have no idea how you did this either")
-	}
-	sqlcNotebook, err := SL.queries.CreateNotebook(ctx, name)
-	if err != nil && strings.Contains(err.Error(), "2067") {
+func (sl Repository) CreateNotebook(ctx context.Context, name string) resources.Notebook {
+	log.Logger.ILog.Trace(fmt.Sprintf("notebook name provided %s", name))
 
-		return resources.Notebook{}, fmt.Errorf("a notebook resource with that name already exists, err: %s", err.Error())
-	}
+	sqlcNotebook, err := sl.queries.CreateNotebook(ctx, name)
 	if err != nil {
-		return resources.Notebook{}, err
+		// we can check for unique value error by comparing it with sqlite3.SQLITE_CONSTRAINT_UNIQUE
+		log.Logger.ILog.Fatal(err, "error running query")
 	}
-	return resources.Notebook{Notebookid: sqlcNotebook.Notebookid, Name: sqlcNotebook.Name}, err
+
+	return resources.Notebook{Notebookid: sqlcNotebook.Notebookid, Name: sqlcNotebook.Name}
 }
 
-func (SL SQLiteStorage) GetNotebookIdByName(ctx context.Context, name string) (int64, error) {
-	return SL.queries.GetNotebookIdByName(ctx, name)
+func (sl Repository) GetNotebookIDByName(ctx context.Context, name string) int64 {
+	id, err := sl.queries.GetNotebookIDByName(ctx, name)
+	if err != nil {
+		log.Logger.ILog.Fatal(err, "error running query")
+	}
+
+	return id
 }
 
-func (SL SQLiteStorage) GetNotebook(ctx context.Context, name string) (Notebook resources.Notebook, err error) {
-	sqlcNotebook, err := SL.queries.GetNotebook(ctx, name)
+func (sl Repository) GetNotebook(ctx context.Context, name string) (notebook resources.Notebook) {
+	sqlcNotebook, err := sl.queries.GetNotebook(ctx, name)
 	if err != nil {
-		return resources.Notebook{}, err
+		log.Logger.ILog.Fatal(err, "error running query")
 	}
-	return resources.Notebook{Notebookid: sqlcNotebook.Notebookid, Name: sqlcNotebook.Name}, err
+
+	return resources.Notebook{Notebookid: sqlcNotebook.Notebookid, Name: sqlcNotebook.Name}
 }
 
-func (SL SQLiteStorage) GetNotebooks(ctx context.Context) (Notebooks []resources.Notebook, err error) {
-	sqlcNotebooks, err := SL.queries.GetNotebooks(ctx)
+func (sl Repository) GetNotebooks(ctx context.Context) []*resources.Notebook {
+	sqlcEntries, err := sl.queries.GetNotebooks(ctx)
 	if err != nil {
-		return nil, err
+		log.Logger.ILog.Fatal(err, "error running query")
 	}
-	for _, sqlcNotebook := range sqlcNotebooks {
-		Notebooks = append(Notebooks, resources.Notebook{Notebookid: sqlcNotebook.Notebookid, Name: sqlcNotebook.Name})
+
+	var notebooks = make([]*resources.Notebook, len(sqlcEntries))
+
+	for index, sqlcEntry := range sqlcEntries {
+		notebooks[index] = &resources.Notebook{Notebookid: sqlcEntry.Notebookid, Name: sqlcEntry.Name}
 	}
-	return Notebooks, err
+	
+	return notebooks
 }

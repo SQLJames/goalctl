@@ -34,7 +34,7 @@ type CreateLogEntryParams struct {
 	Notebookid  int64          `json:"notebookid"`
 }
 
-func (q *Queries) CreateLogEntry(ctx context.Context, arg CreateLogEntryParams) (LogEntry, error) {
+func (q *Queries) CreateLogEntry(ctx context.Context, arg CreateLogEntryParams) (*LogEntry, error) {
 	row := q.db.QueryRowContext(ctx, createLogEntry,
 		arg.Author,
 		arg.Tags,
@@ -51,7 +51,7 @@ func (q *Queries) CreateLogEntry(ctx context.Context, arg CreateLogEntryParams) 
 		&i.Createddate,
 		&i.Notebookid,
 	)
-	return i, err
+	return &i, err
 }
 
 const getLogEntryByCreatedDate = `-- name: GetLogEntryByCreatedDate :many
@@ -65,13 +65,13 @@ ORDER BY
   LogEntryID
 `
 
-func (q *Queries) GetLogEntryByCreatedDate(ctx context.Context, createddate string) ([]LogEntry, error) {
+func (q *Queries) GetLogEntryByCreatedDate(ctx context.Context, createddate string) ([]*LogEntry, error) {
 	rows, err := q.db.QueryContext(ctx, getLogEntryByCreatedDate, createddate)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []LogEntry
+	var items []*LogEntry
 	for rows.Next() {
 		var i LogEntry
 		if err := rows.Scan(
@@ -84,7 +84,7 @@ func (q *Queries) GetLogEntryByCreatedDate(ctx context.Context, createddate stri
 		); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, &i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -104,7 +104,7 @@ WHERE
   LogEntryID = ?
 `
 
-func (q *Queries) GetLogEntryByLogEntryID(ctx context.Context, logentryid int64) (LogEntry, error) {
+func (q *Queries) GetLogEntryByLogEntryID(ctx context.Context, logentryid int64) (*LogEntry, error) {
 	row := q.db.QueryRowContext(ctx, getLogEntryByLogEntryID, logentryid)
 	var i LogEntry
 	err := row.Scan(
@@ -115,7 +115,7 @@ func (q *Queries) GetLogEntryByLogEntryID(ctx context.Context, logentryid int64)
 		&i.Createddate,
 		&i.Notebookid,
 	)
-	return i, err
+	return &i, err
 }
 
 const getLogEntryByNotebook = `-- name: GetLogEntryByNotebook :many
@@ -136,13 +136,13 @@ ORDER BY
   LogEntryID
 `
 
-func (q *Queries) GetLogEntryByNotebook(ctx context.Context, name string) ([]LogEntry, error) {
+func (q *Queries) GetLogEntryByNotebook(ctx context.Context, name string) ([]*LogEntry, error) {
 	rows, err := q.db.QueryContext(ctx, getLogEntryByNotebook, name)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []LogEntry
+	var items []*LogEntry
 	for rows.Next() {
 		var i LogEntry
 		if err := rows.Scan(
@@ -155,7 +155,7 @@ func (q *Queries) GetLogEntryByNotebook(ctx context.Context, name string) ([]Log
 		); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		items = append(items, &i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err

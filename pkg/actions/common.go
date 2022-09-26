@@ -7,69 +7,54 @@ import (
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 )
 
-func GetNotebooks() (NotebookList []resources.Notebook, err error) {
-	storagelayer, err := storage.NewStorageLayer()
-	if err != nil {
-		return nil, err
-	}
-	notebooks, err := storagelayer.GetNotebooks(context.TODO())
-	if err != nil {
-		return nil, err
-	}
+func GetNotebooks() (notebookList []*resources.Notebook) {
+	storagelayer := storage.NewVault()
+	notebooks := storagelayer.Storage.GetNotebooks(context.TODO())
 
-	return notebooks, nil
+	return notebooks
 }
 
-func GetEntriesForNotebook(NotebookName string) (entries []resources.LogEntry, err error) {
-	storagelayer, err := storage.NewStorageLayer()
-	if err != nil {
-		return nil, err
-	}
-	return storagelayer.GetLogEntryByNotebook(context.TODO(), NotebookName)
+func GetEntriesForNotebook(notebookName string) (entries []*resources.LogEntry) {
+	storagelayer := storage.NewVault()
 
+	return storagelayer.Storage.GetLogEntryByNotebook(context.TODO(), notebookName)
 }
 
-func GetGoalDetails() (Details []resources.GoalDetail, err error) {
-	storagelayer, err := storage.NewStorageLayer()
-	if err != nil {
-		return nil, err
-	}
-	goals, err := storagelayer.GetGoals(context.TODO())
-	var journal resources.Journal
+func GetGoalDetails() (details []resources.GoalDetail) {
+	storagelayer := storage.NewVault()
+	goals := storagelayer.Storage.GetGoals(context.TODO())
+	journal := resources.Journal{}
+
 	for _, goal := range goals {
-		logEntries := []resources.LogEntry{}
+		var associations []*resources.Association
 
-		associations, err := ListAssociationsByGoalId(goal.GoalID)
-		if err != nil {
-			return nil, err
+		var logEntries = make([]*resources.LogEntry, len(associations))
+
+		associations = ListAssociationsByGoalID(goal.GoalID)
+
+		for index, association := range associations {
+			entry := GetLogEntryByLogEntryID(association.LogEntryID)
+
+			logEntries[index] = entry
 		}
-		for _, association := range associations {
-			entry, err := GetLogEntryByLogEntryID(association.LogEntryID)
-			if err != nil {
-				return nil, err
-			}
-			logEntries = append(logEntries, entry)
-		}
+
 		journal.GoalDetails = append(journal.GoalDetails, resources.GoalDetail{
-			Goal:    goal,
+			Goal:    *goal,
 			Entries: logEntries,
 		})
 	}
-	return journal.GoalDetails, err
+	
+	return journal.GoalDetails
 }
 
-func ListAssociationsByGoalId(goalid int) ([]resources.Association, error) {
-	storagelayer, err := storage.NewStorageLayer()
-	if err != nil {
-		return nil, err
-	}
-	return storagelayer.GetAssociationsByGoalID(context.TODO(), goalid)
+func ListAssociationsByGoalID(goalid int) []*resources.Association {
+	storagelayer := storage.NewVault()
+
+	return storagelayer.Storage.GetAssociationsByGoalID(context.TODO(), goalid)
 }
 
-func GetLogEntryByLogEntryID(logentryid int) (resources.LogEntry, error) {
-	storagelayer, err := storage.NewStorageLayer()
-	if err != nil {
-		return resources.LogEntry{}, err
-	}
-	return storagelayer.GetLogEntryByLogEntryID(context.TODO(), int64(logentryid))
+func GetLogEntryByLogEntryID(logentryid int) *resources.LogEntry {
+	storagelayer := storage.NewVault()
+
+	return storagelayer.Storage.GetLogEntryByLogEntryID(context.TODO(), int64(logentryid))
 }

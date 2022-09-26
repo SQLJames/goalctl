@@ -1,6 +1,7 @@
 package export
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/sqljames/goalctl/pkg/actions"
@@ -10,30 +11,26 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func actionExportJournal(c *cli.Context) error {
+func actionExportJournal(cliContext *cli.Context) error {
 	var journal resources.Journal
-	Allnotebooks, err := actions.GetNotebooks()
-	if err != nil {
-		return err
-	}
+
+	Allnotebooks := actions.GetNotebooks()
+
 	for index, NotebookObject := range Allnotebooks {
-		entries, err := actions.GetEntriesForNotebook(NotebookObject.Name)
-		if err != nil {
-			return err
-		}
+		entries := actions.GetEntriesForNotebook(NotebookObject.Name)
+
 		Allnotebooks[index].Entries = entries
 	}
-	GoalDetails, err := actions.GetGoalDetails()
-	if err != nil {
-		return err
-	}
+	
+	GoalDetails := actions.GetGoalDetails()
+
 	journal.NoteBooks = Allnotebooks
 	journal.GoalDetails = GoalDetails
 
-	printer := printer.NewPrinter(c)
-	err = printer.Write(resources.Book{Journal: journal}, os.Stdout)
+	err := printer.NewPrinter(cliContext).Writer.Write(resources.Book{Journal: journal}, os.Stdout)
 	if err != nil {
-		log.Logger.Warn("issue Printing the data", "function", "CreateGoal", "error", err.Error())
+		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateGoal", "error", err.Error())
 	}
-	return err
+
+	return fmt.Errorf("printer: %w",err )
 }

@@ -4,12 +4,13 @@ import (
 	"context"
 	"database/sql"
 
+	"github.com/sqljames/goalctl/pkg/log"
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 	"github.com/sqljames/goalctl/pkg/storage/sqlite/sqlc"
 )
 
-func (SL SQLiteStorage) CreateGoal(ctx context.Context, arg resources.Goal) (resources.Goal, error) {
-	sqlcGoal, err := SL.queries.CreateGoal(ctx, sqlc.CreateGoalParams{
+func (sl Repository) CreateGoal(ctx context.Context, arg *resources.Goal) *resources.Goal {
+	sqlcGoal, err := sl.queries.CreateGoal(ctx, sqlc.CreateGoalParams{
 		Author: sql.NullString{
 			String: arg.Author,
 			Valid:  true,
@@ -25,16 +26,19 @@ func (SL SQLiteStorage) CreateGoal(ctx context.Context, arg resources.Goal) (res
 		Status:      arg.Status,
 	})
 	if err != nil {
-		return resources.Goal{}, err
+		log.Logger.ILog.Fatal(err, "error running query")
 	}
+
 	arg.GoalID = int(sqlcGoal.Goalid)
-	return arg, err
+
+	return arg
 }
 
-func (SL SQLiteStorage) GetGoals(ctx context.Context) ([]resources.Goal, error) {
-	sqlcGoals, err := SL.queries.GetGoals(ctx)
+func (sl Repository) GetGoals(ctx context.Context) []*resources.Goal {
+	sqlcGoals, err := sl.queries.GetGoals(ctx)
 	if err != nil {
-		return nil, err
+		log.Logger.ILog.Fatal(err, "error running query")
 	}
-	return convertSqlcGoalsToResource(sqlcGoals), err
+
+	return convertSqlcGoalsToResource(sqlcGoals)
 }

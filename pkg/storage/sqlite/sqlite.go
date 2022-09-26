@@ -3,11 +3,15 @@ package sqlite
 import (
 	"context"
 	"database/sql"
+
+	// embed used for the dll statements on db creation.
 	_ "embed"
 	"fmt"
 
+	// go-sqlite required for embedded sqlite database.
 	_ "github.com/glebarez/go-sqlite"
 	"github.com/sqljames/goalctl/pkg/info"
+	"github.com/sqljames/goalctl/pkg/log"
 	"github.com/sqljames/goalctl/pkg/storage/sqlite/sqlc"
 	"github.com/sqljames/goalctl/pkg/util"
 )
@@ -23,12 +27,12 @@ type database struct {
 	Extension string
 }
 
-type SQLiteStorage struct {
+type Repository struct {
 	queries sqlc.Queries
 }
 
 //go:embed sqlc/schema/GoalToLogEntry.sql
-var GoalToLogEntryddl string
+var goalToLogEntryddl string
 
 //go:embed sqlc/schema/Goal.sql
 var goalddl string
@@ -39,49 +43,43 @@ var logentryddl string
 //go:embed sqlc/schema/Notebook.sql
 var notebookddl string
 
-var ddls []string = []string{logentryddl, notebookddl, goalddl, GoalToLogEntryddl}
+var ddls = []string{logentryddl, notebookddl, goalddl, goalToLogEntryddl}
 
-func newDB() (DB *database, err error) {
-	location, err := util.MakeStorageLocation()
-	if err != nil {
-		return nil, err
-	}
+func newDB() (db *database) {
 	return &database{
-		Location:  location,
+		Location:  util.MakeStorageLocation(),
 		Name:      info.GetApplicationName(),
 		Extension: "db",
-	}, nil
-}
-
-// getDatabaseFileName gets just the file name and extension of the database
-func (DB *database) getDatabaseFileName() (databaseFileName string) {
-	return fmt.Sprintf("%s.%s", DB.Name, DB.Extension)
-}
-
-// getDatabasePath returns the full file path to the database file
-func (DB *database) getDatabasePath() (databasePath string) {
-	return util.JoinPath(DB.Location, DB.getDatabaseFileName())
-}
-
-func NewSQLiteStorage() (storage *SQLiteStorage, err error) {
-	database, err := newDB()
-	if err != nil {
-		return nil, err
 	}
+}
+
+// getDatabaseFileName gets just the file name and extension of the database.
+func (db *database) getDatabaseFileName() (databaseFileName string) {
+	return fmt.Sprintf("%s.%s", db.Name, db.Extension)
+}
+
+// getDatabasePath returns the full file path to the database file.
+func (db *database) getDatabasePath() (databasePath string) {
+	return util.JoinPath(db.Location, db.getDatabaseFileName())
+}
+
+func NewSQLiteStorage() (storage *Repository) {
+	database := newDB()
 	CreateSchema := !util.FileExists(database.getDatabasePath())
 
-	db, err := sql.Open("sqlite", fmt.Sprintf("%s?_pragma=busy_timeout(%d000)&_pragma=journal_mode(WAL)", database.getDatabasePath(), timeoutInSeconds))
+	sqlDB, err := sql.Open("sqlite", fmt.Sprintf("%s?_pragma=busy_timeout(%d000)&_pragma=journal_mode(WAL)", database.getDatabasePath(), timeoutInSeconds))
 	if err != nil {
-		return nil, err
+		log.Logger.ILog.Fatal(err, "error opening database")
 	}
+
 	if CreateSchema {
-		// create tables
+		// create tables.
 		for _, ddl := range ddls {
-			if _, err := db.ExecContext(context.Background(), ddl); err != nil {
-				return nil, err
+			if _, err := sqlDB.ExecContext(context.Background(), ddl); err != nil {
+				log.Logger.ILog.Fatal(err, "error creating the database tables")
 			}
 		}
 	}
 
-	return &SQLiteStorage{queries: *sqlc.New(db)}, nil
+	return &Repository{queries: *sqlc.New(sqlDB)}
 }

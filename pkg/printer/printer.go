@@ -13,39 +13,35 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-var SupportedFormats []string = []string{"json", "toml", "xml", "yaml"}
+var SupportedFormats = []string{"json", "toml", "xml", "yaml"}
 
-type Printer interface {
+type Printer struct {
+	Writer Writer
+}
+
+type Writer interface {
 	Write(data interface{}, writer io.Writer) (err error)
 }
 
-func NewPrinter(c *cli.Context) (printer Printer) {
-	format := c.String(flags.OutputFormatFlagName)
-	format = strings.ToLower(format)
-	if format == "" || !contains(SupportedFormats, format) {
-		log.Logger.Trace("format not defined or is unsupported, using default format.")
-	}
+func NewPrinter(cliContext *cli.Context) (printer Printer) {
+	format := strings.ToLower(cliContext.String(flags.OutputFormatFlagName))
+
 	switch format {
 	case SupportedFormats[0]:
-		log.Logger.Trace("Returning json printer")
-		return &jsonprinter.JsonPrinter{}
-	case SupportedFormats[1]:
-		log.Logger.Trace("Returning toml printer")
-		return &tomlprinter.TomlPrinter{}
-	case SupportedFormats[2]:
-		log.Logger.Trace("Returning xml printer")
-		return &xmlprinter.XMLPrinter{}
-	default:
-		log.Logger.Trace("Returning yaml printer")
-		return &yamlprinter.YamlPrinter{}
-	}
-}
+		log.Logger.ILog.Trace("Returning json printer")
 
-func contains(list []string, value string) (supportedFormat bool) {
-	for _, listitem := range list {
-		if value == listitem {
-			return true
-		}
+		return Printer{Writer: &jsonprinter.JSONPrinter{}}
+	case SupportedFormats[1]:
+		log.Logger.ILog.Trace("Returning toml printer")
+
+		return Printer{Writer: &tomlprinter.TomlPrinter{}}
+	case SupportedFormats[2]:
+		log.Logger.ILog.Trace("Returning xml printer")
+
+		return Printer{Writer: &xmlprinter.XMLPrinter{}}
+	default:
+		log.Logger.ILog.Trace("Returning yaml printer")
+
+		return Printer{Writer: &yamlprinter.YamlPrinter{}}
 	}
-	return false
 }

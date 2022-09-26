@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"io/fs"
 	"log"
 	"os"
-	"os/exec"
 	"path"
 	"path/filepath"
 	"runtime"
@@ -16,8 +16,13 @@ import (
 	"github.com/magefile/mage/sh"
 )
 
+const (
+	devRelease        string      = "dev"
+	folderPermissions fs.FileMode = 0o750
+)
+
 var (
-	goexe      = "go"
+	goexe      = getGoExe()
 	binaryPath = path.Join(gitRoot(), "bin")
 	tempPath   = path.Join(gitRoot(), "tmp")
 	dirs       = []string{binaryPath, tempPath}
@@ -29,46 +34,52 @@ var (
 	}
 )
 
-func init() {
-	if exe := os.Getenv("GOEXE"); exe != "" {
-		goexe = exe
+func getGoExe() (goexe string) {
+	goexe = os.Getenv("GOEXE")
+	if goexe == "" {
+		goexe = "go"
 	}
+
+	return goexe
 }
 
 func flags() string {
-	f := ldflags{}
+	pkgFlags := ldflags{}
 
-	f["pkg/info.applicationName"] = filepath.Base(modulePath())
-	f["pkg/version.buildDate"] = time.Now().Format(time.RFC3339)
-	f["pkg/version.release"] = getRelease()
-	f["pkg/version.buildTag"] = gitTag()
-	f["pkg/version.commitHash"] = gitCommitHash()
-	f["pkg/version.buildVersion"] = getVersion()
-	f["pkg/version.buildBranch"] = gitBranch()
+	pkgFlags["pkg/info.applicationName"] = filepath.Base(modulePath())
+	pkgFlags["pkg/version.buildDate"] = time.Now().Format(time.RFC3339)
+	pkgFlags["pkg/version.release"] = getRelease()
+	pkgFlags["pkg/version.buildTag"] = gitTag()
+	pkgFlags["pkg/version.commitHash"] = gitCommitHash()
+	pkgFlags["pkg/version.buildVersion"] = getVersion()
+	pkgFlags["pkg/version.buildBranch"] = gitBranch()
 
-	return f.String()
+	return pkgFlags.String()
 }
 
 func ensureDirs() error {
-	fmt.Println("--> Ensuring output directories")
+	log.Println("--> Ensuring output directories")
 
 	for _, dir := range dirs {
 		if !fileExists(dir) {
-			fmt.Printf("    creating '%s'\n", dir)
-			if err := os.MkdirAll(dir, 0750); err != nil {
-				return err
+			log.Printf("    creating '%s'\n", dir)
+
+			if err := os.MkdirAll(dir, folderPermissions); err != nil {
+				return fmt.Errorf("OS MkdirAll: %w", err)
 			}
 		}
 	}
+	
 	return nil
 }
 
-// Clean up after yourself
+// Clean up after yourself.
 func Clean() {
-	fmt.Println("--> Cleaning output directories")
+	log.Println("--> Cleaning output directories")
 
 	for _, dir := range dirs {
-		fmt.Printf("    removing '%s'\n", dir)
+		log.Printf("    removing '%s'\n", dir)
+
 		err := os.RemoveAll(dir)
 		if err != nil {
 			log.Fatal("error running clean command", err.Error())
@@ -76,91 +87,95 @@ func Clean() {
 	}
 }
 
-// Vendor dependencies with go modules
+// Vendor dependencies with go modules.
 func Vendor() {
-	fmt.Println("--> Updating dependencies")
+	log.Println("--> Updating dependencies")
+
 	err := sh.Run(goexe, "mod", "tidy")
 	if err != nil {
 		log.Fatal("error running Vendor command", err.Error())
 	}
 }
 
-// Build the application for local running
+// Build the application for local running.
 func Build() error {
 	mg.SerialDeps(Vendor, ensureDirs)
 
 	sourcePath := gitRoot()
 	if err := sh.Run(goexe, "build", "-o", binaryPath, "-ldflags="+flags(), sourcePath); err != nil {
+		return fmt.Errorf("sh Run: %w", err)
+	}
+
+	return nil
+}
+
+// Release the application for all defined targets.
+func Release() {
+	var waitGroup sync.WaitGroup
+
+	mg.SerialDeps(Vendor, ensureDirs)
+	waitGroup.Add(len(targets))
+
+	cgoEnabled := os.Getenv("CGO_ENABLED") == "1"
+
+	log.Printf("--> Building '%s' for release\n", gitRoot())
+
+	for _, buildTarget := range targets {
+		buildTarget.SourceDir = gitRoot()
+		go func(buildTarget target) {
+			defer waitGroup.Done()
+
+			env := map[string]string{
+				"GOOS":   buildTarget.GOOS,
+				"GOARCH": buildTarget.GOARCH,
+			}
+
+			if cgoEnabled && runtime.GOOS != env["GOOS"] {
+				log.Printf("      CGO is enabled, skipping compilation of %s for %s\n", buildTarget.name(), env["GOOS"])
+
+				return
+			}
+
+			log.Printf("      Building %s\n", buildTarget.name())
+
+			err := sh.RunWith(env, goexe, "build", "-o", path.Join(binaryPath, buildTarget.name()), "-ldflags="+flags(), buildTarget.SourceDir)
+			if err != nil {
+				log.Printf("compilation failed: %s\n", err.Error())
+
+				return
+			}
+		}(buildTarget)
+	}
+
+	waitGroup.Wait()
+}
+
+// Scan runs various static checkers to ensure you minimize security holes and have good formatting.
+func Scan() (err error) {
+	log.Println("--> Scanning code")
+
+	err = confirmScanners()
+	if err != nil {
+		return err
+	}
+
+	err = runStaticScanners()
+	if err != nil {
 		return err
 	}
 
 	return nil
-
 }
 
-// Release the application for all defined targets
-func Release() error {
-	mg.SerialDeps(Vendor, ensureDirs)
-
-	cgoEnabled := os.Getenv("CGO_ENABLED") == "1"
-
-	var wg sync.WaitGroup
-	wg.Add(len(targets))
-
-	fmt.Printf("--> Building '%s' for release\n", gitRoot())
-	for _, t := range targets {
-		t.SourceDir = gitRoot()
-		go func(t target) {
-			defer wg.Done()
-
-			env := map[string]string{
-				"GOOS":   t.GOOS,
-				"GOARCH": t.GOARCH,
-			}
-
-			if cgoEnabled && runtime.GOOS != env["GOOS"] {
-				fmt.Printf("      CGO is enabled, skipping compilation of %s for %s\n", t.name(), env["GOOS"])
-				return
-			}
-			fmt.Printf("      Building %s\n", t.name())
-
-			err := sh.RunWith(env, goexe, "build", "-o", path.Join(binaryPath, t.name()), "-ldflags="+flags(), t.SourceDir)
-			//err := sh.RunWith(env, goexe, "build", "-o", path.Join(binaryPath, t.Name()), t.SourceDir)
-			if err != nil {
-				fmt.Printf("compilation failed: %s\n", err.Error())
-				return
-			}
-		}(t)
-	}
-
-	wg.Wait()
-
-	return nil
-}
-
-// Lint the codebase, checking for common errors
-func Lint() {
-	fmt.Println("--> Linting codebase")
-
-	c := exec.Command("gometalinter", "-e", "internal", "-e", "go/pkg/mod", "./...")
-	c.Env = os.Environ()
-	out, err := c.CombinedOutput()
-	if err == nil {
-		fmt.Println("    no issues detected")
-	} else {
-		fmt.Print("    ")
-		fmt.Println(strings.Replace(string(out), "\n", "\n    ", -1))
-	}
-}
-
-// Test the codebase
+// Test the codebase.
 func Test() error {
 	mg.SerialDeps(Vendor, ensureDirs)
 
-	fmt.Println("--> Testing codebase")
-	results, err := sh.Output(goexe, "test", "-cover", "-e", "internal", "-e", "cache", "./...")
-	fmt.Print("    ")
-	fmt.Println(strings.Replace(results, "\n", "\n    ", -1))
+	log.Println("--> Testing codebase")
 
-	return err
+	results, err := sh.Output(goexe, "test", "-cover", "-e", "internal", "-e", "cache", "./...")
+
+	log.Println(strings.ReplaceAll(results, "\n", "\n    "))
+
+	return fmt.Errorf("sh Output: %w", err)
 }

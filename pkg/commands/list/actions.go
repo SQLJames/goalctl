@@ -1,6 +1,7 @@
 package list
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/sqljames/goalctl/pkg/actions"
@@ -11,49 +12,40 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-func actionListNotebooks(c *cli.Context) error {
-	NotebookList, err := actions.GetNotebooks()
+func actionListNotebooks(cliContext *cli.Context) error {
+	notebookList := actions.GetNotebooks()
+
+	err := printer.NewPrinter(cliContext).Writer.Write(notebookList, os.Stdout)
 	if err != nil {
-		log.Logger.Error(err, "Error getting notebooks")
+		log.Logger.ILog.Warn("issue Printing the data", "function", "ListNotebooks", "error", err.Error())
 	}
-	printer := printer.NewPrinter(c)
-	err = printer.Write(NotebookList, os.Stdout)
-	if err != nil {
-		log.Logger.Warn("issue Printing the data", "function", "ListNotebooks", "error", err.Error())
-	}
-	return err
+
+	return fmt.Errorf("printer: %w", err)
 }
 
-func actionListEntries(c *cli.Context) error {
-	NotebookEntries, err := actions.GetEntriesForNotebook(c.String(flags.NameFlagName))
-	if err != nil {
-		log.Logger.Error(err, err.Error())
-		return err
-	}
+func actionListEntries(cliContext *cli.Context) error {
+	NotebookEntries := actions.GetEntriesForNotebook(cliContext.String(flags.NameFlagName))
 
-	NB := resources.Notebook{
-		Name:    c.String(flags.NameFlagName),
+	notebook := resources.Notebook{
+		Name:    cliContext.String(flags.NameFlagName),
 		Entries: NotebookEntries,
 	}
-	log.Logger.Trace("Created notebook resource")
-	printer := printer.NewPrinter(c)
-	err = printer.Write(NB, os.Stdout)
+
+	err := printer.NewPrinter(cliContext).Writer.Write(notebook, os.Stdout)
 	if err != nil {
-		log.Logger.Warn("issue Printing the data", "function", "ListEntries", "error", err.Error())
+		log.Logger.ILog.Warn("issue Printing the data", "function", "ListEntries", "error", err.Error())
 	}
-	return err
+
+	return fmt.Errorf("printer: %w", err)
 }
 
-func actionListGoals(c *cli.Context) error {
-	goals, err := actions.GetGoalDetails()
+func actionListGoals(cliContext *cli.Context) error {
+	goals := actions.GetGoalDetails()
+
+	err := printer.NewPrinter(cliContext).Writer.Write(goals, os.Stdout)
 	if err != nil {
-		log.Logger.Error(err, err.Error())
-		return err
+		log.Logger.ILog.Warn("issue Printing the data", "function", "ListGoals", "error", err.Error())
 	}
-	printer := printer.NewPrinter(c)
-	err = printer.Write(goals, os.Stdout)
-	if err != nil {
-		log.Logger.Warn("issue Printing the data", "function", "ListGoals", "error", err.Error())
-	}
-	return err
+
+	return fmt.Errorf("printer: %w", err)
 }

@@ -3,29 +3,46 @@ package sqlite
 import (
 	"context"
 
+	"github.com/sqljames/goalctl/pkg/log"
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 	"github.com/sqljames/goalctl/pkg/storage/sqlite/sqlc"
 )
 
-func (SL SQLiteStorage) CreateAssociation(ctx context.Context, arg resources.Association) (resources.Association, error) {
-	_, err := SL.queries.CreateAssociation(ctx, sqlc.CreateAssociationParams{
+func (sl Repository) CreateAssociation(ctx context.Context, arg resources.Association) resources.Association {
+	_, err := sl.queries.CreateAssociation(ctx, sqlc.CreateAssociationParams{
 		Goalid:     int64(arg.GoalID),
 		Logentryid: int64(arg.LogEntryID),
 	})
-	return arg, err
+	if err != nil {
+		log.Logger.ILog.Fatal(err, "error running query")
+	}
+
+	return arg
 }
 
-func (SL SQLiteStorage) GetAssociations(ctx context.Context) ([]resources.Association, error) {
-	associations, err := SL.queries.GetAssociations(ctx)
-	return convertSqlcGoalToLogEntriesToResource(associations), err
+func (sl Repository) GetAssociations(ctx context.Context) []*resources.Association {
+	associations, err := sl.queries.GetAssociations(ctx)
+	if err != nil {
+		log.Logger.ILog.Fatal(err, "error running query")
+	}
+
+	return convertSqlcGoalToLogEntriesToResource(associations)
 }
 
-func (SL SQLiteStorage) GetAssociationsByGoalID(ctx context.Context, goalid int) ([]resources.Association, error) {
-	associations, err := SL.queries.GetAssociationsByGoalID(ctx, int64(goalid))
-	return convertSqlcGoalToLogEntriesToResource(associations), err
+func (sl Repository) GetAssociationsByGoalID(ctx context.Context, goalid int) []*resources.Association {
+	associations, err := sl.queries.GetAssociationsByGoalID(ctx, int64(goalid))
+	if err != nil {
+		log.Logger.ILog.Fatal(err, "error running query")
+	}
+
+	return convertSqlcGoalToLogEntriesToResource(associations)
 }
 
-func (SL SQLiteStorage) GetAssociationsByLogEntryID(ctx context.Context, logentryid int) ([]resources.Association, error) {
-	associations, err := SL.queries.GetAssociationsByLogEntryID(ctx, int64(logentryid))
-	return convertSqlcGoalToLogEntriesToResource(associations), err
+func (sl Repository) GetAssociationsByLogEntryID(ctx context.Context, logentryid int) []*resources.Association {
+	associations, err := sl.queries.GetAssociationsByLogEntryID(ctx, int64(logentryid))
+	if err != nil {
+		log.Logger.ILog.Fatal(err, "error running query")
+	}
+
+	return convertSqlcGoalToLogEntriesToResource(associations)
 }
