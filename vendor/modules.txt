@@ -78,7 +78,7 @@ k8s.io/klog/v2/internal/dbg
 k8s.io/klog/v2/internal/serialize
 k8s.io/klog/v2/internal/severity
 k8s.io/klog/v2/klogr
-# modernc.org/libc v1.18.0
+# modernc.org/libc v1.19.0
 ## explicit; go 1.17
 modernc.org/libc
 modernc.org/libc/errno
@@ -109,9 +109,9 @@ modernc.org/libc/wctype
 # modernc.org/mathutil v1.5.0
 ## explicit; go 1.13
 modernc.org/mathutil
-# modernc.org/memory v1.3.0
+# modernc.org/memory v1.4.0
 ## explicit; go 1.18
 modernc.org/memory
-# modernc.org/sqlite v1.18.2
+# modernc.org/sqlite v1.19.1
 ## explicit; go 1.17
 modernc.org/sqlite/lib
