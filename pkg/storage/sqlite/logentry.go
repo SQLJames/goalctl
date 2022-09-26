@@ -15,7 +15,7 @@ func (sl Repository) CreateLogEntry(ctx context.Context, arg *resources.LogEntry
 		notebook := sl.CreateNotebook(ctx, notebookName)
 		NotebookID = notebook.Notebookid
 	}
-	
+
 	Entry, err := sl.queries.CreateLogEntry(ctx, sqlc.CreateLogEntryParams{
 		Author: sql.NullString{
 			String: arg.Author,
@@ -45,6 +45,7 @@ func (sl Repository) GetLogEntryByCreatedDate(ctx context.Context, createddate s
 	if err != nil {
 		log.Logger.ILog.Fatal(err, "error running query")
 	}
+	
 	return convertSqlcLogEntriesToResource(sqlcLogEntries)
 }
 
@@ -53,6 +54,7 @@ func (sl Repository) GetLogEntryByNotebook(ctx context.Context, name string) []*
 	if err != nil {
 		log.Logger.ILog.Fatal(err, "error running query")
 	}
+
 	return convertSqlcLogEntriesToResource(sqlcLogEntries)
 }
 
@@ -61,5 +63,6 @@ func (sl Repository) GetLogEntryByLogEntryID(ctx context.Context, logentryid int
 	if err != nil {
 		log.Logger.ILog.Fatal(err, "error running query")
 	}
+	
 	return convertSqlcLogEntryToResource(sqlcLogEntry)
 }

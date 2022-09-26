@@ -1,6 +1,7 @@
 package list
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/sqljames/goalctl/pkg/actions"
@@ -18,7 +19,8 @@ func actionListNotebooks(cliContext *cli.Context) error {
 	if err != nil {
 		log.Logger.ILog.Warn("issue Printing the data", "function", "ListNotebooks", "error", err.Error())
 	}
-	return err
+
+	return fmt.Errorf("printer: %w", err)
 }
 
 func actionListEntries(cliContext *cli.Context) error {
@@ -33,14 +35,17 @@ func actionListEntries(cliContext *cli.Context) error {
 	if err != nil {
 		log.Logger.ILog.Warn("issue Printing the data", "function", "ListEntries", "error", err.Error())
 	}
-	return err
+
+	return fmt.Errorf("printer: %w", err)
 }
 
 func actionListGoals(cliContext *cli.Context) error {
 	goals := actions.GetGoalDetails()
+
 	err := printer.NewPrinter(cliContext).Writer.Write(goals, os.Stdout)
 	if err != nil {
 		log.Logger.ILog.Warn("issue Printing the data", "function", "ListGoals", "error", err.Error())
 	}
-	return err
+
+	return fmt.Errorf("printer: %w", err)
 }

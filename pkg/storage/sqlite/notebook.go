@@ -25,6 +25,7 @@ func (sl Repository) GetNotebookIDByName(ctx context.Context, name string) int64
 	if err != nil {
 		log.Logger.ILog.Fatal(err, "error running query")
 	}
+
 	return id
 }
 
@@ -33,6 +34,7 @@ func (sl Repository) GetNotebook(ctx context.Context, name string) (notebook res
 	if err != nil {
 		log.Logger.ILog.Fatal(err, "error running query")
 	}
+
 	return resources.Notebook{Notebookid: sqlcNotebook.Notebookid, Name: sqlcNotebook.Name}
 }
 
@@ -47,5 +49,6 @@ func (sl Repository) GetNotebooks(ctx context.Context) []*resources.Notebook {
 	for index, sqlcEntry := range sqlcEntries {
 		notebooks[index] = &resources.Notebook{Notebookid: sqlcEntry.Notebookid, Name: sqlcEntry.Name}
 	}
+	
 	return notebooks
 }

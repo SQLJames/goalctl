@@ -41,12 +41,14 @@ func confirmScanners() (err error) {
 			return err
 		}
 	}
+
 	return nil
 }
 
 // installIfMissing checks for existence then installs a file if it's not there.
 func installIfMissing(executableName, installURL string) (err error) {
 	log.Printf("--> Checking if Scanner Exists: %s\n", executableName)
+	
 	_, missing := exec.LookPath(executableName)
 	if missing != nil {
 		log.Printf("--> Scanner Missing Installing Scanner: %s\n", executableName)
@@ -56,6 +58,6 @@ func installIfMissing(executableName, installURL string) (err error) {
 			return fmt.Errorf("sh Run: %w", err)
 		}
 	}
-	
+
 	return nil
 }

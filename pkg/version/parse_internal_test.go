@@ -7,6 +7,8 @@ import (
 )
 
 func TestParseVersion(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		TestName      string
 		VersionNumber string
@@ -53,6 +55,8 @@ func TestParseVersion(t *testing.T) {
 }
 
 func TestUpgradeAvailable(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		TestName      string
 		VersionNumber string

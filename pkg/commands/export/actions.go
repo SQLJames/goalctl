@@ -1,6 +1,7 @@
 package export
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/sqljames/goalctl/pkg/actions"
@@ -12,6 +13,7 @@ import (
 
 func actionExportJournal(cliContext *cli.Context) error {
 	var journal resources.Journal
+
 	Allnotebooks := actions.GetNotebooks()
 
 	for index, NotebookObject := range Allnotebooks {
@@ -19,6 +21,7 @@ func actionExportJournal(cliContext *cli.Context) error {
 
 		Allnotebooks[index].Entries = entries
 	}
+	
 	GoalDetails := actions.GetGoalDetails()
 
 	journal.NoteBooks = Allnotebooks
@@ -28,5 +31,6 @@ func actionExportJournal(cliContext *cli.Context) error {
 	if err != nil {
 		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateGoal", "error", err.Error())
 	}
-	return err
+
+	return fmt.Errorf("printer: %w",err )
 }

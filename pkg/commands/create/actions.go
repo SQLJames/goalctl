@@ -2,6 +2,7 @@ package create
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"time"
 
@@ -33,7 +34,8 @@ func actionCreateNotebook(cliContext *cli.Context) error {
 	if err != nil {
 		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateNotebook", "error", err.Error())
 	}
-	return err
+	
+	return fmt.Errorf("printer: %w", err)
 }
 
 func actionCreateLogEntry(cliContext *cli.Context) error {
@@ -46,7 +48,8 @@ func actionCreateLogEntry(cliContext *cli.Context) error {
 	if err != nil {
 		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateLogEntry", "error", err.Error())
 	}
-	return err
+
+	return fmt.Errorf("printer: %w", err)
 }
 
 func actionCreateGoal(cliContext *cli.Context) error {
@@ -63,5 +66,6 @@ func actionCreateGoal(cliContext *cli.Context) error {
 	if err != nil {
 		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateGoal", "error", err.Error())
 	}
-	return err
+
+	return fmt.Errorf("printer: %w", err)
 }

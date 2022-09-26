@@ -43,6 +43,7 @@ func GetGoalDetails() (details []resources.GoalDetail) {
 			Entries: logEntries,
 		})
 	}
+	
 	return journal.GoalDetails
 }
 

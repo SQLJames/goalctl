@@ -62,6 +62,7 @@ func convertSqlcGoalToLogEntriesToResource(sqlcEntries []*sqlc.GoalToLogEntry) [
 	for index, entry := range sqlcEntries {
 		associations[index] = convertSqlcGoalToLogEntryToResource(entry)
 	}
+	
 	return associations
 }
 
