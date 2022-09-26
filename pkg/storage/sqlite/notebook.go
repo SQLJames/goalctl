@@ -10,11 +10,13 @@ import (
 
 func (sl Repository) CreateNotebook(ctx context.Context, name string) resources.Notebook {
 	log.Logger.Trace(fmt.Sprintf("notebook name provided %s", name))
+
 	sqlcNotebook, err := sl.queries.CreateNotebook(ctx, name)
 	if err != nil {
 		// we can check for unique value error by comparing it with sqlite3.SQLITE_CONSTRAINT_UNIQUE
 		log.Logger.Fatal(err, "error running query")
 	}
+
 	return resources.Notebook{Notebookid: sqlcNotebook.Notebookid, Name: sqlcNotebook.Name}
 }
 

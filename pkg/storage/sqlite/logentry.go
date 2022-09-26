@@ -28,9 +28,11 @@ func (sl Repository) CreateLogEntry(ctx context.Context, arg *resources.LogEntry
 		Createddate: arg.CreatedDate,
 		Notebookid:  NotebookID,
 	})
+
 	if err != nil {
 		log.Logger.Fatal(err, "error running query")
 	}
+	
 	arg.LogEntryID = Entry.Logentryid
 	arg.Notebookid = Entry.Notebookid
 

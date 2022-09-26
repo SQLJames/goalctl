@@ -65,7 +65,7 @@ func ensureDirs() error {
 			log.Printf("    creating '%s'\n", dir)
 
 			if err := os.MkdirAll(dir, folderPermissions); err != nil {
-				return fmt.Errorf("OS MkdirAll: %v", err)
+				return fmt.Errorf("OS MkdirAll: %w", err)
 			}
 		}
 	}

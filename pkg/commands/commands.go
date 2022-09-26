@@ -53,6 +53,7 @@ func beforeTasks(cliContext *cli.Context) error {
 func instrumentLoggingFlags(cliContext *cli.Context) error {
 	// Command line flags always overwrite configuration files
 	first := altsrc.InitInputSourceWithContext(cliContext.App.Flags, altsrc.NewYamlSourceFromFlagFunc("config"))
+
 	err := first(cliContext)
 	if err != nil {
 		log.Logger.Error(err, err.Error())

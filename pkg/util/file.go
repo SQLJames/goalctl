@@ -26,12 +26,14 @@ func GetHomeDir() (directory string, err error) {
 }
 
 func MakeStorageLocation() (storageLocation string) {
+	applicationName := info.GetApplicationName()
 	baseDir, err := GetHomeDir()
 	if err != nil {
 		log.Logger.Error(err, "Error getting home directory, setting location to tmp folder.")
+
 		baseDir = os.TempDir()
 	}
-	applicationName := info.GetApplicationName()
+
 	storageLocation = path.Join(baseDir, "."+applicationName)
 
 	err = os.MkdirAll(storageLocation, folderPermissons)
@@ -55,10 +57,4 @@ func JoinPath(basePath, leaf string) (fullPath string) {
 	log.Logger.Trace(fmt.Sprintf("path is %s", joinedPath))
 
 	return joinedPath
-}
-
-func closeFile(f *os.File) {
-	if err := f.Close(); err != nil {
-		log.Logger.Warn("issue closing file", "fileName", f.Name(), "error", err.Error())
-	}
 }

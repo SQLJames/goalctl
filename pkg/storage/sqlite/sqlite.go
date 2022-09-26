@@ -46,7 +46,6 @@ var notebookddl string
 var ddls = []string{logentryddl, notebookddl, goalddl, goalToLogEntryddl}
 
 func newDB() (db *database) {
-
 	return &database{
 		Location:  util.MakeStorageLocation(),
 		Name:      info.GetApplicationName(),

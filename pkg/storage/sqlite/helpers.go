@@ -40,6 +40,7 @@ func convertSqlcGoalsToResource(sqlcEntries []*sqlc.Goal) []*resources.Goal {
 	for index, entry := range sqlcEntries {
 		goals[index] = convertSqlcGoalToResource(entry)
 	}
+
 	return goals
 }
 
