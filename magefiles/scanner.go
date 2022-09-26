@@ -31,6 +31,7 @@ func runStaticScanners() (err error) {
 			return fmt.Errorf("sh RunV: %w", err)
 		}
 	}
+
 	return nil
 }
 func confirmScanners() (err error) {
@@ -49,10 +50,12 @@ func installIfMissing(executableName, installURL string) (err error) {
 	_, missing := exec.LookPath(executableName)
 	if missing != nil {
 		log.Printf("--> Scanner Missing Installing Scanner: %s\n", executableName)
+
 		err := sh.Run("go", "install", installURL)
 		if err != nil {
 			return fmt.Errorf("sh Run: %w", err)
 		}
 	}
+	
 	return nil
 }

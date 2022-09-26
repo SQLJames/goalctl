@@ -24,7 +24,7 @@ func (yp *XMLPrinter) Write(data interface{}, destination io.Writer) (err error)
 
 	_, err = destination.Write([]byte("\n"))
 	if err != nil {
-		log.Logger.Warn("issue writing data out to destination.", "error", err.Error())
+		log.Logger.ILog.Warn("issue writing data out to destination.", "error", err.Error())
 
 		return fmt.Errorf("xml: %w", err)
 	}

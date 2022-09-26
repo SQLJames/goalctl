@@ -26,7 +26,7 @@ func (sl Repository) CreateGoal(ctx context.Context, arg *resources.Goal) *resou
 		Status:      arg.Status,
 	})
 	if err != nil {
-		log.Logger.Fatal(err, "error running query")
+		log.Logger.ILog.Fatal(err, "error running query")
 	}
 
 	arg.GoalID = int(sqlcGoal.Goalid)
@@ -37,8 +37,8 @@ func (sl Repository) CreateGoal(ctx context.Context, arg *resources.Goal) *resou
 func (sl Repository) GetGoals(ctx context.Context) []*resources.Goal {
 	sqlcGoals, err := sl.queries.GetGoals(ctx)
 	if err != nil {
-		log.Logger.Fatal(err, "error running query")
+		log.Logger.ILog.Fatal(err, "error running query")
 	}
-	
+
 	return convertSqlcGoalsToResource(sqlcGoals)
 }

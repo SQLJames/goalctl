@@ -28,6 +28,7 @@ func UpgradeAvailable(remoteVersion string) (upgradeAvailable bool, err error) {
 	if err != nil {
 		return false, fmt.Errorf("parseVersion: %w", err)
 	}
+
 	upgradeAvailable, _ = constraint.Validate(semVerCurrent)
 
 	return upgradeAvailable, nil

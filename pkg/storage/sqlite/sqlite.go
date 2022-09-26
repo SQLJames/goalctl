@@ -69,14 +69,14 @@ func NewSQLiteStorage() (storage *Repository) {
 
 	sqlDB, err := sql.Open("sqlite", fmt.Sprintf("%s?_pragma=busy_timeout(%d000)&_pragma=journal_mode(WAL)", database.getDatabasePath(), timeoutInSeconds))
 	if err != nil {
-		log.Logger.Fatal(err, "error opening database")
+		log.Logger.ILog.Fatal(err, "error opening database")
 	}
 
 	if CreateSchema {
 		// create tables.
 		for _, ddl := range ddls {
 			if _, err := sqlDB.ExecContext(context.Background(), ddl); err != nil {
-				log.Logger.Fatal(err, "error creating the database tables")
+				log.Logger.ILog.Fatal(err, "error creating the database tables")
 			}
 		}
 	}

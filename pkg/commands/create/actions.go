@@ -21,17 +21,17 @@ func (empty *emptryStringError) Error() string {
 }
 func actionCreateNotebook(cliContext *cli.Context) error {
 	if cliContext.String(flags.NameFlagName) == "" {
-		log.Logger.Error(&emptryStringError{}, "Error creating notebook", "function", "actionCreateNotebook")
+		log.Logger.ILog.Error(&emptryStringError{}, "Error creating notebook", "function", "actionCreateNotebook")
 
 		return &emptryStringError{}
 	}
 
 	storagelayer := storage.NewVault()
-	row := storagelayer.CreateNotebook(context.TODO(), cliContext.String(flags.NameFlagName))
+	row := storagelayer.Storage.CreateNotebook(context.TODO(), cliContext.String(flags.NameFlagName))
 
-	err := printer.NewPrinter(cliContext).Write(row, os.Stdout)
+	err := printer.NewPrinter(cliContext).Writer.Write(row, os.Stdout)
 	if err != nil {
-		log.Logger.Warn("issue Printing the data", "function", "CreateNotebook", "error", err.Error())
+		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateNotebook", "error", err.Error())
 	}
 	return err
 }
@@ -40,11 +40,11 @@ func actionCreateLogEntry(cliContext *cli.Context) error {
 	storagelayer := storage.NewVault()
 	le := resources.NewLogEntry(cliContext.String(flags.EntryTextFlagName), cliContext.StringSlice(flags.TagsFlagName))
 
-	row := storagelayer.CreateLogEntry(context.TODO(), le, cliContext.String(flags.NameFlagName))
+	row := storagelayer.Storage.CreateLogEntry(context.TODO(), le, cliContext.String(flags.NameFlagName))
 
-	err := printer.NewPrinter(cliContext).Write(row, os.Stdout)
+	err := printer.NewPrinter(cliContext).Writer.Write(row, os.Stdout)
 	if err != nil {
-		log.Logger.Warn("issue Printing the data", "function", "CreateLogEntry", "error", err.Error())
+		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateLogEntry", "error", err.Error())
 	}
 	return err
 }
@@ -57,11 +57,11 @@ func actionCreateGoal(cliContext *cli.Context) error {
 		cliContext.String(flags.EntryTextFlagName),
 		cliContext.Int(flags.PriorityFlagName))
 
-	row := storagelayer.CreateGoal(context.TODO(), goal)
+	row := storagelayer.Storage.CreateGoal(context.TODO(), goal)
 
-	err := printer.NewPrinter(cliContext).Write(row, os.Stdout)
+	err := printer.NewPrinter(cliContext).Writer.Write(row, os.Stdout)
 	if err != nil {
-		log.Logger.Warn("issue Printing the data", "function", "CreateGoal", "error", err.Error())
+		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateGoal", "error", err.Error())
 	}
 	return err
 }

@@ -13,6 +13,6 @@ func Run() {
 
 	// Execute.
 	if err := cmd.Run(os.Args); err != nil {
-		log.Logger.Fatal(err, err.Error())
+		log.Logger.ILog.Fatal(err, err.Error())
 	}
 }

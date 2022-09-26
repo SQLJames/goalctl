@@ -71,6 +71,6 @@ func InitializeLogger(logLevel int) {
 
 	err := fs.Set("v", strconv.Itoa(logLevel))
 	if err != nil {
-		Logger.Warn("issue setting verbosity flag", "error", err.Error())
+		Logger.ILog.Warn("issue setting verbosity flag", "error", err.Error())
 	}
 }

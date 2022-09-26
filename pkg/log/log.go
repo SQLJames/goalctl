@@ -1,7 +1,11 @@
 package log
 
+type Log struct {
+	ILog logger
+}
+
 var (
-	Logger = newLogger()
+	Logger = Log{ILog: newInternalklog()}
 )
 
 type logger interface {
@@ -12,8 +16,4 @@ type logger interface {
 	Info(message string, keysAndValues ...interface{})
 	Debug(message string, keysAndValues ...interface{})
 	Trace(message string, keysAndValues ...interface{})
-}
-
-func newLogger() logger {
-	return newInternalklog()
 }

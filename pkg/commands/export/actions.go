@@ -24,9 +24,9 @@ func actionExportJournal(cliContext *cli.Context) error {
 	journal.NoteBooks = Allnotebooks
 	journal.GoalDetails = GoalDetails
 
-	err := printer.NewPrinter(cliContext).Write(resources.Book{Journal: journal}, os.Stdout)
+	err := printer.NewPrinter(cliContext).Writer.Write(resources.Book{Journal: journal}, os.Stdout)
 	if err != nil {
-		log.Logger.Warn("issue Printing the data", "function", "CreateGoal", "error", err.Error())
+		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateGoal", "error", err.Error())
 	}
 	return err
 }

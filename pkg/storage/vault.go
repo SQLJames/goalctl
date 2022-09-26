@@ -7,6 +7,10 @@ import (
 	"github.com/sqljames/goalctl/pkg/storage/sqlite"
 )
 
+type Vault struct {
+	Storage Repository
+}
+
 type Notebook interface {
 	CreateNotebook(ctx context.Context, name string) resources.Notebook
 	GetNotebookIDByName(ctx context.Context, name string) int64
@@ -30,7 +34,7 @@ type Associations interface {
 	GetAssociationsByLogEntryID(ctx context.Context, logentryid int) []*resources.Association
 }
 
-type Vault interface {
+type Repository interface {
 	Notebook
 	LogEntry
 	Goal
@@ -38,5 +42,5 @@ type Vault interface {
 }
 
 func NewVault() (vault Vault) {
-	return sqlite.NewSQLiteStorage()
+	return Vault{Storage: sqlite.NewSQLiteStorage()}
 }

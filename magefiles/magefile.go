@@ -69,6 +69,7 @@ func ensureDirs() error {
 			}
 		}
 	}
+	
 	return nil
 }
 

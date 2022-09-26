@@ -56,14 +56,14 @@ func instrumentLoggingFlags(cliContext *cli.Context) error {
 
 	err := first(cliContext)
 	if err != nil {
-		log.Logger.Error(err, err.Error())
+		log.Logger.ILog.Error(err, err.Error())
 	}
 
 	// The second config map will not overwrite the first
 	second := altsrc.InitInputSourceWithContext(cliContext.App.Flags, altsrc.NewYamlSourceFromFlagFunc("global-config"))
 	err = second(cliContext)
 	if err != nil {
-		log.Logger.Error(err, err.Error())
+		log.Logger.ILog.Error(err, err.Error())
 	}
 
 	log.InitializeLogger(cliContext.Int("verbosity"))

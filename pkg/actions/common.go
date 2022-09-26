@@ -9,7 +9,7 @@ import (
 
 func GetNotebooks() (notebookList []*resources.Notebook) {
 	storagelayer := storage.NewVault()
-	notebooks := storagelayer.GetNotebooks(context.TODO())
+	notebooks := storagelayer.Storage.GetNotebooks(context.TODO())
 
 	return notebooks
 }
@@ -17,12 +17,12 @@ func GetNotebooks() (notebookList []*resources.Notebook) {
 func GetEntriesForNotebook(notebookName string) (entries []*resources.LogEntry) {
 	storagelayer := storage.NewVault()
 
-	return storagelayer.GetLogEntryByNotebook(context.TODO(), notebookName)
+	return storagelayer.Storage.GetLogEntryByNotebook(context.TODO(), notebookName)
 }
 
 func GetGoalDetails() (details []resources.GoalDetail) {
 	storagelayer := storage.NewVault()
-	goals := storagelayer.GetGoals(context.TODO())
+	goals := storagelayer.Storage.GetGoals(context.TODO())
 	journal := resources.Journal{}
 
 	for _, goal := range goals {
@@ -49,11 +49,11 @@ func GetGoalDetails() (details []resources.GoalDetail) {
 func ListAssociationsByGoalID(goalid int) []*resources.Association {
 	storagelayer := storage.NewVault()
 
-	return storagelayer.GetAssociationsByGoalID(context.TODO(), goalid)
+	return storagelayer.Storage.GetAssociationsByGoalID(context.TODO(), goalid)
 }
 
 func GetLogEntryByLogEntryID(logentryid int) *resources.LogEntry {
 	storagelayer := storage.NewVault()
 
-	return storagelayer.GetLogEntryByLogEntryID(context.TODO(), int64(logentryid))
+	return storagelayer.Storage.GetLogEntryByLogEntryID(context.TODO(), int64(logentryid))
 }

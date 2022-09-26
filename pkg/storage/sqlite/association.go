@@ -14,7 +14,7 @@ func (sl Repository) CreateAssociation(ctx context.Context, arg resources.Associ
 		Logentryid: int64(arg.LogEntryID),
 	})
 	if err != nil {
-		log.Logger.Fatal(err, "error running query")
+		log.Logger.ILog.Fatal(err, "error running query")
 	}
 
 	return arg
@@ -23,7 +23,7 @@ func (sl Repository) CreateAssociation(ctx context.Context, arg resources.Associ
 func (sl Repository) GetAssociations(ctx context.Context) []*resources.Association {
 	associations, err := sl.queries.GetAssociations(ctx)
 	if err != nil {
-		log.Logger.Fatal(err, "error running query")
+		log.Logger.ILog.Fatal(err, "error running query")
 	}
 
 	return convertSqlcGoalToLogEntriesToResource(associations)
@@ -32,7 +32,7 @@ func (sl Repository) GetAssociations(ctx context.Context) []*resources.Associati
 func (sl Repository) GetAssociationsByGoalID(ctx context.Context, goalid int) []*resources.Association {
 	associations, err := sl.queries.GetAssociationsByGoalID(ctx, int64(goalid))
 	if err != nil {
-		log.Logger.Fatal(err, "error running query")
+		log.Logger.ILog.Fatal(err, "error running query")
 	}
 
 	return convertSqlcGoalToLogEntriesToResource(associations)
@@ -41,7 +41,7 @@ func (sl Repository) GetAssociationsByGoalID(ctx context.Context, goalid int) []
 func (sl Repository) GetAssociationsByLogEntryID(ctx context.Context, logentryid int) []*resources.Association {
 	associations, err := sl.queries.GetAssociationsByLogEntryID(ctx, int64(logentryid))
 	if err != nil {
-		log.Logger.Fatal(err, "error running query")
+		log.Logger.ILog.Fatal(err, "error running query")
 	}
 
 	return convertSqlcGoalToLogEntriesToResource(associations)

@@ -15,7 +15,11 @@ import (
 
 var SupportedFormats = []string{"json", "toml", "xml", "yaml"}
 
-type Printer interface {
+type Printer struct {
+	Writer Writer
+}
+
+type Writer interface {
 	Write(data interface{}, writer io.Writer) (err error)
 }
 
@@ -24,20 +28,20 @@ func NewPrinter(cliContext *cli.Context) (printer Printer) {
 
 	switch format {
 	case SupportedFormats[0]:
-		log.Logger.Trace("Returning json printer")
+		log.Logger.ILog.Trace("Returning json printer")
 
-		return &jsonprinter.JSONPrinter{}
+		return Printer{Writer: &jsonprinter.JSONPrinter{}}
 	case SupportedFormats[1]:
-		log.Logger.Trace("Returning toml printer")
+		log.Logger.ILog.Trace("Returning toml printer")
 
-		return &tomlprinter.TomlPrinter{}
+		return Printer{Writer: &tomlprinter.TomlPrinter{}}
 	case SupportedFormats[2]:
-		log.Logger.Trace("Returning xml printer")
+		log.Logger.ILog.Trace("Returning xml printer")
 
-		return &xmlprinter.XMLPrinter{}
+		return Printer{Writer: &xmlprinter.XMLPrinter{}}
 	default:
-		log.Logger.Trace("Returning yaml printer")
+		log.Logger.ILog.Trace("Returning yaml printer")
 
-		return &yamlprinter.YamlPrinter{}
+		return Printer{Writer: &yamlprinter.YamlPrinter{}}
 	}
 }

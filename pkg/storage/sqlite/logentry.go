@@ -15,6 +15,7 @@ func (sl Repository) CreateLogEntry(ctx context.Context, arg *resources.LogEntry
 		notebook := sl.CreateNotebook(ctx, notebookName)
 		NotebookID = notebook.Notebookid
 	}
+	
 	Entry, err := sl.queries.CreateLogEntry(ctx, sqlc.CreateLogEntryParams{
 		Author: sql.NullString{
 			String: arg.Author,
@@ -30,9 +31,9 @@ func (sl Repository) CreateLogEntry(ctx context.Context, arg *resources.LogEntry
 	})
 
 	if err != nil {
-		log.Logger.Fatal(err, "error running query")
+		log.Logger.ILog.Fatal(err, "error running query")
 	}
-	
+
 	arg.LogEntryID = Entry.Logentryid
 	arg.Notebookid = Entry.Notebookid
 
@@ -42,7 +43,7 @@ func (sl Repository) CreateLogEntry(ctx context.Context, arg *resources.LogEntry
 func (sl Repository) GetLogEntryByCreatedDate(ctx context.Context, createddate string) (logEntries []*resources.LogEntry) {
 	sqlcLogEntries, err := sl.queries.GetLogEntryByCreatedDate(ctx, createddate)
 	if err != nil {
-		log.Logger.Fatal(err, "error running query")
+		log.Logger.ILog.Fatal(err, "error running query")
 	}
 	return convertSqlcLogEntriesToResource(sqlcLogEntries)
 }
@@ -50,7 +51,7 @@ func (sl Repository) GetLogEntryByCreatedDate(ctx context.Context, createddate s
 func (sl Repository) GetLogEntryByNotebook(ctx context.Context, name string) []*resources.LogEntry {
 	sqlcLogEntries, err := sl.queries.GetLogEntryByNotebook(ctx, name)
 	if err != nil {
-		log.Logger.Fatal(err, "error running query")
+		log.Logger.ILog.Fatal(err, "error running query")
 	}
 	return convertSqlcLogEntriesToResource(sqlcLogEntries)
 }
@@ -58,7 +59,7 @@ func (sl Repository) GetLogEntryByNotebook(ctx context.Context, name string) []*
 func (sl Repository) GetLogEntryByLogEntryID(ctx context.Context, logentryid int64) *resources.LogEntry {
 	sqlcLogEntry, err := sl.queries.GetLogEntryByLogEntryID(ctx, logentryid)
 	if err != nil {
-		log.Logger.Fatal(err, "error running query")
+		log.Logger.ILog.Fatal(err, "error running query")
 	}
 	return convertSqlcLogEntryToResource(sqlcLogEntry)
 }

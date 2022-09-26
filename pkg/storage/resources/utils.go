@@ -10,7 +10,7 @@ import (
 func NewGoal(goal, dueDate, details string, priority int) *Goal {
 	dueTime, err := time.Parse(time.RFC3339, dueDate)
 	if err != nil {
-		log.Logger.Error(err, "Unable to parse due time , getting current time.")
+		log.Logger.ILog.Error(err, "Unable to parse due time , getting current time.")
 
 		dueTime = time.Now().UTC()
 	}
@@ -38,10 +38,10 @@ func NewLogEntry(entryText string, tags []string) *LogEntry {
 func getCurrentUser() (username string) {
 	currentUser, err := user.Current()
 	if err != nil {
-		log.Logger.Error(err, "Unable to get current os user, setting Author to `self`")
+		log.Logger.ILog.Error(err, "Unable to get current os user, setting Author to `self`")
 
 		currentUser.Username = "self"
 	}
-	
+
 	return currentUser.Username
 }

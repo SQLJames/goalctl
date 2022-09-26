@@ -37,7 +37,7 @@ func actionLink(cliContext *cli.Context) error {
 
 	storagelayer := storage.NewVault()
 	for _, entry := range links {
-		storagelayer.CreateAssociation(context.TODO(), entry)
+		storagelayer.Storage.CreateAssociation(context.TODO(), entry)
 	}
 
 	return nil

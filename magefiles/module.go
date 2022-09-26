@@ -32,6 +32,7 @@ func modulePath() string {
 
 		return filepath.Base(gitRoot())
 	}
+	
 	return parseFileLines(lines)
 }
 

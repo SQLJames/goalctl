@@ -14,9 +14,9 @@ import (
 func actionListNotebooks(cliContext *cli.Context) error {
 	notebookList := actions.GetNotebooks()
 
-	err := printer.NewPrinter(cliContext).Write(notebookList, os.Stdout)
+	err := printer.NewPrinter(cliContext).Writer.Write(notebookList, os.Stdout)
 	if err != nil {
-		log.Logger.Warn("issue Printing the data", "function", "ListNotebooks", "error", err.Error())
+		log.Logger.ILog.Warn("issue Printing the data", "function", "ListNotebooks", "error", err.Error())
 	}
 	return err
 }
@@ -29,18 +29,18 @@ func actionListEntries(cliContext *cli.Context) error {
 		Entries: NotebookEntries,
 	}
 
-	err := printer.NewPrinter(cliContext).Write(notebook, os.Stdout)
+	err := printer.NewPrinter(cliContext).Writer.Write(notebook, os.Stdout)
 	if err != nil {
-		log.Logger.Warn("issue Printing the data", "function", "ListEntries", "error", err.Error())
+		log.Logger.ILog.Warn("issue Printing the data", "function", "ListEntries", "error", err.Error())
 	}
 	return err
 }
 
 func actionListGoals(cliContext *cli.Context) error {
 	goals := actions.GetGoalDetails()
-	err := printer.NewPrinter(cliContext).Write(goals, os.Stdout)
+	err := printer.NewPrinter(cliContext).Writer.Write(goals, os.Stdout)
 	if err != nil {
-		log.Logger.Warn("issue Printing the data", "function", "ListGoals", "error", err.Error())
+		log.Logger.ILog.Warn("issue Printing the data", "function", "ListGoals", "error", err.Error())
 	}
 	return err
 }
