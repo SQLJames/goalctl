@@ -101,7 +101,7 @@ linters:
     - gosec
     - grouper
     - importas
-    - interfacebloat
+    #- interfacebloat
     #- interfacer
     - ireturn
     - lll
@@ -122,7 +122,7 @@ linters:
     - prealloc
     - predeclared
     - promlinter
-    - reassign
+    #- reassign
     - revive
     #- rowserrcheck
     #- scopelint
@@ -135,7 +135,7 @@ linters:
     - tparallel
     - unconvert
     - unparam
-    - usestdlibvars
+    #- usestdlibvars
     - varnamelen
     #- wastedassign
     - whitespace
