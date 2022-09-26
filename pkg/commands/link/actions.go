@@ -22,15 +22,16 @@ func actionLink(cliContext *cli.Context) error {
 			if err != nil {
 				return fmt.Errorf("converting GoalID: %w", err)
 			}
+
 			logentryIDInt, err := strconv.Atoi(logentryID)
 			if err != nil {
 				return fmt.Errorf("converting logentryID: %w", err)
 			}
-			link := resources.Association{
+
+			links = append(links, resources.Association{
 				GoalID:     goalidInt,
 				LogEntryID: logentryIDInt,
-			}
-			links = append(links, link)
+			})
 		}
 	}
 
@@ -45,7 +46,7 @@ func actionLink(cliContext *cli.Context) error {
 func removeDuplicate[T string | int](sliceList []T) []T {
 	allKeys := make(map[T]bool)
 	list := []T{}
-	
+
 	for _, item := range sliceList {
 		if _, value := allKeys[item]; !value {
 			allKeys[item] = true
@@ -53,5 +54,6 @@ func removeDuplicate[T string | int](sliceList []T) []T {
 			list = append(list, item)
 		}
 	}
+
 	return list
 }

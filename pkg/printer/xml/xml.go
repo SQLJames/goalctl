@@ -14,6 +14,7 @@ type XMLPrinter struct {
 func (yp *XMLPrinter) Write(data interface{}, destination io.Writer) (err error) {
 	enc := xml.NewEncoder(destination)
 	enc.Indent("", "  ")
+
 	err = enc.Encode(data)
 	if err != nil {
 		return fmt.Errorf("xml: %w", err)

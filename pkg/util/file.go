@@ -33,12 +33,14 @@ func MakeStorageLocation() (storageLocation string, err error) {
 	}
 	applicationName := info.GetApplicationName()
 	storageLocation = path.Join(homedir, "."+applicationName)
+
 	err = os.MkdirAll(storageLocation, folderPermissons)
 	if err != nil {
 		log.Logger.Error(err, "error creating storagelocation")
 
 		return "", err
 	}
+
 	return storageLocation, nil
 }
 
@@ -69,6 +71,7 @@ func FileExists(fileName string) (exists bool) {
 func JoinPath(basePath, leaf string) (fullPath string) {
 	joinedPath := path.Join(basePath, leaf)
 	log.Logger.Trace(fmt.Sprintf("path is %s", joinedPath))
+	
 	return joinedPath
 }
 

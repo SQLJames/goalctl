@@ -10,17 +10,19 @@ import (
 
 func gitTag() string {
 	var err error
-	
+
 	tagOrBranch, ok := os.LookupEnv("CI_COMMIT_REF_NAME")
 	if !ok {
 		tagOrBranch, err = gitShellOut("describe", "--tags", "--always")
 		if err != nil {
 			var exitError exec.ExitError
+
 			ok := errors.As(err, &exitError)
 			if ok && exitError.Exited() {
-				// probably no git tag
+				// probably no git tag.
 				return devRelease
 			}
+
 			return devRelease
 		}
 	}
@@ -47,8 +49,8 @@ func gitBranch() string {
 	if err != nil {
 		return err.Error()
 	}
-	branch = strings.TrimSpace(branch)
-	return branch
+
+	return strings.TrimSpace(branch)
 }
 
 // gitRoot returns the root directory from the git repo.
@@ -57,17 +59,19 @@ func gitRoot() string {
 	if err != nil {
 		return ""
 	}
-	directory = strings.TrimSpace(directory)
-	return directory
+
+	return strings.TrimSpace(directory)
 }
 
 func gitShellOut(args ...string) (string, error) {
 	c := exec.Command("git", args...)
 	c.Env = os.Environ()
 	c.Stderr = os.Stderr
+
 	b, err := c.Output()
 	if err != nil {
 		return "", errors.Wrapf(err, `failed to run %v %q`, "git", args)
 	}
+
 	return string(b), nil
 }

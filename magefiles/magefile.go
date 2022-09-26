@@ -38,6 +38,7 @@ func getGoExe() (goexe string) {
 	if goexe == "" {
 		goexe = "go"
 	}
+
 	return goexe
 }
 
@@ -76,6 +77,7 @@ func Clean() {
 
 	for _, dir := range dirs {
 		log.Printf("    removing '%s'\n", dir)
+
 		err := os.RemoveAll(dir)
 		if err != nil {
 			log.Fatal("error running clean command", err.Error())
@@ -86,6 +88,7 @@ func Clean() {
 // Vendor dependencies with go modules.
 func Vendor() {
 	log.Println("--> Updating dependencies")
+
 	err := sh.Run(goexe, "mod", "tidy")
 	if err != nil {
 		log.Fatal("error running Vendor command", err.Error())
@@ -110,8 +113,9 @@ func Release() {
 
 	mg.SerialDeps(Vendor, ensureDirs)
 	waitGroup.Add(len(targets))
+
 	cgoEnabled := os.Getenv("CGO_ENABLED") == "1"
-	
+
 	log.Printf("--> Building '%s' for release\n", gitRoot())
 
 	for _, buildTarget := range targets {
@@ -147,18 +151,21 @@ func Release() {
 // Scan runs various static checkers to ensure you minimize security holes and have good formatting.
 func Scan() (err error) {
 	log.Println("--> Scanning code")
+
 	err = confirmScanners()
 	if err != nil {
 		return err
 	}
+
 	err = runStaticScanners()
 	if err != nil {
 		return err
 	}
+	
 	return nil
 }
 
-// Test the codebase
+// Test the codebase.
 func Test() error {
 	mg.SerialDeps(Vendor, ensureDirs)
 

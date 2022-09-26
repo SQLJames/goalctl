@@ -4,11 +4,11 @@ import (
 	"context"
 	"database/sql"
 
-	// embed used for the dll statements on db creation
+	// embed used for the dll statements on db creation.
 	_ "embed"
 	"fmt"
 
-	// go-sqlite required for embedded sqlite database
+	// go-sqlite required for embedded sqlite database.
 	_ "github.com/glebarez/go-sqlite"
 	"github.com/sqljames/goalctl/pkg/info"
 	"github.com/sqljames/goalctl/pkg/log"
@@ -57,12 +57,12 @@ func newDB() (db *database, err error) {
 	}, nil
 }
 
-// getDatabaseFileName gets just the file name and extension of the database
+// getDatabaseFileName gets just the file name and extension of the database.
 func (db *database) getDatabaseFileName() (databaseFileName string) {
 	return fmt.Sprintf("%s.%s", db.Name, db.Extension)
 }
 
-// getDatabasePath returns the full file path to the database file
+// getDatabasePath returns the full file path to the database file.
 func (db *database) getDatabasePath() (databasePath string) {
 	return util.JoinPath(db.Location, db.getDatabaseFileName())
 }
@@ -78,8 +78,9 @@ func NewSQLiteStorage() (storage *Repository) {
 	if err != nil {
 		log.Logger.Fatal(err, "error opening database")
 	}
+
 	if CreateSchema {
-		// create tables
+		// create tables.
 		for _, ddl := range ddls {
 			if _, err := sqlDB.ExecContext(context.Background(), ddl); err != nil {
 				log.Logger.Fatal(err, "error creating the database tables")

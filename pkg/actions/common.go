@@ -16,6 +16,7 @@ func GetNotebooks() (notebookList []*resources.Notebook) {
 
 func GetEntriesForNotebook(notebookName string) (entries []*resources.LogEntry) {
 	storagelayer := storage.NewVault()
+
 	return storagelayer.GetLogEntryByNotebook(context.TODO(), notebookName)
 }
 
@@ -26,6 +27,7 @@ func GetGoalDetails() (details []resources.GoalDetail) {
 
 	for _, goal := range goals {
 		var associations []*resources.Association
+
 		var logEntries = make([]*resources.LogEntry, len(associations))
 
 		associations = ListAssociationsByGoalID(goal.GoalID)
@@ -46,10 +48,12 @@ func GetGoalDetails() (details []resources.GoalDetail) {
 
 func ListAssociationsByGoalID(goalid int) []*resources.Association {
 	storagelayer := storage.NewVault()
+
 	return storagelayer.GetAssociationsByGoalID(context.TODO(), goalid)
 }
 
 func GetLogEntryByLogEntryID(logentryid int) *resources.LogEntry {
 	storagelayer := storage.NewVault()
+
 	return storagelayer.GetLogEntryByLogEntryID(context.TODO(), int64(logentryid))
 }
