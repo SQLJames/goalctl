@@ -15,6 +15,7 @@ func modulePath() string {
 	file, err := os.Open("go.mod")
 	if err != nil {
 		log.Println(err)
+		
 		return filepath.Base(gitRoot())
 	}
 
