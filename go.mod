@@ -5,7 +5,7 @@ require (
 	github.com/glebarez/go-sqlite v1.18.2
 	github.com/go-logr/logr v1.2.3
 	github.com/magefile/mage v1.14.0
-	github.com/pelletier/go-toml/v2 v2.0.3
+	github.com/pelletier/go-toml/v2 v2.0.5
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.8.0
 	github.com/urfave/cli/v2 v2.11.1
