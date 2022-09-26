@@ -9,6 +9,15 @@ import (
 	"github.com/sqljames/goalctl/pkg/storage/sqlite/sqlc"
 )
 
+func (sl Repository) GetLogEntries(ctx context.Context) (logEntries []*resources.LogEntry) {
+	sqlcLogEntries, err := sl.queries.GetLogEntries(ctx)
+	if err != nil {
+		log.Logger.ILog.Fatal(err, "error running query")
+	}
+
+	return convertSqlcLogEntriesToResource(sqlcLogEntries)
+}
+
 func (sl Repository) CreateLogEntry(ctx context.Context, arg *resources.LogEntry, notebookName string) *resources.LogEntry {
 	NotebookID := sl.GetNotebookIDByName(ctx, notebookName)
 	if NotebookID == 0 {
@@ -45,7 +54,7 @@ func (sl Repository) GetLogEntryByCreatedDate(ctx context.Context, createddate s
 	if err != nil {
 		log.Logger.ILog.Fatal(err, "error running query")
 	}
-	
+
 	return convertSqlcLogEntriesToResource(sqlcLogEntries)
 }
 
@@ -63,6 +72,6 @@ func (sl Repository) GetLogEntryByLogEntryID(ctx context.Context, logentryid int
 	if err != nil {
 		log.Logger.ILog.Fatal(err, "error running query")
 	}
-	
+
 	return convertSqlcLogEntryToResource(sqlcLogEntry)
 }

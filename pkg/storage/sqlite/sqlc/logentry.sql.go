@@ -54,6 +54,45 @@ func (q *Queries) CreateLogEntry(ctx context.Context, arg CreateLogEntryParams) 
 	return &i, err
 }
 
+const getLogEntries = `-- name: GetLogEntries :many
+SELECT
+  logentryid, author, tags, note, createddate, notebookid
+FROM
+  LogEntry
+ORDER BY
+  LogEntryID
+`
+
+func (q *Queries) GetLogEntries(ctx context.Context) ([]*LogEntry, error) {
+	rows, err := q.db.QueryContext(ctx, getLogEntries)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []*LogEntry
+	for rows.Next() {
+		var i LogEntry
+		if err := rows.Scan(
+			&i.Logentryid,
+			&i.Author,
+			&i.Tags,
+			&i.Note,
+			&i.Createddate,
+			&i.Notebookid,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, &i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getLogEntryByCreatedDate = `-- name: GetLogEntryByCreatedDate :many
 SELECT
   logentryid, author, tags, note, createddate, notebookid
