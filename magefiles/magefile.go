@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/fs"
 	"log"
 	"os"
@@ -64,7 +65,7 @@ func ensureDirs() error {
 			log.Printf("    creating '%s'\n", dir)
 
 			if err := os.MkdirAll(dir, folderPermissions); err != nil {
-				return err
+				return fmt.Errorf("OS MkdirAll: %v", err)
 			}
 		}
 	}
@@ -101,7 +102,7 @@ func Build() error {
 
 	sourcePath := gitRoot()
 	if err := sh.Run(goexe, "build", "-o", binaryPath, "-ldflags="+flags(), sourcePath); err != nil {
-		return err
+		return fmt.Errorf("sh Run: %w", err)
 	}
 
 	return nil
@@ -161,7 +162,7 @@ func Scan() (err error) {
 	if err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 
@@ -175,5 +176,5 @@ func Test() error {
 
 	log.Println(strings.ReplaceAll(results, "\n", "\n    "))
 
-	return err
+	return fmt.Errorf("sh Output: %w", err)
 }

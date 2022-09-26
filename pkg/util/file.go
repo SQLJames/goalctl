@@ -5,7 +5,6 @@ import (
 	"io/fs"
 	"os"
 	"path"
-	"path/filepath"
 
 	"github.com/sqljames/goalctl/pkg/info"
 	"github.com/sqljames/goalctl/pkg/log"
@@ -20,44 +19,27 @@ func GetHomeDir() (directory string, err error) {
 	if err != nil {
 		log.Logger.Error(err, "getting home directory")
 
-		return "", err
+		return "", fmt.Errorf("OS UserHomeDir: %w", err)
 	}
 
 	return dirname, nil
 }
 
-func MakeStorageLocation() (storageLocation string, err error) {
-	homedir, err := GetHomeDir()
+func MakeStorageLocation() (storageLocation string) {
+	baseDir, err := GetHomeDir()
 	if err != nil {
-		return "", err
+		log.Logger.Error(err, "Error getting home directory, setting location to tmp folder.")
+		baseDir = os.TempDir()
 	}
 	applicationName := info.GetApplicationName()
-	storageLocation = path.Join(homedir, "."+applicationName)
+	storageLocation = path.Join(baseDir, "."+applicationName)
 
 	err = os.MkdirAll(storageLocation, folderPermissons)
 	if err != nil {
-		log.Logger.Error(err, "error creating storagelocation")
-
-		return "", err
+		log.Logger.Fatal(err, "error creating storagelocation", "location", storageLocation)
 	}
 
-	return storageLocation, nil
-}
-
-func CreateifNotexist(file string) (err error) {
-	cleanedFile := filepath.Clean(file)
-	if !FileExists(cleanedFile) {
-		file, err := os.Create(cleanedFile)
-		defer closeFile(file)
-
-		if err != nil {
-			log.Logger.Error(err, "unable to create file")
-
-			return err
-		}
-	}
-
-	return nil
+	return storageLocation
 }
 
 func FileExists(fileName string) (exists bool) {
@@ -71,7 +53,7 @@ func FileExists(fileName string) (exists bool) {
 func JoinPath(basePath, leaf string) (fullPath string) {
 	joinedPath := path.Join(basePath, leaf)
 	log.Logger.Trace(fmt.Sprintf("path is %s", joinedPath))
-	
+
 	return joinedPath
 }
 

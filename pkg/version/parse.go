@@ -21,12 +21,12 @@ func parseVersion(ver string) (version *semver.Version, err error) {
 func UpgradeAvailable(remoteVersion string) (upgradeAvailable bool, err error) {
 	constraint, err := semver.NewConstraint(fmt.Sprintf("<%s", remoteVersion))
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("semver NewConstraint: %w", err)
 	}
 
 	semVerCurrent, err := parseVersion(buildVersion)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("parseVersion: %w", err)
 	}
 	upgradeAvailable, _ = constraint.Validate(semVerCurrent)
 

@@ -26,9 +26,9 @@ func (s *scanner) getInstallURL() (installURL string) {
 func runStaticScanners() (err error) {
 	for _, scanner := range scanners {
 		log.Printf("--> Running Scanner: %s\n", scanner.command)
-		
+
 		if err := sh.RunV(scanner.command, scanner.runArgs...); err != nil {
-			return err
+			return fmt.Errorf("sh RunV: %w", err)
 		}
 	}
 	return nil
@@ -51,7 +51,7 @@ func installIfMissing(executableName, installURL string) (err error) {
 		log.Printf("--> Scanner Missing Installing Scanner: %s\n", executableName)
 		err := sh.Run("go", "install", installURL)
 		if err != nil {
-			return err
+			return fmt.Errorf("sh Run: %w", err)
 		}
 	}
 	return nil

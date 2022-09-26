@@ -45,16 +45,13 @@ var notebookddl string
 
 var ddls = []string{logentryddl, notebookddl, goalddl, goalToLogEntryddl}
 
-func newDB() (db *database, err error) {
-	location, err := util.MakeStorageLocation()
-	if err != nil {
-		return nil, err
-	}
+func newDB() (db *database) {
+
 	return &database{
-		Location:  location,
+		Location:  util.MakeStorageLocation(),
 		Name:      info.GetApplicationName(),
 		Extension: "db",
-	}, nil
+	}
 }
 
 // getDatabaseFileName gets just the file name and extension of the database.
@@ -68,10 +65,7 @@ func (db *database) getDatabasePath() (databasePath string) {
 }
 
 func NewSQLiteStorage() (storage *Repository) {
-	database, err := newDB()
-	if err != nil {
-		log.Logger.Fatal(err, "error opening database")
-	}
+	database := newDB()
 	CreateSchema := !util.FileExists(database.getDatabasePath())
 
 	sqlDB, err := sql.Open("sqlite", fmt.Sprintf("%s?_pragma=busy_timeout(%d000)&_pragma=journal_mode(WAL)", database.getDatabasePath(), timeoutInSeconds))
