@@ -20,6 +20,7 @@ type Notebook interface {
 }
 type LogEntry interface {
 	CreateLogEntry(ctx context.Context, arg *resources.LogEntry, notebookName string) *resources.LogEntry
+	GetLogEntries(ctx context.Context) []*resources.LogEntry
 	GetLogEntryByCreatedDate(ctx context.Context, createddate string) []*resources.LogEntry
 	GetLogEntryByLogEntryID(ctx context.Context, logentryid int64) *resources.LogEntry
 }

@@ -47,3 +47,11 @@ VALUES(
   ?
   )
   RETURNING *;
+
+-- name: GetLogEntries :many
+SELECT
+  *
+FROM
+  LogEntry
+ORDER BY
+  LogEntryID;
