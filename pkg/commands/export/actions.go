@@ -30,7 +30,8 @@ func actionExportJournal(cliContext *cli.Context) error {
 	err := printer.NewPrinter(cliContext).Writer.Write(resources.Book{Journal: journal}, os.Stdout)
 	if err != nil {
 		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateGoal", "error", err.Error())
+		err = fmt.Errorf("printer: %w", err)
 	}
 
-	return fmt.Errorf("printer: %w",err )
+	return err
 }

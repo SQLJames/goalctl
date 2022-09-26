@@ -18,9 +18,10 @@ func actionListNotebooks(cliContext *cli.Context) error {
 	err := printer.NewPrinter(cliContext).Writer.Write(notebookList, os.Stdout)
 	if err != nil {
 		log.Logger.ILog.Warn("issue Printing the data", "function", "ListNotebooks", "error", err.Error())
+		err = fmt.Errorf("printer: %w", err)
 	}
 
-	return fmt.Errorf("printer: %w", err)
+	return err
 }
 
 func actionListEntries(cliContext *cli.Context) error {
@@ -34,9 +35,10 @@ func actionListEntries(cliContext *cli.Context) error {
 	err := printer.NewPrinter(cliContext).Writer.Write(notebook, os.Stdout)
 	if err != nil {
 		log.Logger.ILog.Warn("issue Printing the data", "function", "ListEntries", "error", err.Error())
+		err = fmt.Errorf("printer: %w", err)
 	}
 
-	return fmt.Errorf("printer: %w", err)
+	return err
 }
 
 func actionListGoals(cliContext *cli.Context) error {
@@ -45,7 +47,8 @@ func actionListGoals(cliContext *cli.Context) error {
 	err := printer.NewPrinter(cliContext).Writer.Write(goals, os.Stdout)
 	if err != nil {
 		log.Logger.ILog.Warn("issue Printing the data", "function", "ListGoals", "error", err.Error())
+		err = fmt.Errorf("printer: %w", err)
 	}
 
-	return fmt.Errorf("printer: %w", err)
+	return err
 }
