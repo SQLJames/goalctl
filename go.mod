@@ -13,6 +13,7 @@ require (
 	github.com/urfave/cli/v2 v2.11.1
 	gopkg.in/yaml.v3 v3.0.1
 	k8s.io/klog/v2 v2.70.1
+	modernc.org/sqlite v1.18.2
 )
 
 require (
@@ -20,7 +21,7 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/kr/pretty v0.1.0 // indirect
+	github.com/kr/pretty v0.2.1 // indirect
 	github.com/mattn/go-isatty v0.0.16 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
@@ -31,5 +32,4 @@ require (
 	modernc.org/libc v1.18.0 // indirect
 	modernc.org/mathutil v1.5.0 // indirect
 	modernc.org/memory v1.3.0 // indirect
-	modernc.org/sqlite v1.18.2 // indirect
 )
