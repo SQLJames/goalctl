@@ -2,6 +2,8 @@ package sqlite
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/sqljames/goalctl/pkg/log"
@@ -21,12 +23,17 @@ func (sl Repository) CreateNotebook(ctx context.Context, name string) resources.
 }
 
 func (sl Repository) GetNotebookIDByName(ctx context.Context, name string) int64 {
-	id, err := sl.queries.GetNotebookIDByName(ctx, name)
-	if err != nil {
+	notebookID, err := sl.queries.GetNotebookIDByName(ctx, name)
+
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		log.Logger.ILog.Fatal(err, "error running query")
 	}
 
-	return id
+	if errors.Is(err, sql.ErrNoRows) {
+		notebookID = 0
+	}
+
+	return notebookID
 }
 
 func (sl Repository) GetNotebook(ctx context.Context, name string) (notebook resources.Notebook) {
@@ -49,6 +56,6 @@ func (sl Repository) GetNotebooks(ctx context.Context) []*resources.Notebook {
 	for index, sqlcEntry := range sqlcEntries {
 		notebooks[index] = &resources.Notebook{Notebookid: sqlcEntry.Notebookid, Name: sqlcEntry.Name}
 	}
-	
+
 	return notebooks
 }
