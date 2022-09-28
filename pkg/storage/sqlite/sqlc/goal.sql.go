@@ -66,6 +66,31 @@ func (q *Queries) CreateGoal(ctx context.Context, arg CreateGoalParams) (*Goal, 
 	return &i, err
 }
 
+const getGoalByGoalID = `-- name: GetGoalByGoalID :one
+SELECT
+  goalid, duedate, author, createddate, goal, details, priority, status
+FROM
+  Goal
+WHERE
+  GoalID = ?
+`
+
+func (q *Queries) GetGoalByGoalID(ctx context.Context, goalid int64) (*Goal, error) {
+	row := q.db.QueryRowContext(ctx, getGoalByGoalID, goalid)
+	var i Goal
+	err := row.Scan(
+		&i.Goalid,
+		&i.Duedate,
+		&i.Author,
+		&i.Createddate,
+		&i.Goal,
+		&i.Details,
+		&i.Priority,
+		&i.Status,
+	)
+	return &i, err
+}
+
 const getGoals = `-- name: GetGoals :many
 SELECT
   goalid, duedate, author, createddate, goal, details, priority, status
@@ -105,4 +130,36 @@ func (q *Queries) GetGoals(ctx context.Context) ([]*Goal, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateGoal = `-- name: UpdateGoal :exec
+UPDATE Goal
+SET duedate = ?,
+    goal = ?, 
+    details = ?, 
+    priority = ?,
+    status = ?
+WHERE 
+  GoalID = ?
+`
+
+type UpdateGoalParams struct {
+	Duedate  sql.NullString `json:"duedate"`
+	Goal     string         `json:"goal"`
+	Details  string         `json:"details"`
+	Priority int64          `json:"priority"`
+	Status   string         `json:"status"`
+	Goalid   int64          `json:"goalid"`
+}
+
+func (q *Queries) UpdateGoal(ctx context.Context, arg UpdateGoalParams) error {
+	_, err := q.db.ExecContext(ctx, updateGoal,
+		arg.Duedate,
+		arg.Goal,
+		arg.Details,
+		arg.Priority,
+		arg.Status,
+		arg.Goalid,
+	)
+	return err
 }

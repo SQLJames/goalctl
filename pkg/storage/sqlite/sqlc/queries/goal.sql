@@ -28,3 +28,22 @@ VALUES(
   ?
   )
   RETURNING *;
+
+-- name: GetGoalByGoalID :one
+SELECT
+  *
+FROM
+  Goal
+WHERE
+  GoalID = ?;
+
+
+-- name: UpdateGoal :exec
+UPDATE Goal
+SET duedate = ?,
+    goal = ?, 
+    details = ?, 
+    priority = ?,
+    status = ?
+WHERE 
+  GoalID = ?;

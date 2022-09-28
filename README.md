@@ -20,9 +20,9 @@ command on the folder `pkg\storage\sqlite\sqlc`
 
 # Example
 ```
-.\bin\goalctl.exe create notebook -name "work"
-.\bin\goalctl.exe create entry -entry "Entry data for the log" -name "work" -tag "1" -tag "2"  
-.\bin\goalctl.exe create goal --duedate "2023-08-13" --entry "Celebrate" --name "birthday2" --priority 1
-.\bin\goalctl.exe link -g 1 -le 2
-.\bin\goalctl.exe list goal
+./bin/goalctl-linux-amd64 create notebook -name "work"
+./bin/goalctl-linux-amd64 create entry -entry "Entry data for the log" -name "work" -tag "1" -tag "2"  
+./bin/goalctl-linux-amd64 create goal --duedate "2023-08-13" --entry "Celebrate" --name "birthday2" --priority 1
+./bin/goalctl-linux-amd64 link -g 1 -le 2
+./bin/goalctl-linux-amd64 list goal
 ```
