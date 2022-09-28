@@ -87,3 +87,8 @@ func UpdateGoal(arg *resources.Goal) {
 	storagelayer := storage.NewVault()
 	storagelayer.Storage.UpdateGoal(context.TODO(), arg)
 }
+
+func UpdateLogEntry(arg *resources.LogEntry) {
+	storagelayer := storage.NewVault()
+	storagelayer.Storage.UpdateLogEntry(context.TODO(), arg)
+}

@@ -15,6 +15,7 @@ const (
 	LogEntryIDFlagName   string = "logentryid"
 	GoalStatusFlagName   string = "status"
 	ConfirmFlagName      string = "confirm"
+	NotebookIDFlagName   string = "notebookid"
 )
 
 var (

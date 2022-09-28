@@ -204,3 +204,29 @@ func (q *Queries) GetLogEntryByNotebook(ctx context.Context, name string) ([]*Lo
 	}
 	return items, nil
 }
+
+const updateLogEntry = `-- name: UpdateLogEntry :exec
+UPDATE LogEntry
+SET tags = ?,
+    notebookid = ?, 
+    note = ?
+WHERE 
+  LogEntryID = ?
+`
+
+type UpdateLogEntryParams struct {
+	Tags       sql.NullString `json:"tags"`
+	Notebookid int64          `json:"notebookid"`
+	Note       string         `json:"note"`
+	Logentryid int64          `json:"logentryid"`
+}
+
+func (q *Queries) UpdateLogEntry(ctx context.Context, arg UpdateLogEntryParams) error {
+	_, err := q.db.ExecContext(ctx, updateLogEntry,
+		arg.Tags,
+		arg.Notebookid,
+		arg.Note,
+		arg.Logentryid,
+	)
+	return err
+}

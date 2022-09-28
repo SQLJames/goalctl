@@ -55,3 +55,12 @@ FROM
   LogEntry
 ORDER BY
   LogEntryID;
+
+
+-- name: UpdateLogEntry :exec
+UPDATE LogEntry
+SET tags = ?,
+    notebookid = ?, 
+    note = ?
+WHERE 
+  LogEntryID = ?;

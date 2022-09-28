@@ -23,10 +23,6 @@ For Release generation, run `mage release`
 - Allow users to retrieve past due goals
 
 ### Log entries
-- Allow users to migrate an entry to a new notebook
-- Allow users to update the log entry 
-- Allow users to add tags
-- Allow users to remove tags
 - Allow users to delete a log entry 
    
 ### Filtering

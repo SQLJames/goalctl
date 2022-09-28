@@ -77,3 +77,19 @@ func (sl Repository) GetLogEntryByLogEntryID(ctx context.Context, logentryid int
 
 	return convertSqlcLogEntryToResource(sqlcLogEntry)
 }
+
+func (sl Repository) UpdateLogEntry(ctx context.Context, arg *resources.LogEntry) {
+	err := sl.queries.UpdateLogEntry(ctx, sqlc.UpdateLogEntryParams{
+		Tags: sql.NullString{
+			String: convertSliceToString(arg.Tags),
+			Valid:  true,
+		},
+		Note:       arg.Entry,
+		Notebookid: arg.Notebookid,
+		Logentryid: arg.LogEntryID,
+	})
+
+	if err != nil {
+		log.Logger.ILog.Fatal(err, "error running query")
+	}
+}
