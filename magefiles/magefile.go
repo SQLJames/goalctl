@@ -113,7 +113,7 @@ func Build() error {
 func Release() {
 	var waitGroup sync.WaitGroup
 
-	mg.SerialDeps(Vendor, ensureDirs)
+	mg.SerialDeps(Vendor, ensureDirs, Clean)
 	waitGroup.Add(len(targets))
 
 	cgoEnabled := os.Getenv("CGO_ENABLED") == "1"

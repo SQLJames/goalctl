@@ -91,6 +91,9 @@ func generateChecksum(filePath string) {
 
 func writeChecksum(filePath, filename, checksumName, checksum string) {
 	sanitizedInput := filepath.Clean(filePath)
+	
 	err := os.WriteFile(path.Join(sanitizedInput, fmt.Sprintf("%s.%s.txt", filename, checksumName)), []byte(checksum), filePermissions)
-	log.Fatal(err)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
