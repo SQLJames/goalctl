@@ -1,7 +1,8 @@
 package modify
 
 import (
-	"github.com/sqljames/goalctl/pkg/commands/modify/actions"
+	"github.com/sqljames/goalctl/pkg/commands/modify/actions/entry"
+	"github.com/sqljames/goalctl/pkg/commands/modify/actions/goal"
 	"github.com/urfave/cli/v2"
 )
 
@@ -11,7 +12,8 @@ func New() *cli.Command {
 		Usage:   "Allows users to modify objects",
 		Aliases: []string{"m"},
 		Subcommands: []*cli.Command{
-			actions.ModifyGoal(),
+			goal.ModifyGoal(),
+			entry.ModifyEntry(),
 		},
 	}
 }

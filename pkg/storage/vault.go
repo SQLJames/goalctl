@@ -23,6 +23,7 @@ type LogEntry interface {
 	GetLogEntries(ctx context.Context) []*resources.LogEntry
 	GetLogEntryByCreatedDate(ctx context.Context, createddate string) []*resources.LogEntry
 	GetLogEntryByLogEntryID(ctx context.Context, logentryid int64) *resources.LogEntry
+	UpdateLogEntry(ctx context.Context, arg *resources.LogEntry)
 }
 type Goal interface {
 	CreateGoal(ctx context.Context, arg *resources.Goal) *resources.Goal
