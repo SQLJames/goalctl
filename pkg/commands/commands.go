@@ -5,6 +5,7 @@ import (
 	"github.com/sqljames/goalctl/pkg/commands/export"
 	"github.com/sqljames/goalctl/pkg/commands/link"
 	"github.com/sqljames/goalctl/pkg/commands/list"
+	"github.com/sqljames/goalctl/pkg/commands/modify"
 	"github.com/sqljames/goalctl/pkg/flags"
 	"github.com/sqljames/goalctl/pkg/info"
 	"github.com/sqljames/goalctl/pkg/log"
@@ -30,6 +31,7 @@ func NewApp() *cli.App {
 			list.New(),
 			export.New(),
 			link.New(),
+			modify.New(),
 		},
 	}
 
@@ -62,7 +64,7 @@ func instrumentLoggingFlags(cliContext *cli.Context) error {
 
 	// The second config map will not overwrite the first
 	second := altsrc.InitInputSourceWithContext(cliContext.App.Flags, altsrc.NewYamlSourceFromFlagFunc("global-config"))
-	
+
 	err = second(cliContext)
 	if err != nil {
 		log.Logger.ILog.Error(err, err.Error())

@@ -28,7 +28,7 @@ func GetGoalDetails() (details []resources.GoalDetail) {
 	allAssociations := storagelayer.Storage.GetAssociations(context.TODO())
 
 	for _, goal := range goals {
-		var associations = lookupAssociations(allAssociations,goal.GoalID)
+		var associations = lookupAssociations(allAssociations, goal.GoalID)
 
 		var logEntries = make([]*resources.LogEntry, len(associations))
 
@@ -75,4 +75,15 @@ func lookupAssociations(entries []*resources.Association, goalID int) (associati
 	}
 
 	return associations
+}
+
+func GetGoalByGoalID(goalID int) *resources.Goal {
+	storagelayer := storage.NewVault()
+
+	return storagelayer.Storage.GetGoalByGoalID(context.TODO(), goalID)
+}
+
+func UpdateGoal(arg *resources.Goal) {
+	storagelayer := storage.NewVault()
+	storagelayer.Storage.UpdateGoal(context.TODO(), arg)
 }

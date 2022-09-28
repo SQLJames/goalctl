@@ -3,6 +3,8 @@ package sqlite
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"fmt"
 
 	"github.com/sqljames/goalctl/pkg/log"
 	"github.com/sqljames/goalctl/pkg/storage/resources"
@@ -41,4 +43,36 @@ func (sl Repository) GetGoals(ctx context.Context) []*resources.Goal {
 	}
 
 	return convertSqlcGoalsToResource(sqlcGoals)
+}
+
+func (sl Repository) GetGoalByGoalID(ctx context.Context, goalID int) *resources.Goal {
+	sqlcGoal, err := sl.queries.GetGoalByGoalID(ctx, int64(goalID))
+
+	if err != nil && errors.Is(err, sql.ErrNoRows) {
+		log.Logger.ILog.Fatal(err, fmt.Sprintf("The Goal with the ID of %d, does not exist.", goalID))
+	}
+
+	if err != nil {
+		log.Logger.ILog.Fatal(err, "error running query")
+	}
+
+	return convertSqlcGoalToResource(sqlcGoal)
+}
+
+func (sl Repository) UpdateGoal(ctx context.Context, arg *resources.Goal) {
+	err := sl.queries.UpdateGoal(ctx, sqlc.UpdateGoalParams{
+		Goalid: int64(arg.GoalID),
+		Duedate: sql.NullString{
+			String: arg.Deadline,
+			Valid:  true,
+		},
+		Goal:     arg.Goal,
+		Details:  arg.Details,
+		Priority: int64(arg.Priority),
+		Status:   arg.Status,
+	})
+
+	if err != nil {
+		log.Logger.ILog.Fatal(err, "error running query")
+	}
 }

@@ -19,12 +19,7 @@ For Release generation, run `mage release`
 ## Roadmap
 ### Goals
 - Allow users to delete associations 
-- Allow users to change priority of a goal
-- Allow users to change dueDate of a goal
-- Allow users to change the name of a goal
 - Allow users to delete a goal
-- Allow users to change the status of a goal
-- Allow users to change teh priority of a goal
 - Allow users to retrieve past due goals
 
 ### Log entries

@@ -13,6 +13,8 @@ const (
 	PriorityFlagName     string = "priority"
 	GoalIDFlagName       string = "goalid"
 	LogEntryIDFlagName   string = "logentryid"
+	GoalStatusFlagName   string = "status"
+	ConfirmFlagName      string = "confirm"
 )
 
 var (
@@ -76,5 +78,17 @@ var (
 		Usage:    "ID of the log entry that you want to link with a goal id",
 		Required: true,
 		Aliases:  []string{"le"},
+	}
+	GoalStatusFlag *cli.StringSliceFlag = &cli.StringSliceFlag{
+		Name:     GoalStatusFlagName,
+		Usage:    "The status you would like to assign to the goal",
+		Required: false,
+		//Aliases:  []string{"le"},
+	}
+	ConfirmFlag *cli.BoolFlag = &cli.BoolFlag{
+		Name:     ConfirmFlagName,
+		Usage:    "Flag used to confirm that you want to make the modification",
+		Required: false,
+		Value:    false,
 	}
 )
