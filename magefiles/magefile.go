@@ -69,7 +69,7 @@ func ensureDirs() error {
 			}
 		}
 	}
-	
+
 	return nil
 }
 
@@ -148,6 +148,7 @@ func Release() {
 	}
 
 	waitGroup.Wait()
+	generateChecksum(binaryPath)
 }
 
 // Scan runs various static checkers to ensure you minimize security holes and have good formatting.
