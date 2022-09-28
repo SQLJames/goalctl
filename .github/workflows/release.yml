@@ -34,6 +34,5 @@ jobs:
         with:
           repo_token: "${{ secrets.PAT }}"
           prerelease: true
-          automatic_release_tag: "latest"
           files: |
             ./bin/*
