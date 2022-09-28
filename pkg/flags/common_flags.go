@@ -13,7 +13,8 @@ const (
 	PriorityFlagName     string = "priority"
 	GoalIDFlagName       string = "goalid"
 	LogEntryIDFlagName   string = "logentryid"
-	GoalStatusFlagName   string = "Status"
+	GoalStatusFlagName   string = "status"
+	ConfirmFlagName      string = "confirm"
 )
 
 var (
@@ -83,5 +84,11 @@ var (
 		Usage:    "The status you would like to assign to the goal",
 		Required: false,
 		//Aliases:  []string{"le"},
+	}
+	ConfirmFlag *cli.BoolFlag = &cli.BoolFlag{
+		Name:     ConfirmFlagName,
+		Usage:    "Flag used to confirm that you want to make the modification",
+		Required: false,
+		Value:    false,
 	}
 )
