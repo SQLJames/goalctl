@@ -24,15 +24,15 @@ type Hash struct {
 var (
 	filePermissions fs.FileMode = 0o666
 	/* #nosec G401 */
-	hashes                      = []Hash{
+	hashes = []Hash{
 		{
 			name:       "md5",
-			newHash:    md5.New(),//#nosec G401 -- used to generate file checksums on build
+			newHash:    md5.New(), //#nosec G401 -- used to generate file checksums on build
 			byteLength: 16,
 		},
 		{
 			name:       "sha1",
-			newHash:    sha1.New(),//#nosec G401 -- used to generate file checksums on build
+			newHash:    sha1.New(), //#nosec G401 -- used to generate file checksums on build
 			byteLength: 20,
 		},
 		{
@@ -43,14 +43,19 @@ var (
 	}
 )
 
-func (h *Hash) getFileChecksums(filePath string) (string, error) {
-	var returnHashString string
+func (h *Hash) getFileChecksums(filePath string) (returnHashString string, err error) {
+	sanitizedInput := filepath.Clean(filePath)
 
-	file, err := os.Open(filePath)
+	file, err := os.Open(sanitizedInput)
 	if err != nil {
 		return returnHashString, fmt.Errorf("os.Open: %w", err)
 	}
-	defer file.Close()
+
+	defer func(f *os.File) {
+		if err := f.Close(); err != nil {
+			log.Println("issue closing file", "fileName", file.Name(), "error", err.Error())
+		}
+	}(file)
 
 	if _, err := io.Copy(h.newHash, file); err != nil {
 		return returnHashString, fmt.Errorf("io.Copy: %w", err)
@@ -86,5 +91,6 @@ func generateChecksum(filePath string) {
 
 func writeChecksum(filePath, filename, checksumName, checksum string) {
 	sanitizedInput := filepath.Clean(filePath)
-	os.WriteFile(path.Join(sanitizedInput, fmt.Sprintf("%s.%s.txt", filename, checksumName)), []byte(checksum), filePermissions)
+	err := os.WriteFile(path.Join(sanitizedInput, fmt.Sprintf("%s.%s.txt", filename, checksumName)), []byte(checksum), filePermissions)
+	log.Fatal(err)
 }
