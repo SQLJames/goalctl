@@ -16,6 +16,7 @@ const (
 	GoalStatusFlagName   string = "status"
 	ConfirmFlagName      string = "confirm"
 	NotebookIDFlagName   string = "notebookid"
+	PastDueFlagName   string = "pastdue"
 )
 
 var (
@@ -92,4 +93,5 @@ var (
 		Required: false,
 		Value:    false,
 	}
+
 )
