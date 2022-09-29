@@ -48,6 +48,7 @@ func listGoalEntries() *cli.Command {
 		Action: actionListGoals,
 		Flags: []cli.Flag{
 			flags.OutputFormatFlag,
+			PastDueFlag,
 		},
 	}
 }

@@ -20,7 +20,7 @@ func GetEntriesForNotebook(notebookName string) (entries []*resources.LogEntry) 
 	return storagelayer.Storage.GetLogEntryByNotebook(context.TODO(), notebookName)
 }
 
-func GetGoalDetails() (details []resources.GoalDetail) {
+func GetGoalDetails() (details []*resources.GoalDetail) {
 	storagelayer := storage.NewVault()
 	goals := storagelayer.Storage.GetGoals(context.TODO())
 	journal := resources.Journal{}
@@ -36,7 +36,7 @@ func GetGoalDetails() (details []resources.GoalDetail) {
 			logEntries[index] = lookupLogEntry(allLogEntries, association.LogEntryID)
 		}
 
-		journal.GoalDetails = append(journal.GoalDetails, resources.GoalDetail{
+		journal.GoalDetails = append(journal.GoalDetails, &resources.GoalDetail{
 			Goal:    *goal,
 			Entries: logEntries,
 		})

@@ -5,7 +5,7 @@ type Book struct {
 }
 type Journal struct {
 	NoteBooks   []*Notebook   `json:"notebooks,omitempty" toml:"notebooks,omitempty" xml:"notebooks,omitempty" yaml:"notebooks,omitempty"`
-	GoalDetails []GoalDetail `json:"goalDetails,omitempty" toml:"goalDetails,omitempty" xml:"goalDetails,omitempty" yaml:"goalDetails,omitempty"`
+	GoalDetails []*GoalDetail `json:"goalDetails,omitempty" toml:"goalDetails,omitempty" xml:"goalDetails,omitempty" yaml:"goalDetails,omitempty"`
 }
 
 type GoalDetail struct {
