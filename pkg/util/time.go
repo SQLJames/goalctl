@@ -12,6 +12,7 @@ func StringToTime(inputTime string) (time.Time, error) {
 	if err != nil {
 		log.Logger.ILog.Error(err, "date is not in the correct format", "inputDate", inputTime)
 	}
+	
 	return parsedTime, fmt.Errorf("StringToTime: %w", err)
 }
 
