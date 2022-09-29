@@ -3,7 +3,6 @@ package goal
 import (
 	"fmt"
 	"os"
-	"time"
 
 	common "github.com/sqljames/goalctl/pkg/actions"
 	"github.com/sqljames/goalctl/pkg/commands/modify/actions"
@@ -11,6 +10,7 @@ import (
 	"github.com/sqljames/goalctl/pkg/log"
 	"github.com/sqljames/goalctl/pkg/printer"
 	"github.com/sqljames/goalctl/pkg/storage/resources"
+	"github.com/sqljames/goalctl/pkg/util"
 	"github.com/urfave/cli/v2"
 )
 
@@ -38,7 +38,7 @@ func actionModifyGoal(cliContext *cli.Context) error {
 	goal := common.GetGoalByGoalID(cliContext.Int(flags.GoalIDFlagName))
 
 	if cliContext.IsSet(flags.DueDateFlagName) {
-		goal.Deadline = cliContext.Timestamp(flags.DueDateFlagName).UTC().Format(time.RFC3339)
+		goal.Deadline = util.TimeToString(cliContext.Timestamp(flags.DueDateFlagName))
 	}
 
 	if cliContext.IsSet(flags.NameFlagName) {

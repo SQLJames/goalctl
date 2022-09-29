@@ -10,6 +10,7 @@ import (
 	"github.com/sqljames/goalctl/pkg/log"
 	"github.com/sqljames/goalctl/pkg/printer"
 	"github.com/sqljames/goalctl/pkg/storage/resources"
+	"github.com/sqljames/goalctl/pkg/util"
 	"github.com/urfave/cli/v2"
 )
 
@@ -67,7 +68,7 @@ func actionListGoals(cliContext *cli.Context) error {
 }
 
 func expired(inputDate *string) bool {
-	parsedTime, err := time.Parse(time.RFC3339, *inputDate)
+	parsedTime, err := util.StringToTime(*inputDate)
 	if err != nil {
 		log.Logger.ILog.Error(err, "date stored in database is not correct", "DateInDatabase", inputDate)
 
