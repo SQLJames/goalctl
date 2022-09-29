@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"time"
 
 	"github.com/sqljames/goalctl/pkg/log"
+	"github.com/sqljames/goalctl/pkg/util"
 
 	"github.com/sqljames/goalctl/pkg/flags"
 	"github.com/sqljames/goalctl/pkg/printer"
@@ -35,7 +35,7 @@ func actionCreateNotebook(cliContext *cli.Context) error {
 		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateNotebook", "error", err.Error())
 		err = fmt.Errorf("printer: %w", err)
 	}
-	
+
 	return err
 }
 
@@ -58,7 +58,7 @@ func actionCreateGoal(cliContext *cli.Context) error {
 	storagelayer := storage.NewVault()
 	goal := resources.NewGoal(
 		cliContext.String(flags.NameFlagName),
-		cliContext.Timestamp(flags.DueDateFlagName).UTC().Format(time.RFC3339),
+		util.TimeToString(cliContext.Timestamp(flags.DueDateFlagName)),
 		cliContext.String(flags.EntryTextFlagName),
 		cliContext.Int(flags.PriorityFlagName))
 
