@@ -23,6 +23,7 @@ func exportNotebook() *cli.Command {
 		Action: actionExportJournal,
 		Flags: []cli.Flag{
 			flags.OutputFormatFlag,
+			flags.FilterFlag,
 		},
 	}
 }

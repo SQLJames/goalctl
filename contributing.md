@@ -28,6 +28,7 @@ For Release generation, run `mage release`
 ### Filtering
 - Allow users to filter items that are returned under the list command
   - --filter [logentry/goal].[element_to_filter](>,<,=)[value]
+  - ./bin/goalctl-linux-amd64 export journal --out json | gojq '.journal.goalDetails[].goalEntry | select(.status == "Active")'
 
 ### Import functionality
 Allow users to import journal entries to migrate to the platform

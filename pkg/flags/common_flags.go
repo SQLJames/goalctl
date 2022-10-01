@@ -16,7 +16,8 @@ const (
 	GoalStatusFlagName   string = "status"
 	ConfirmFlagName      string = "confirm"
 	NotebookIDFlagName   string = "notebookid"
-	PastDueFlagName   string = "pastdue"
+	PastDueFlagName      string = "pastdue"
+	FilterFlagName       string = "filter"
 )
 
 var (
@@ -93,5 +94,9 @@ var (
 		Required: false,
 		Value:    false,
 	}
-
+	FilterFlag *cli.StringFlag = &cli.StringFlag{
+		Name:     FilterFlagName,
+		Usage:    "jq style filter statement you can apply to the output",
+		Required: false,
+	}
 )
