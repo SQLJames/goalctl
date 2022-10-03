@@ -3,9 +3,8 @@
 SELECT
   *
 FROM
-  Goal
-ORDER BY
-  GoalID;
+  Goal;
+
 
 
 -- name: CreateGoal :one
@@ -28,14 +27,6 @@ VALUES(
   ?
   )
   RETURNING *;
-
--- name: GetGoalByGoalID :one
-SELECT
-  *
-FROM
-  Goal
-WHERE
-  GoalID = ?;
 
 
 -- name: UpdateGoal :exec

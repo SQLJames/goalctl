@@ -66,38 +66,11 @@ func (q *Queries) CreateGoal(ctx context.Context, arg CreateGoalParams) (*Goal, 
 	return &i, err
 }
 
-const getGoalByGoalID = `-- name: GetGoalByGoalID :one
-SELECT
-  goalid, duedate, author, createddate, goal, details, priority, status
-FROM
-  Goal
-WHERE
-  GoalID = ?
-`
-
-func (q *Queries) GetGoalByGoalID(ctx context.Context, goalid int64) (*Goal, error) {
-	row := q.db.QueryRowContext(ctx, getGoalByGoalID, goalid)
-	var i Goal
-	err := row.Scan(
-		&i.Goalid,
-		&i.Duedate,
-		&i.Author,
-		&i.Createddate,
-		&i.Goal,
-		&i.Details,
-		&i.Priority,
-		&i.Status,
-	)
-	return &i, err
-}
-
 const getGoals = `-- name: GetGoals :many
 SELECT
   goalid, duedate, author, createddate, goal, details, priority, status
 FROM
   Goal
-ORDER BY
-  GoalID
 `
 
 func (q *Queries) GetGoals(ctx context.Context) ([]*Goal, error) {

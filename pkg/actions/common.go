@@ -22,7 +22,7 @@ func GetEntriesForNotebook(notebookName string) (entries []*resources.LogEntry) 
 
 func GetGoalDetails() (details []*resources.GoalDetail) {
 	storagelayer := storage.NewVault()
-	goals := storagelayer.Storage.GetGoals(context.TODO())
+	goals := storagelayer.Storage.GetGoals(context.TODO(), nil)
 	journal := resources.Journal{}
 	allLogEntries := storagelayer.Storage.GetLogEntries(context.TODO())
 	allAssociations := storagelayer.Storage.GetAssociations(context.TODO())
@@ -79,8 +79,9 @@ func lookupAssociations(entries []*resources.Association, goalID int) (associati
 
 func GetGoalByGoalID(goalID int) *resources.Goal {
 	storagelayer := storage.NewVault()
+	goals := storagelayer.Storage.GetGoals(context.TODO(), &resources.Goal{GoalID: goalID})
 
-	return storagelayer.Storage.GetGoalByGoalID(context.TODO(), goalID)
+	return goals[0]
 }
 
 func UpdateGoal(arg *resources.Goal) {

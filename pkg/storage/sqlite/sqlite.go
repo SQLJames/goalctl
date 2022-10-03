@@ -29,6 +29,7 @@ type database struct {
 
 type Repository struct {
 	queries sqlc.Queries
+	db      sql.DB
 }
 
 //go:embed sqlc/schema/GoalToLogEntry.sql
@@ -67,10 +68,7 @@ func NewSQLiteStorage() (storage *Repository) {
 	database := newDB()
 	CreateSchema := !util.FileExists(database.getDatabasePath())
 
-	sqlDB, err := sql.Open("sqlite", fmt.Sprintf("%s?_pragma=busy_timeout(%d000)&_pragma=journal_mode(WAL)", database.getDatabasePath(), timeoutInSeconds))
-	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, "error opening database")
-	}
+	sqlDB := openDB(database)
 
 	if CreateSchema {
 		// create tables.
@@ -81,5 +79,15 @@ func NewSQLiteStorage() (storage *Repository) {
 		}
 	}
 
-	return &Repository{queries: *sqlc.New(sqlDB)}
+	return &Repository{queries: *sqlc.New(sqlDB),
+		db: *sqlDB}
+}
+
+func openDB(database *database) *sql.DB {
+	sqlDB, err := sql.Open("sqlite", fmt.Sprintf("%s?_pragma=busy_timeout(%d000)&_pragma=journal_mode(WAL)", database.getDatabasePath(), timeoutInSeconds))
+	if err != nil {
+		jlogr.Logger.ILog.Fatal(err, "error opening database")
+	}
+
+	return sqlDB
 }
