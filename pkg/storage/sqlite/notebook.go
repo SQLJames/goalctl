@@ -30,7 +30,7 @@ func (sl Repository) GetNotebookIDByName(ctx context.Context, name string) int64
 	}
 
 	if errors.Is(err, sql.ErrNoRows) {
-		notebookID = 0
+		notebookID = -1
 	}
 
 	return notebookID

@@ -66,6 +66,15 @@ github.com/urfave/cli/v2/altsrc
 # github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673
 ## explicit
 github.com/xrash/smetrics
+# github.com/yiplee/nap v1.0.1
+## explicit; go 1.18
+github.com/yiplee/nap
+# github.com/yiplee/sqlc v1.0.2
+## explicit; go 1.13
+github.com/yiplee/sqlc
+# golang.org/x/sync v0.0.0-20220513210516-0976fa681c29
+## explicit
+golang.org/x/sync/errgroup
 # golang.org/x/sys v0.0.0-20220829200755-d48e67d00261
 ## explicit; go 1.17
 golang.org/x/sys/internal/unsafeheader

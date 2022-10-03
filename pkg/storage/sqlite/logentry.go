@@ -20,7 +20,7 @@ func (sl Repository) GetLogEntries(ctx context.Context) (logEntries []*resources
 
 func (sl Repository) CreateLogEntry(ctx context.Context, arg *resources.LogEntry, notebookName string) *resources.LogEntry {
 	NotebookID := sl.GetNotebookIDByName(ctx, notebookName)
-	if NotebookID == 0 {
+	if NotebookID == -1 {
 		log.Logger.ILog.Warn("No results for notebook, Attempting to create a new notebook")
 
 		notebook := sl.CreateNotebook(ctx, notebookName)

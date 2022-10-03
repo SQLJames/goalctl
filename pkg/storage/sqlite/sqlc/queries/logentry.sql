@@ -52,9 +52,8 @@ VALUES(
 SELECT
   *
 FROM
-  LogEntry
-ORDER BY
-  LogEntryID;
+  LogEntry;
+
 
 
 -- name: UpdateLogEntry :exec

@@ -3,6 +3,7 @@ package actions
 import (
 	"context"
 
+	"github.com/sqljames/goalctl/pkg/log"
 	"github.com/sqljames/goalctl/pkg/storage"
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 )
@@ -16,8 +17,13 @@ func GetNotebooks() (notebookList []*resources.Notebook) {
 
 func GetEntriesForNotebook(notebookName string) (entries []*resources.LogEntry) {
 	storagelayer := storage.NewVault()
-
-	return storagelayer.Storage.GetLogEntryByNotebook(context.TODO(), notebookName)
+	notebookid := storagelayer.Storage.GetNotebookIDByName(context.TODO(), notebookName)
+	if notebookid == -1 {
+		log.Logger.ILog.Warn("Notebook doesn't exist")
+		return entries
+	}
+	//return storagelayer.Storage.GetLogEntryByNotebook(context.TODO(), notebookName)
+	return storagelayer.Storage.FilterLogEntries(context.TODO(), &resources.LogEntry{Notebookid: notebookid})
 }
 
 func GetGoalDetails() (details []*resources.GoalDetail) {

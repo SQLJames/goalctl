@@ -59,8 +59,6 @@ SELECT
   logentryid, author, tags, note, createddate, notebookid
 FROM
   LogEntry
-ORDER BY
-  LogEntryID
 `
 
 func (q *Queries) GetLogEntries(ctx context.Context) ([]*LogEntry, error) {
