@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/sqljames/goalctl/pkg/log"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 type XMLPrinter struct {
@@ -24,7 +24,7 @@ func (yp *XMLPrinter) Write(data interface{}, destination io.Writer) (err error)
 
 	_, err = destination.Write([]byte("\n"))
 	if err != nil {
-		log.Logger.ILog.Warn("issue writing data out to destination.", "error", err.Error())
+		jlogr.Logger.ILog.Warn("issue writing data out to destination.", "error", err.Error())
 
 		return fmt.Errorf("xml: %w", err)
 	}

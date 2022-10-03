@@ -5,7 +5,7 @@ import (
 	"io"
 
 	"github.com/pelletier/go-toml/v2"
-	"github.com/sqljames/goalctl/pkg/log"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 type TomlPrinter struct {
@@ -19,7 +19,7 @@ func (yp *TomlPrinter) Write(data interface{}, destination io.Writer) (err error
 
 	_, err = destination.Write(bytes)
 	if err != nil {
-		log.Logger.ILog.Warn("issue writing data out to destination.", "error", err.Error())
+		jlogr.Logger.ILog.Warn("issue writing data out to destination.", "error", err.Error())
 
 		return fmt.Errorf("toml: %w", err)
 	}

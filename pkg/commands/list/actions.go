@@ -7,10 +7,10 @@ import (
 
 	"github.com/sqljames/goalctl/pkg/actions"
 	"github.com/sqljames/goalctl/pkg/flags"
-	"github.com/sqljames/goalctl/pkg/log"
 	"github.com/sqljames/goalctl/pkg/printer"
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 	"github.com/sqljames/goalctl/pkg/util"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 	"github.com/urfave/cli/v2"
 )
 
@@ -19,7 +19,7 @@ func actionListNotebooks(cliContext *cli.Context) error {
 
 	err := printer.NewPrinter(cliContext).Writer.Write(notebookList, os.Stdout)
 	if err != nil {
-		log.Logger.ILog.Warn("issue Printing the data", "function", "ListNotebooks", "error", err.Error())
+		jlogr.Logger.ILog.Warn("issue Printing the data", "function", "ListNotebooks", "error", err.Error())
 		err = fmt.Errorf("printer: %w", err)
 	}
 
@@ -36,7 +36,7 @@ func actionListEntries(cliContext *cli.Context) error {
 
 	err := printer.NewPrinter(cliContext).Writer.Write(notebook, os.Stdout)
 	if err != nil {
-		log.Logger.ILog.Warn("issue Printing the data", "function", "ListEntries", "error", err.Error())
+		jlogr.Logger.ILog.Warn("issue Printing the data", "function", "ListEntries", "error", err.Error())
 		err = fmt.Errorf("printer: %w", err)
 	}
 
@@ -60,7 +60,7 @@ func actionListGoals(cliContext *cli.Context) error {
 
 	err := printer.NewPrinter(cliContext).Writer.Write(goals, os.Stdout)
 	if err != nil {
-		log.Logger.ILog.Warn("issue Printing the data", "function", "ListGoals", "error", err.Error())
+		jlogr.Logger.ILog.Warn("issue Printing the data", "function", "ListGoals", "error", err.Error())
 		err = fmt.Errorf("printer: %w", err)
 	}
 
@@ -70,7 +70,7 @@ func actionListGoals(cliContext *cli.Context) error {
 func expired(inputDate *string) bool {
 	parsedTime, err := util.StringToTime(*inputDate)
 	if err != nil {
-		log.Logger.ILog.Error(err, "date stored in database is not correct", "DateInDatabase", inputDate)
+		jlogr.Logger.ILog.Error(err, "date stored in database is not correct", "DateInDatabase", &inputDate)
 
 		return false
 	}

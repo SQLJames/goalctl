@@ -1,4 +1,4 @@
-package log
+package jlogr
 
 type Log struct {
 	ILog logger

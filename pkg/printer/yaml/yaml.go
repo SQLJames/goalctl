@@ -4,8 +4,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/sqljames/goalctl/pkg/log"
-
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 	"gopkg.in/yaml.v3"
 )
 
@@ -20,7 +19,7 @@ func (yp *YamlPrinter) Write(data interface{}, destination io.Writer) (err error
 
 	_, err = destination.Write(bytes)
 	if err != nil {
-		log.Logger.ILog.Warn("issue writing data out to destination.", "error", err.Error())
+		jlogr.Logger.ILog.Warn("issue writing data out to destination.", "error", err.Error())
 	}
 
 	return nil
