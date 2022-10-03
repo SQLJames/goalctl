@@ -1,13 +1,13 @@
-package log_test
+package jlogr_test
 
 import (
 	"testing"
 
-	"github.com/sqljames/goalctl/pkg/log"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 var (
-	benchmarkLogger = log.Logger.ILog
+	benchmarkLogger = jlogr.Logger.ILog
 )
 
 func BenchmarkInfoLogger(b *testing.B) {

@@ -5,9 +5,9 @@ import (
 	"os"
 
 	"github.com/sqljames/goalctl/pkg/actions"
-	"github.com/sqljames/goalctl/pkg/log"
 	"github.com/sqljames/goalctl/pkg/printer"
 	"github.com/sqljames/goalctl/pkg/storage/resources"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 	"github.com/urfave/cli/v2"
 )
 
@@ -21,7 +21,7 @@ func actionExportJournal(cliContext *cli.Context) error {
 
 		Allnotebooks[index].Entries = entries
 	}
-	
+
 	GoalDetails := actions.GetGoalDetails()
 
 	journal.NoteBooks = Allnotebooks
@@ -29,7 +29,7 @@ func actionExportJournal(cliContext *cli.Context) error {
 
 	err := printer.NewPrinter(cliContext).Writer.Write(resources.Book{Journal: journal}, os.Stdout)
 	if err != nil {
-		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateGoal", "error", err.Error())
+		jlogr.Logger.ILog.Warn("issue Printing the data", "function", "CreateGoal", "error", err.Error())
 		err = fmt.Errorf("printer: %w", err)
 	}
 

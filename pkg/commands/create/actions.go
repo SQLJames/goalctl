@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/sqljames/goalctl/pkg/log"
 	"github.com/sqljames/goalctl/pkg/util"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 
 	"github.com/sqljames/goalctl/pkg/flags"
 	"github.com/sqljames/goalctl/pkg/printer"
@@ -22,7 +22,7 @@ func (empty *emptryStringError) Error() string {
 }
 func actionCreateNotebook(cliContext *cli.Context) error {
 	if cliContext.String(flags.NameFlagName) == "" {
-		log.Logger.ILog.Error(&emptryStringError{}, "Error creating notebook", "function", "actionCreateNotebook")
+		jlogr.Logger.ILog.Error(&emptryStringError{}, "Error creating notebook", "function", "actionCreateNotebook")
 
 		return &emptryStringError{}
 	}
@@ -32,7 +32,7 @@ func actionCreateNotebook(cliContext *cli.Context) error {
 
 	err := printer.NewPrinter(cliContext).Writer.Write(row, os.Stdout)
 	if err != nil {
-		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateNotebook", "error", err.Error())
+		jlogr.Logger.ILog.Warn("issue Printing the data", "function", "CreateNotebook", "error", err.Error())
 		err = fmt.Errorf("printer: %w", err)
 	}
 
@@ -47,7 +47,7 @@ func actionCreateLogEntry(cliContext *cli.Context) error {
 
 	err := printer.NewPrinter(cliContext).Writer.Write(row, os.Stdout)
 	if err != nil {
-		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateLogEntry", "error", err.Error())
+		jlogr.Logger.ILog.Warn("issue Printing the data", "function", "CreateLogEntry", "error", err.Error())
 		err = fmt.Errorf("printer: %w", err)
 	}
 
@@ -66,7 +66,7 @@ func actionCreateGoal(cliContext *cli.Context) error {
 
 	err := printer.NewPrinter(cliContext).Writer.Write(row, os.Stdout)
 	if err != nil {
-		log.Logger.ILog.Warn("issue Printing the data", "function", "CreateGoal", "error", err.Error())
+		jlogr.Logger.ILog.Warn("issue Printing the data", "function", "CreateGoal", "error", err.Error())
 		err = fmt.Errorf("printer: %w", err)
 	}
 

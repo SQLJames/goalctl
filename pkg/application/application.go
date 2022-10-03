@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/sqljames/goalctl/pkg/commands"
-	"github.com/sqljames/goalctl/pkg/log"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 func Run() {
@@ -13,6 +13,6 @@ func Run() {
 
 	// Execute.
 	if err := cmd.Run(os.Args); err != nil {
-		log.Logger.ILog.Fatal(err, err.Error())
+		jlogr.Logger.ILog.Fatal(err, err.Error())
 	}
 }

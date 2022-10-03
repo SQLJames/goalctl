@@ -7,9 +7,9 @@ import (
 	common "github.com/sqljames/goalctl/pkg/actions"
 	"github.com/sqljames/goalctl/pkg/commands/modify/actions"
 	"github.com/sqljames/goalctl/pkg/flags"
-	"github.com/sqljames/goalctl/pkg/log"
 	"github.com/sqljames/goalctl/pkg/printer"
 	"github.com/sqljames/goalctl/pkg/storage/resources"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 	"github.com/urfave/cli/v2"
 )
 
@@ -48,7 +48,7 @@ func actionModifyEntry(cliContext *cli.Context) error {
 
 	err := printer.NewPrinter(cliContext).Writer.Write(logEntry, os.Stdout)
 	if err != nil {
-		log.Logger.ILog.Warn("issue Printing the data", "function", "ListEntries", "error", err.Error())
+		jlogr.Logger.ILog.Warn("issue Printing the data", "function", "ListEntries", "error", err.Error())
 		err = fmt.Errorf("printer: %w", err)
 	}
 
@@ -61,15 +61,15 @@ func validateParameters(cliContext *cli.Context) {
 	if !cliContext.IsSet(flags.EntryTextFlagName) &&
 		!cliContext.IsSet(flags.NotebookIDFlagName) &&
 		!cliContext.IsSet(flags.TagsFlagName) {
-		log.Logger.ILog.Fatal(&actions.NoModificationError{}, "please check the command or the help section to see what you can modify.")
+		jlogr.Logger.ILog.Fatal(&actions.NoModificationError{}, "please check the command or the help section to see what you can modify.")
 	}
 }
 
 func doWork(confirm bool, logEntry *resources.LogEntry) {
 	if confirm {
-		log.Logger.ILog.Warn("Updating")
+		jlogr.Logger.ILog.Warn("Updating")
 		common.UpdateLogEntry(logEntry)
 	} else {
-		log.Logger.ILog.Warn("Not updated, to replace the information, pass in the --confirm flag.")
+		jlogr.Logger.ILog.Warn("Not updated, to replace the information, pass in the --confirm flag.")
 	}
 }

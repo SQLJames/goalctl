@@ -5,11 +5,11 @@ import (
 	"strings"
 
 	"github.com/sqljames/goalctl/pkg/flags"
-	"github.com/sqljames/goalctl/pkg/log"
 	jsonprinter "github.com/sqljames/goalctl/pkg/printer/json"
 	tomlprinter "github.com/sqljames/goalctl/pkg/printer/toml"
 	xmlprinter "github.com/sqljames/goalctl/pkg/printer/xml"
 	yamlprinter "github.com/sqljames/goalctl/pkg/printer/yaml"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 	"github.com/urfave/cli/v2"
 )
 
@@ -28,19 +28,19 @@ func NewPrinter(cliContext *cli.Context) (printer Printer) {
 
 	switch format {
 	case SupportedFormats[0]:
-		log.Logger.ILog.Trace("Returning json printer")
+		jlogr.Logger.ILog.Trace("Returning json printer")
 
 		return Printer{Writer: &jsonprinter.JSONPrinter{}}
 	case SupportedFormats[1]:
-		log.Logger.ILog.Trace("Returning toml printer")
+		jlogr.Logger.ILog.Trace("Returning toml printer")
 
 		return Printer{Writer: &tomlprinter.TomlPrinter{}}
 	case SupportedFormats[2]:
-		log.Logger.ILog.Trace("Returning xml printer")
+		jlogr.Logger.ILog.Trace("Returning xml printer")
 
 		return Printer{Writer: &xmlprinter.XMLPrinter{}}
 	default:
-		log.Logger.ILog.Trace("Returning yaml printer")
+		jlogr.Logger.ILog.Trace("Returning yaml printer")
 
 		return Printer{Writer: &yamlprinter.YamlPrinter{}}
 	}

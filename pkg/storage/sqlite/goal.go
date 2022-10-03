@@ -6,9 +6,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/sqljames/goalctl/pkg/log"
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 	"github.com/sqljames/goalctl/pkg/storage/sqlite/sqlc"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 func (sl Repository) CreateGoal(ctx context.Context, arg *resources.Goal) *resources.Goal {
@@ -28,7 +28,7 @@ func (sl Repository) CreateGoal(ctx context.Context, arg *resources.Goal) *resou
 		Status:      arg.Status,
 	})
 	if err != nil {
-		log.Logger.ILog.Fatal(err, "error running query")
+		jlogr.Logger.ILog.Fatal(err, "error running query")
 	}
 
 	arg.GoalID = int(sqlcGoal.Goalid)
@@ -39,7 +39,7 @@ func (sl Repository) CreateGoal(ctx context.Context, arg *resources.Goal) *resou
 func (sl Repository) GetGoals(ctx context.Context) []*resources.Goal {
 	sqlcGoals, err := sl.queries.GetGoals(ctx)
 	if err != nil {
-		log.Logger.ILog.Fatal(err, "error running query")
+		jlogr.Logger.ILog.Fatal(err, "error running query")
 	}
 
 	return convertSqlcGoalsToResource(sqlcGoals)
@@ -49,11 +49,11 @@ func (sl Repository) GetGoalByGoalID(ctx context.Context, goalID int) *resources
 	sqlcGoal, err := sl.queries.GetGoalByGoalID(ctx, int64(goalID))
 
 	if err != nil && errors.Is(err, sql.ErrNoRows) {
-		log.Logger.ILog.Fatal(err, fmt.Sprintf("The Goal with the ID of %d, does not exist.", goalID))
+		jlogr.Logger.ILog.Fatal(err, fmt.Sprintf("The Goal with the ID of %d, does not exist.", goalID))
 	}
 
 	if err != nil {
-		log.Logger.ILog.Fatal(err, "error running query")
+		jlogr.Logger.ILog.Fatal(err, "error running query")
 	}
 
 	return convertSqlcGoalToResource(sqlcGoal)
@@ -73,6 +73,6 @@ func (sl Repository) UpdateGoal(ctx context.Context, arg *resources.Goal) {
 	})
 
 	if err != nil {
-		log.Logger.ILog.Fatal(err, "error running query")
+		jlogr.Logger.ILog.Fatal(err, "error running query")
 	}
 }

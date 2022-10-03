@@ -11,9 +11,9 @@ import (
 	// go-sqlite required for embedded sqlite database.
 	_ "github.com/glebarez/go-sqlite"
 	"github.com/sqljames/goalctl/pkg/info"
-	"github.com/sqljames/goalctl/pkg/log"
 	"github.com/sqljames/goalctl/pkg/storage/sqlite/sqlc"
 	"github.com/sqljames/goalctl/pkg/util"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 const (
@@ -69,14 +69,14 @@ func NewSQLiteStorage() (storage *Repository) {
 
 	sqlDB, err := sql.Open("sqlite", fmt.Sprintf("%s?_pragma=busy_timeout(%d000)&_pragma=journal_mode(WAL)", database.getDatabasePath(), timeoutInSeconds))
 	if err != nil {
-		log.Logger.ILog.Fatal(err, "error opening database")
+		jlogr.Logger.ILog.Fatal(err, "error opening database")
 	}
 
 	if CreateSchema {
 		// create tables.
 		for _, ddl := range ddls {
 			if _, err := sqlDB.ExecContext(context.Background(), ddl); err != nil {
-				log.Logger.ILog.Fatal(err, "error creating the database tables")
+				jlogr.Logger.ILog.Fatal(err, "error creating the database tables")
 			}
 		}
 	}

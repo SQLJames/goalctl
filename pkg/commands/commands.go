@@ -8,7 +8,7 @@ import (
 	"github.com/sqljames/goalctl/pkg/commands/modify"
 	"github.com/sqljames/goalctl/pkg/flags"
 	"github.com/sqljames/goalctl/pkg/info"
-	"github.com/sqljames/goalctl/pkg/log"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 	"github.com/sqljames/goalctl/pkg/version"
 	"github.com/urfave/cli/v2"
 	"github.com/urfave/cli/v2/altsrc"
@@ -59,7 +59,7 @@ func instrumentLoggingFlags(cliContext *cli.Context) error {
 
 	err := first(cliContext)
 	if err != nil {
-		log.Logger.ILog.Error(err, err.Error())
+		jlogr.Logger.ILog.Error(err, err.Error())
 	}
 
 	// The second config map will not overwrite the first
@@ -67,10 +67,10 @@ func instrumentLoggingFlags(cliContext *cli.Context) error {
 
 	err = second(cliContext)
 	if err != nil {
-		log.Logger.ILog.Error(err, err.Error())
+		jlogr.Logger.ILog.Error(err, err.Error())
 	}
 
-	log.InitializeLogger(cliContext.Int("verbosity"))
+	jlogr.InitializeLogger(cliContext.Int("verbosity"))
 
 	return err
 }
