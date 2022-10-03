@@ -29,6 +29,7 @@ type LogEntry interface {
 type Goal interface {
 	CreateGoal(ctx context.Context, arg *resources.Goal) *resources.Goal
 	GetGoals(ctx context.Context) []*resources.Goal
+	FilterGetGoals(ctx context.Context,arg *resources.Goal)[]*resources.Goal
 	UpdateGoal(ctx context.Context, arg *resources.Goal)
 	GetGoalByGoalID(ctx context.Context, goalID int) *resources.Goal
 }

@@ -43,19 +43,12 @@ func actionListEntries(cliContext *cli.Context) error {
 }
 
 func actionListGoals(cliContext *cli.Context) error {
-	goals := actions.GetGoalDetails()
-
+	filter := resources.Goal{}
 	if cliContext.Bool(flags.PastDueFlagName) {
-		tempGoalDetails := []*resources.GoalDetail{}
-
-		for index := range goals {
-			if expired(&goals[index].Goal.Deadline) {
-				tempGoalDetails = append(tempGoalDetails, goals[index])
-			}
-		}
-
-		goals = tempGoalDetails
+		filter.Deadline = time.Now().Format(time.RFC3339)
 	}
+
+	goals := actions.GetGoalDetails(filter)
 
 	err := printer.NewPrinter(cliContext).Writer.Write(goals, os.Stdout)
 	if err != nil {

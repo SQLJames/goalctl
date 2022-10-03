@@ -26,9 +26,9 @@ func GetEntriesForNotebook(notebookName string) (entries []*resources.LogEntry) 
 	return storagelayer.Storage.FilterLogEntries(context.TODO(), &resources.LogEntry{Notebookid: notebookid})
 }
 
-func GetGoalDetails() (details []*resources.GoalDetail) {
+func GetGoalDetails(filter resources.Goal) (details []*resources.GoalDetail) {
 	storagelayer := storage.NewVault()
-	goals := storagelayer.Storage.GetGoals(context.TODO())
+	goals := storagelayer.Storage.FilterGetGoals(context.TODO(), &filter)
 	journal := resources.Journal{}
 	allLogEntries := storagelayer.Storage.GetLogEntries(context.TODO())
 	allAssociations := storagelayer.Storage.GetAssociations(context.TODO())

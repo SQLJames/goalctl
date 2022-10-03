@@ -46,7 +46,7 @@ func GenerateBook() resources.Book {
 		Allnotebooks[index].Entries = entries
 	}
 
-	GoalDetails := actions.GetGoalDetails()
+	GoalDetails := actions.GetGoalDetails(resources.Goal{})
 
 	journal.NoteBooks = Allnotebooks
 	journal.GoalDetails = GoalDetails

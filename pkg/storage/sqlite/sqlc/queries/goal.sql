@@ -3,9 +3,7 @@
 SELECT
   *
 FROM
-  Goal
-ORDER BY
-  GoalID;
+  Goal;
 
 
 -- name: CreateGoal :one

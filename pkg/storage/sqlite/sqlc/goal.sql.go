@@ -96,8 +96,6 @@ SELECT
   goalid, duedate, author, createddate, goal, details, priority, status
 FROM
   Goal
-ORDER BY
-  GoalID
 `
 
 func (q *Queries) GetGoals(ctx context.Context) ([]*Goal, error) {
