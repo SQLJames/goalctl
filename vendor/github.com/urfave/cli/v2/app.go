@@ -229,7 +229,9 @@ func (a *App) Setup() {
 	a.flagCategories = newFlagCategories()
 	for _, fl := range a.Flags {
 		if cf, ok := fl.(CategorizableFlag); ok {
-			a.flagCategories.AddFlag(cf.GetCategory(), cf)
+			if cf.GetCategory() != "" {
+				a.flagCategories.AddFlag(cf.GetCategory(), cf)
+			}
 		}
 	}
 
@@ -340,6 +342,10 @@ func (a *App) RunContext(ctx context.Context, arguments []string) (err error) {
 			err = beforeErr
 			return err
 		}
+	}
+
+	if err = runFlagActions(cCtx, a.Flags); err != nil {
+		return err
 	}
 
 	var c *Command
@@ -523,6 +529,10 @@ func (a *App) RunAsSubcommand(ctx *Context) (err error) {
 		}
 	}
 
+	if err = runFlagActions(cCtx, a.Flags); err != nil {
+		return err
+	}
+
 	args := cCtx.Args()
 	if args.Present() {
 		name := args.First()
@@ -644,6 +654,26 @@ func (a *App) argsWithDefaultCommand(oldArgs Args) Args {
 	}
 
 	return oldArgs
+}
+
+func runFlagActions(c *Context, fs []Flag) error {
+	for _, f := range fs {
+		isSet := false
+		for _, name := range f.Names() {
+			if c.IsSet(name) {
+				isSet = true
+				break
+			}
+		}
+		if isSet {
+			if af, ok := f.(ActionableFlag); ok {
+				if err := af.RunAction(c); err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return nil
 }
 
 // Author represents someone who has contributed to a cli project.
