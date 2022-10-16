@@ -101,7 +101,7 @@ func Vendor() {
 func Build() error {
 	mg.SerialDeps(Vendor, ensureDirs)
 
-	sourcePath := gitRoot()
+	sourcePath := path.Join(gitRoot(), "cli")
 	if err := sh.Run(goexe, "build", "-o", binaryPath, "-ldflags="+flags(), sourcePath); err != nil {
 		return fmt.Errorf("sh Run: %w", err)
 	}
@@ -121,7 +121,7 @@ func Release() {
 	log.Printf("--> Building '%s' for release\n", gitRoot())
 
 	for _, buildTarget := range targets {
-		buildTarget.SourceDir = gitRoot()
+		buildTarget.SourceDir = path.Join(gitRoot(), "cli")
 		go func(buildTarget target) {
 			defer waitGroup.Done()
 
