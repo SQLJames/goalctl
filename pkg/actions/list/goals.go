@@ -44,7 +44,11 @@ func expired(inputDate *string) bool {
 }
 
 func GetGoalDetails() (details []*resources.GoalDetail) {
-	storagelayer := storage.NewVault()
+	storagelayer, err := storage.NewVault()
+	if err != nil {
+		jlogr.Logger.ILog.Fatal(err, err.Error())
+		return
+	}
 	goals := storagelayer.Storage.GetGoals(context.TODO())
 	journal := resources.Journal{}
 	allLogEntries := storagelayer.Storage.GetLogEntries(context.TODO())
@@ -69,7 +73,10 @@ func GetGoalDetails() (details []*resources.GoalDetail) {
 }
 
 func GetGoalByGoalID(goalID int) *resources.Goal {
-	storagelayer := storage.NewVault()
+	storagelayer, err := storage.NewVault()
+	if err != nil {
+		jlogr.Logger.ILog.Fatal(err, err.Error())
+	}
 
 	return storagelayer.Storage.GetGoalByGoalID(context.TODO(), goalID)
 }

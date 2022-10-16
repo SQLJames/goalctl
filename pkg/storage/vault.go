@@ -45,6 +45,11 @@ type Repository interface {
 	Associations
 }
 
-func NewVault() (vault Vault) {
-	return Vault{Storage: sqlite.NewSQLiteStorage()}
+func NewVault() (vault Vault, err error) {
+	repo, err := sqlite.NewSQLiteStorage()
+	if err != nil {
+		return Vault{}, err
+	}
+	
+	return Vault{Storage: repo}, nil
 }

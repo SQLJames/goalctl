@@ -7,6 +7,7 @@ import (
 
 	"github.com/sqljames/goalctl/pkg/storage"
 	"github.com/sqljames/goalctl/pkg/storage/resources"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 func Link(logEntryID, goalID []string) error {
@@ -33,7 +34,10 @@ func Link(logEntryID, goalID []string) error {
 		}
 	}
 
-	storagelayer := storage.NewVault()
+	storagelayer, err := storage.NewVault()
+	if err != nil {
+		jlogr.Logger.ILog.Fatal(err, err.Error())
+	}
 	for _, entry := range links {
 		storagelayer.Storage.CreateAssociation(context.TODO(), entry)
 	}

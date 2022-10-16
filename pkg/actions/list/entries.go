@@ -5,6 +5,7 @@ import (
 
 	"github.com/sqljames/goalctl/pkg/storage"
 	"github.com/sqljames/goalctl/pkg/storage/resources"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 func ListEntries(notebookName string) resources.Notebook {
@@ -29,7 +30,10 @@ func lookupLogEntry(entries []*resources.LogEntry, logEntryID int) *resources.Lo
 }
 
 func GetLogEntryByLogEntryID(logentryid int) *resources.LogEntry {
-	storagelayer := storage.NewVault()
+	storagelayer, err := storage.NewVault()
+	if err != nil {
+		jlogr.Logger.ILog.Fatal(err, err.Error())
+	}
 
 	return storagelayer.Storage.GetLogEntryByLogEntryID(context.TODO(), int64(logentryid))
 }

@@ -15,7 +15,10 @@ func CreateNotebook(notebookName string) (data *resources.Notebook, err error) {
 		return nil, &EmptryStringError{}
 	}
 
-	storagelayer := storage.NewVault()
+	storagelayer, err := storage.NewVault()
+	if err != nil {
+		jlogr.Logger.ILog.Fatal(err, err.Error())
+	}
 	row := storagelayer.Storage.CreateNotebook(context.TODO(), notebookName)
 
 	return &row, err

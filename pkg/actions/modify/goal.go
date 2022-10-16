@@ -7,6 +7,7 @@ import (
 	"github.com/sqljames/goalctl/pkg/storage"
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 	"github.com/sqljames/goalctl/pkg/util"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 func ModifyGoal(confirm bool, targetGoalID int, modOpts GoalModificationOptions) *resources.Goal {
@@ -45,6 +46,9 @@ func decodeGoalModificationOptions(goal *resources.Goal, modOpts GoalModificatio
 }
 
 func UpdateGoal(arg *resources.Goal) {
-	storagelayer := storage.NewVault()
+	storagelayer, err := storage.NewVault()
+	if err != nil {
+		jlogr.Logger.ILog.Fatal(err, err.Error())
+	}
 	storagelayer.Storage.UpdateGoal(context.TODO(), arg)
 }

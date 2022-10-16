@@ -1,4 +1,5 @@
-
+-- +migrate Up
+-- +migrate StatementBegin
 CREATE TABLE LogEntry (
   LogEntryID INTEGER PRIMARY KEY AUTOINCREMENT,
   Author text,
@@ -8,3 +9,10 @@ CREATE TABLE LogEntry (
   NotebookID INTEGER NOT NULL,
   FOREIGN KEY(NotebookID) REFERENCES Notebook(NotebookID)
 );
+
+-- +migrate StatementEnd
+
+-- +migrate Down
+-- +migrate StatementBegin
+DROP TABLE LogEntry;
+-- +migrate StatementEnd
