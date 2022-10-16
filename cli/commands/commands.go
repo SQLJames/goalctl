@@ -23,7 +23,7 @@ func NewApp() *cli.App {
 		Flags:     flags.GenerateGlobalFlags(),
 		Version:   version.Version.String(),
 		Before:    beforeTasks,
-		Authors:   info.Authors,
+		Authors:   makeAuthors(),
 		Copyright: info.Copyright,
 		Suggest:   true,
 		Commands: []*cli.Command{
@@ -84,4 +84,14 @@ func modifyCLIDefaultVersion() {
 	cli.VersionPrinter = func(cCtx *cli.Context) {
 		version.Version.CliPrinter()
 	}
+}
+
+func makeAuthors() (authors []*cli.Author) {
+	for _, author := range info.Authors {
+		authors = append(authors, &cli.Author{
+			Name:  author.Name,
+			Email: author.Email,
+		})
+	}
+	return authors
 }
