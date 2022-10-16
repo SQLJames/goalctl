@@ -2,6 +2,7 @@ package sqlite
 
 import (
 	"database/sql"
+	"errors"
 	"sync"
 
 	"fmt"
@@ -12,13 +13,16 @@ import (
 	"github.com/sqljames/goalctl/pkg/info"
 	"github.com/sqljames/goalctl/pkg/storage/sqlite/sqlc"
 	"github.com/sqljames/goalctl/pkg/util"
-	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 var (
 	once  sync.Once
 	repo  *Repository
 	errDB error
+)
+
+var (
+	ErrNoRows = errors.New("That Item Doesn't Exist")
 )
 
 const (
@@ -62,16 +66,16 @@ func NewSQLiteStorage() (storage *Repository, errDB error) {
 	once.Do(func() {
 		database, errDB := newDB()
 		if errDB != nil {
-			jlogr.Logger.ILog.Fatal(errDB, errDB.Error())
+			return
 		}
 
 		sqlDB, errDB := sql.Open("sqlite", fmt.Sprintf("%s?_pragma=busy_timeout(%d000)&_pragma=journal_mode(WAL)", database.getDatabasePath(), timeoutInSeconds))
 		if errDB != nil {
-			jlogr.Logger.ILog.Fatal(errDB, errDB.Error())
+			return
 		}
-		runMigrations(sqlDB)
+		_, errDB = runMigrations(sqlDB)
 		if errDB != nil {
-			jlogr.Logger.ILog.Fatal(errDB, errDB.Error())
+			return
 		}
 
 		repo = &Repository{queries: *sqlc.New(sqlDB)}

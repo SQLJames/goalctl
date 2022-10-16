@@ -10,45 +10,45 @@ import (
 	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
-func (sl Repository) CreateNotebook(ctx context.Context, name string) resources.Notebook {
+func (sl Repository) CreateNotebook(ctx context.Context, name string) (resources.Notebook, error) {
 	jlogr.Logger.ILog.Trace(fmt.Sprintf("notebook name provided %s", name))
 
 	sqlcNotebook, err := sl.queries.CreateNotebook(ctx, name)
 	if err != nil {
 		// we can check for unique value error by comparing it with sqlite3.SQLITE_CONSTRAINT_UNIQUE
-		jlogr.Logger.ILog.Fatal(err, "error running query")
+		return resources.Notebook{}, nil
 	}
 
-	return resources.Notebook{Notebookid: sqlcNotebook.Notebookid, Name: sqlcNotebook.Name}
+	return resources.Notebook{Notebookid: sqlcNotebook.Notebookid, Name: sqlcNotebook.Name}, err
 }
 
-func (sl Repository) GetNotebookIDByName(ctx context.Context, name string) int64 {
+func (sl Repository) GetNotebookIDByName(ctx context.Context, name string) (int64, error) {
 	notebookID, err := sl.queries.GetNotebookIDByName(ctx, name)
 
-	if err != nil && !errors.Is(err, sql.ErrNoRows) {
-		jlogr.Logger.ILog.Fatal(err, "error running query")
-	}
-
 	if errors.Is(err, sql.ErrNoRows) {
-		notebookID = 0
+		return 0, ErrNoRows
 	}
 
-	return notebookID
+	if err != nil {
+		return -1, err
+	}
+
+	return notebookID, nil
 }
 
-func (sl Repository) GetNotebook(ctx context.Context, name string) (notebook resources.Notebook) {
+func (sl Repository) GetNotebook(ctx context.Context, name string) (notebook resources.Notebook, err error) {
 	sqlcNotebook, err := sl.queries.GetNotebook(ctx, name)
 	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, "error running query")
+		return resources.Notebook{}, err
 	}
 
-	return resources.Notebook{Notebookid: sqlcNotebook.Notebookid, Name: sqlcNotebook.Name}
+	return resources.Notebook{Notebookid: sqlcNotebook.Notebookid, Name: sqlcNotebook.Name}, nil
 }
 
-func (sl Repository) GetNotebooks(ctx context.Context) []*resources.Notebook {
+func (sl Repository) GetNotebooks(ctx context.Context) ([]*resources.Notebook, error) {
 	sqlcEntries, err := sl.queries.GetNotebooks(ctx)
 	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, "error running query")
+		return nil, err
 	}
 
 	var notebooks = make([]*resources.Notebook, len(sqlcEntries))
@@ -57,5 +57,5 @@ func (sl Repository) GetNotebooks(ctx context.Context) []*resources.Notebook {
 		notebooks[index] = &resources.Notebook{Notebookid: sqlcEntry.Notebookid, Name: sqlcEntry.Name}
 	}
 
-	return notebooks
+	return notebooks, nil
 }

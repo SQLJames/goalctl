@@ -8,10 +8,11 @@ import (
 	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
-func CreateLogEntry(newLogEntry NewLogEntry) *resources.LogEntry {
+func CreateLogEntry(newLogEntry NewLogEntry) (*resources.LogEntry, error) {
 	storagelayer, err := storage.NewVault()
 	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, err.Error())
+		jlogr.Logger.ILog.Error(err, err.Error())
+		return nil, err
 	}
 	le := resources.NewLogEntry(newLogEntry.LogEntry, newLogEntry.Tags)
 

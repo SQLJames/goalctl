@@ -5,44 +5,30 @@ import (
 
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 	"github.com/sqljames/goalctl/pkg/storage/sqlite/sqlc"
-	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
-func (sl Repository) CreateAssociation(ctx context.Context, arg resources.Association) resources.Association {
+func (sl Repository) CreateAssociation(ctx context.Context, arg resources.Association) (resources.Association, error) {
 	_, err := sl.queries.CreateAssociation(ctx, sqlc.CreateAssociationParams{
 		Goalid:     int64(arg.GoalID),
 		Logentryid: int64(arg.LogEntryID),
 	})
-	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, "error running query")
-	}
 
-	return arg
+	return arg, err
 }
 
-func (sl Repository) GetAssociations(ctx context.Context) []*resources.Association {
+func (sl Repository) GetAssociations(ctx context.Context) ([]*resources.Association, error) {
 	associations, err := sl.queries.GetAssociations(ctx)
-	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, "error running query")
-	}
-
-	return convertSqlcGoalToLogEntriesToResource(associations)
+	return convertSqlcGoalToLogEntriesToResource(associations), err
 }
 
-func (sl Repository) GetAssociationsByGoalID(ctx context.Context, goalid int) []*resources.Association {
+func (sl Repository) GetAssociationsByGoalID(ctx context.Context, goalid int) ([]*resources.Association, error) {
 	associations, err := sl.queries.GetAssociationsByGoalID(ctx, int64(goalid))
-	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, "error running query")
-	}
 
-	return convertSqlcGoalToLogEntriesToResource(associations)
+	return convertSqlcGoalToLogEntriesToResource(associations), err
 }
 
-func (sl Repository) GetAssociationsByLogEntryID(ctx context.Context, logentryid int) []*resources.Association {
+func (sl Repository) GetAssociationsByLogEntryID(ctx context.Context, logentryid int) ([]*resources.Association, error) {
 	associations, err := sl.queries.GetAssociationsByLogEntryID(ctx, int64(logentryid))
-	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, "error running query")
-	}
 
-	return convertSqlcGoalToLogEntriesToResource(associations)
+	return convertSqlcGoalToLogEntriesToResource(associations), err
 }

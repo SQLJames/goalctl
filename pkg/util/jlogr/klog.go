@@ -6,9 +6,7 @@ import (
 	"strconv"
 
 	"github.com/go-logr/logr"
-	"github.com/sqljames/goalctl/pkg/info"
 	"k8s.io/klog/v2"
-	"k8s.io/klog/v2/klogr"
 )
 
 type internalklogImplementation struct {
@@ -21,11 +19,12 @@ type internalklogImplementation struct {
 	TraceLogger   logr.Logger
 }
 
-func newInternalklog() *internalklogImplementation {
-	logger := klogr.NewWithOptions(klogr.WithFormat(klogr.FormatKlog)).
-		WithCallDepth(1).
-		WithValues("applicationName", info.GetApplicationName())
+func SetLogger(logr logr.Logger) {
+	defaultLogger = logr
+}
 
+func newInternalklog() *internalklogImplementation {
+	logger := defaultLogger
 	return &internalklogImplementation{
 		PanicLogger:   logger.WithName("Panic"),
 		FatalLogger:   logger.WithName("Fatal"),

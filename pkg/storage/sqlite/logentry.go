@@ -9,21 +9,27 @@ import (
 	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
-func (sl Repository) GetLogEntries(ctx context.Context) (logEntries []*resources.LogEntry) {
+func (sl Repository) GetLogEntries(ctx context.Context) (logEntries []*resources.LogEntry, err error) {
 	sqlcLogEntries, err := sl.queries.GetLogEntries(ctx)
 	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, "error running query")
+		return nil, err
 	}
 
-	return convertSqlcLogEntriesToResource(sqlcLogEntries)
+	return convertSqlcLogEntriesToResource(sqlcLogEntries), err
 }
 
-func (sl Repository) CreateLogEntry(ctx context.Context, arg *resources.LogEntry, notebookName string) *resources.LogEntry {
-	NotebookID := sl.GetNotebookIDByName(ctx, notebookName)
+func (sl Repository) CreateLogEntry(ctx context.Context, arg *resources.LogEntry, notebookName string) (*resources.LogEntry, error) {
+	NotebookID, err := sl.GetNotebookIDByName(ctx, notebookName)
+	if err != nil {
+		return nil, err
+	}
 	if NotebookID == 0 {
-		jlogr.Logger.ILog.Warn("No results for notebook, Attempting to create a new notebook")
+		jlogr.Logger.ILog.Debug("No results for notebook, Attempting to create a new notebook")
 
-		notebook := sl.CreateNotebook(ctx, notebookName)
+		notebook, err := sl.CreateNotebook(ctx, notebookName)
+		if err != nil {
+			return nil, err
+		}
 		NotebookID = notebook.Notebookid
 	}
 
@@ -42,43 +48,43 @@ func (sl Repository) CreateLogEntry(ctx context.Context, arg *resources.LogEntry
 	})
 
 	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, "error running query")
+		return nil, err
 	}
 
 	arg.LogEntryID = Entry.Logentryid
 	arg.Notebookid = Entry.Notebookid
 
-	return arg
+	return arg, err
 }
 
-func (sl Repository) GetLogEntryByCreatedDate(ctx context.Context, createddate string) (logEntries []*resources.LogEntry) {
+func (sl Repository) GetLogEntryByCreatedDate(ctx context.Context, createddate string) (logEntries []*resources.LogEntry, err error) {
 	sqlcLogEntries, err := sl.queries.GetLogEntryByCreatedDate(ctx, createddate)
 	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, "error running query")
+		return nil, err
 	}
 
-	return convertSqlcLogEntriesToResource(sqlcLogEntries)
+	return convertSqlcLogEntriesToResource(sqlcLogEntries), err
 }
 
-func (sl Repository) GetLogEntryByNotebook(ctx context.Context, name string) []*resources.LogEntry {
+func (sl Repository) GetLogEntryByNotebook(ctx context.Context, name string) ([]*resources.LogEntry, error) {
 	sqlcLogEntries, err := sl.queries.GetLogEntryByNotebook(ctx, name)
 	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, "error running query")
+		return nil, err
 	}
 
-	return convertSqlcLogEntriesToResource(sqlcLogEntries)
+	return convertSqlcLogEntriesToResource(sqlcLogEntries), err
 }
 
-func (sl Repository) GetLogEntryByLogEntryID(ctx context.Context, logentryid int64) *resources.LogEntry {
+func (sl Repository) GetLogEntryByLogEntryID(ctx context.Context, logentryid int64) (*resources.LogEntry, error) {
 	sqlcLogEntry, err := sl.queries.GetLogEntryByLogEntryID(ctx, logentryid)
 	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, "error running query")
+		return nil, err
 	}
 
-	return convertSqlcLogEntryToResource(sqlcLogEntry)
+	return convertSqlcLogEntryToResource(sqlcLogEntry), err
 }
 
-func (sl Repository) UpdateLogEntry(ctx context.Context, arg *resources.LogEntry) {
+func (sl Repository) UpdateLogEntry(ctx context.Context, arg *resources.LogEntry) error {
 	err := sl.queries.UpdateLogEntry(ctx, sqlc.UpdateLogEntryParams{
 		Tags: sql.NullString{
 			String: convertSliceToString(arg.Tags),
@@ -89,7 +95,5 @@ func (sl Repository) UpdateLogEntry(ctx context.Context, arg *resources.LogEntry
 		Logentryid: arg.LogEntryID,
 	})
 
-	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, "error running query")
-	}
+	return err
 }

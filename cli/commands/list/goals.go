@@ -4,6 +4,7 @@ import (
 	"github.com/sqljames/goalctl/cli/flags"
 	"github.com/sqljames/goalctl/cli/output"
 	"github.com/sqljames/goalctl/pkg/actions/list"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 	"github.com/urfave/cli/v2"
 )
 
@@ -25,8 +26,11 @@ func ListGoals(cliContext *cli.Context) error {
 		filter.PastDue = true
 	}
 
-	goals := list.ListGoals(filter)
-
+	goals, err := list.ListGoals(filter)
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+		return err
+	}
 	output.Output(cliContext.String(flags.OutputFormatFlagName), goals)
 
 	return nil

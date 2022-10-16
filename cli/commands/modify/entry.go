@@ -4,6 +4,7 @@ import (
 	"github.com/sqljames/goalctl/cli/flags"
 	"github.com/sqljames/goalctl/cli/output"
 	"github.com/sqljames/goalctl/pkg/actions/modify"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 	"github.com/urfave/cli/v2"
 )
 
@@ -25,8 +26,11 @@ func modifyEntry() *cli.Command {
 
 func actionModifyEntry(cliContext *cli.Context) error {
 	modificationDetails := decodeModificationRequest(cliContext)
-	logEntry := modify.ModifyEntry(cliContext.Bool(flags.ConfirmFlagName), cliContext.Int(flags.LogEntryIDFlagName), modificationDetails)
-
+	logEntry, err := modify.ModifyEntry(cliContext.Bool(flags.ConfirmFlagName), cliContext.Int(flags.LogEntryIDFlagName), modificationDetails)
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+		return err
+	}
 	output.Output(cliContext.String(flags.OutputFormatFlagName), logEntry)
 
 	confirmationWarning(cliContext.Bool(flags.ConfirmFlagName))

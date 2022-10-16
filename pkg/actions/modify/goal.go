@@ -10,15 +10,19 @@ import (
 	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
-func ModifyGoal(confirm bool, targetGoalID int, modOpts GoalModificationOptions) *resources.Goal {
-	goal := list.GetGoalByGoalID(targetGoalID)
+func ModifyGoal(confirm bool, targetGoalID int, modOpts GoalModificationOptions) (*resources.Goal, error) {
+	goal, err := list.GetGoalByGoalID(targetGoalID)
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+		return nil, err
+	}
 	goal = decodeGoalModificationOptions(goal, modOpts)
 
 	if confirm {
 		UpdateGoal(goal)
 	}
 
-	return goal
+	return goal, nil
 }
 
 func decodeGoalModificationOptions(goal *resources.Goal, modOpts GoalModificationOptions) *resources.Goal {
@@ -45,10 +49,11 @@ func decodeGoalModificationOptions(goal *resources.Goal, modOpts GoalModificatio
 	return goal
 }
 
-func UpdateGoal(arg *resources.Goal) {
+func UpdateGoal(arg *resources.Goal) error {
 	storagelayer, err := storage.NewVault()
 	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, err.Error())
+		jlogr.Logger.ILog.Error(err, err.Error())
+		return err
 	}
-	storagelayer.Storage.UpdateGoal(context.TODO(), arg)
+	return storagelayer.Storage.UpdateGoal(context.TODO(), arg)
 }

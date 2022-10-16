@@ -4,6 +4,7 @@ import (
 	"github.com/sqljames/goalctl/cli/flags"
 	"github.com/sqljames/goalctl/cli/output"
 	"github.com/sqljames/goalctl/pkg/actions/create"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 	"github.com/urfave/cli/v2"
 )
 
@@ -28,7 +29,11 @@ func actionCreateGoal(cliContext *cli.Context) error {
 		Details:  cliContext.String(flags.EntryTextFlagName),
 		Priority: cliContext.Int(flags.PriorityFlagName),
 	}
-	result := create.CreateGoal(newGoal)
+	result, err := create.CreateGoal(newGoal)
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+		return err
+	}
 	output.Output(cliContext.String(flags.OutputFormatFlagName), result)
 
 	return nil

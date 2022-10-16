@@ -17,9 +17,13 @@ func CreateNotebook(notebookName string) (data *resources.Notebook, err error) {
 
 	storagelayer, err := storage.NewVault()
 	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, err.Error())
+		jlogr.Logger.ILog.Error(err, err.Error())
+		return nil, err
 	}
-	row := storagelayer.Storage.CreateNotebook(context.TODO(), notebookName)
-
-	return &row, err
+	results, err := storagelayer.Storage.CreateNotebook(context.TODO(), notebookName)
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+		return nil, err
+	}
+	return &results, err
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
-func AssociationsByGoalID(goalid int) []*resources.Association {
+func AssociationsByGoalID(goalid int) ([]*resources.Association, error) {
 	storagelayer, err := storage.NewVault()
 	if err != nil {
 		jlogr.Logger.ILog.Fatal(err, err.Error())

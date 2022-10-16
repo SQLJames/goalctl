@@ -9,16 +9,19 @@ import (
 	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
-func ModifyEntry(confirm bool, targetEntryID int, modOpts EntryModificationOptions) *resources.LogEntry {
+func ModifyEntry(confirm bool, targetEntryID int, modOpts EntryModificationOptions) (*resources.LogEntry, error) {
 
-	logEntry := list.GetLogEntryByLogEntryID(targetEntryID)
-
+	logEntry, err := list.GetLogEntryByLogEntryID(targetEntryID)
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+		return nil, err
+	}
 	logEntry = decodeEntryModificationOptions(logEntry, modOpts)
 
 	if confirm {
 		UpdateLogEntry(logEntry)
 	}
-	return logEntry
+	return logEntry, nil
 }
 
 func decodeEntryModificationOptions(logEntry *resources.LogEntry, modOpts EntryModificationOptions) *resources.LogEntry {
@@ -38,10 +41,11 @@ func decodeEntryModificationOptions(logEntry *resources.LogEntry, modOpts EntryM
 	return logEntry
 }
 
-func UpdateLogEntry(arg *resources.LogEntry) {
+func UpdateLogEntry(arg *resources.LogEntry) error {
 	storagelayer, err := storage.NewVault()
 	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, err.Error())
+		jlogr.Logger.ILog.Error(err, err.Error())
+		return err
 	}
-	storagelayer.Storage.UpdateLogEntry(context.TODO(), arg)
+	return storagelayer.Storage.UpdateLogEntry(context.TODO(), arg)
 }

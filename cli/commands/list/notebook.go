@@ -4,6 +4,7 @@ import (
 	"github.com/sqljames/goalctl/cli/flags"
 	"github.com/sqljames/goalctl/cli/output"
 	"github.com/sqljames/goalctl/pkg/actions/list"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 	"github.com/urfave/cli/v2"
 )
 
@@ -19,8 +20,11 @@ func listNotebooks() *cli.Command {
 }
 
 func ListNotebooks(cliContext *cli.Context) error {
-	notebookList := list.GetNotebooks()
-
+	notebookList, err := list.GetNotebooks()
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+		return err
+	}
 	output.Output(cliContext.String(flags.OutputFormatFlagName), notebookList)
 
 	return nil

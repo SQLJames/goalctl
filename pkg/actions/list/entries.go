@@ -8,15 +8,20 @@ import (
 	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
-func ListEntries(notebookName string) resources.Notebook {
-	NotebookEntries := GetEntriesForNotebook(notebookName)
+func ListEntries(notebookName string) (*resources.Notebook, error) {
+	NotebookEntries, err := GetEntriesForNotebook(notebookName)
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+		
+		return nil, err
+	}
 
 	notebook := resources.Notebook{
 		Name:    notebookName,
 		Entries: NotebookEntries,
 	}
 
-	return notebook
+	return &notebook, nil
 }
 
 func lookupLogEntry(entries []*resources.LogEntry, logEntryID int) *resources.LogEntry {
@@ -29,11 +34,22 @@ func lookupLogEntry(entries []*resources.LogEntry, logEntryID int) *resources.Lo
 	return nil
 }
 
-func GetLogEntryByLogEntryID(logentryid int) *resources.LogEntry {
+func GetLogEntryByLogEntryID(logentryid int) (*resources.LogEntry, error) {
 	storagelayer, err := storage.NewVault()
 	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, err.Error())
+		jlogr.Logger.ILog.Error(err, err.Error())
+		return nil, err
 	}
 
 	return storagelayer.Storage.GetLogEntryByLogEntryID(context.TODO(), int64(logentryid))
+}
+
+func GetEntriesForNotebook(notebookName string) (entries []*resources.LogEntry, err error) {
+	storagelayer, err := storage.NewVault()
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+		return nil, err
+	}
+
+	return storagelayer.Storage.GetLogEntryByNotebook(context.TODO(), notebookName)
 }

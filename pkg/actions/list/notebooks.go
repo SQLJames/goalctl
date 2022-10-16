@@ -8,21 +8,13 @@ import (
 	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
-func GetNotebooks() (notebookList []*resources.Notebook) {
+func GetNotebooks() (notebookList []*resources.Notebook, err error) {
 	storagelayer, err := storage.NewVault()
 	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, err.Error())
+		jlogr.Logger.ILog.Error(err, err.Error())
+		return nil, err
 	}
-	notebooks := storagelayer.Storage.GetNotebooks(context.TODO())
+	notebooks, err := storagelayer.Storage.GetNotebooks(context.TODO())
 
-	return notebooks
-}
-
-func GetEntriesForNotebook(notebookName string) (entries []*resources.LogEntry) {
-	storagelayer, err := storage.NewVault()
-	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, err.Error())
-	}
-
-	return storagelayer.Storage.GetLogEntryByNotebook(context.TODO(), notebookName)
+	return notebooks, err
 }

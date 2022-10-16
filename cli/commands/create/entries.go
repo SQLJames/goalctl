@@ -4,6 +4,7 @@ import (
 	"github.com/sqljames/goalctl/cli/flags"
 	"github.com/sqljames/goalctl/cli/output"
 	"github.com/sqljames/goalctl/pkg/actions/create"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 	"github.com/urfave/cli/v2"
 )
 
@@ -26,7 +27,11 @@ func actionCreateLogEntry(cliContext *cli.Context) error {
 		NotebookName: cliContext.String(flags.NameFlagName),
 		Tags:         cliContext.StringSlice(flags.TagsFlagName),
 	}
-	result := create.CreateLogEntry(logEntry)
+	result, err := create.CreateLogEntry(logEntry)
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+		return err
+	}
 	output.Output(cliContext.String(flags.OutputFormatFlagName), result)
 	return nil
 }
