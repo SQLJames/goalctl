@@ -25,7 +25,7 @@ func SetLogger(logrLogger logr.Logger) {
 
 func newInternalklog() *internalklogImplementation {
 	logger := defaultLogger
-	
+
 	return &internalklogImplementation{
 		PanicLogger:   logger.WithName("Panic"),
 		FatalLogger:   logger.WithName("Fatal"),
@@ -71,6 +71,6 @@ func InitializeLogger(logLevel int) {
 
 	err := fs.Set("v", strconv.Itoa(logLevel))
 	if err != nil {
-		Logger.ILog.Warn("issue setting verbosity flag", "error", err.Error())
+		Logger.ILog.Error(err, err.Error())
 	}
 }

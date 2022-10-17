@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 func gitTag() string {
@@ -15,6 +16,7 @@ func gitTag() string {
 	if !ok {
 		tagOrBranch, err = gitShellOut("describe", "--tags", "--always")
 		if err != nil {
+			jlogr.Logger.ILog.Error(err, err.Error())
 			var exitError exec.ExitError
 
 			ok := errors.As(err, &exitError)
@@ -37,6 +39,8 @@ func gitCommitHash() string {
 	if !ok {
 		hash, err = gitShellOut("rev-parse", "HEAD")
 		if err != nil {
+			jlogr.Logger.ILog.Error(err, err.Error())
+
 			return ""
 		}
 	}
@@ -47,6 +51,8 @@ func gitCommitHash() string {
 func gitBranch() string {
 	branch, err := gitShellOut("rev-parse", "--abbrev-ref", "HEAD")
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return err.Error()
 	}
 
@@ -57,6 +63,8 @@ func gitBranch() string {
 func gitRoot() string {
 	directory, err := gitShellOut("rev-parse", "--show-toplevel")
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return ""
 	}
 
@@ -68,10 +76,12 @@ func gitShellOut(args ...string) (string, error) {
 	c.Env = os.Environ()
 	c.Stderr = os.Stderr
 
-	b, err := c.Output()
+	bytes, err := c.Output()
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return "", errors.Wrapf(err, `failed to run %v %q`, "git", args)
 	}
 
-	return string(b), nil
+	return string(bytes), nil
 }

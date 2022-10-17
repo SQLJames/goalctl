@@ -15,6 +15,8 @@ func (sl Repository) CreateNotebook(ctx context.Context, name string) (resources
 
 	sqlcNotebook, err := sl.queries.CreateNotebook(ctx, name)
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		// we can check for unique value error by comparing it with sqlite3.SQLITE_CONSTRAINT_UNIQUE
 		return resources.Notebook{}, err
 	}
@@ -30,6 +32,8 @@ func (sl Repository) GetNotebookIDByName(ctx context.Context, name string) (int6
 	}
 
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return -1, err
 	}
 
@@ -39,6 +43,8 @@ func (sl Repository) GetNotebookIDByName(ctx context.Context, name string) (int6
 func (sl Repository) GetNotebook(ctx context.Context, name string) (notebook resources.Notebook, err error) {
 	sqlcNotebook, err := sl.queries.GetNotebook(ctx, name)
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return resources.Notebook{}, err
 	}
 
@@ -48,6 +54,8 @@ func (sl Repository) GetNotebook(ctx context.Context, name string) (notebook res
 func (sl Repository) GetNotebooks(ctx context.Context) ([]*resources.Notebook, error) {
 	sqlcEntries, err := sl.queries.GetNotebooks(ctx)
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+		
 		return nil, err
 	}
 

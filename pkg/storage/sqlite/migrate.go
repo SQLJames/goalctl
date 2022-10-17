@@ -36,29 +36,45 @@ func (f *EmbedFileMigrationSource) FindMigrations() ([]*migrate.Migration, error
 	items := make([]*migrate.Migration, 0)
 	err := fs.WalkDir(f.Filesystem, `.`, func(path string, entry fs.DirEntry, err error) error {
 		if err != nil {
+			jlogr.Logger.ILog.Error(err, err.Error())
+
 			return fmt.Errorf(`%w: %v`, ErrEmbedReadDirFailed, err)
 		}
 		// from now we always return nil cause if we send err, WalkDir stop processing.
 		if entry.IsDir() {
+			jlogr.Logger.ILog.Error(err, err.Error())
+
 			return err
 		}
+
 		if !strings.HasSuffix(entry.Name(), `.sql`) {
+			jlogr.Logger.ILog.Error(err, err.Error())
+
 			return err
 		}
+
 		content, err := f.Filesystem.ReadFile(path)
 		if err != nil {
+			jlogr.Logger.ILog.Error(err, err.Error())
+
 			return err
 		}
+
 		migration, err := migrate.ParseMigration(entry.Name(), bytes.NewReader(content))
 		if err != nil {
+			jlogr.Logger.ILog.Error(err, err.Error())
+
 			return err
 		}
+
 		items = append(items, migration)
 
 		return nil
 	})
 
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return items, fmt.Errorf(`%w: %v`, ErrEmbedWalkFailed, err)
 	}
 
@@ -70,11 +86,15 @@ func runMigrations(sqlDB *sql.DB) (int, error) {
 
 	migration, err := MigrationSource.FindMigrations()
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return 0, err
 	}
 
 	numberOfMigrations, err := migrate.Exec(sqlDB, "sqlite3", &migrate.MemoryMigrationSource{Migrations: migration}, migrate.Up)
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+		
 		return 0, err
 	}
 

@@ -13,6 +13,7 @@ import (
 	"github.com/sqljames/goalctl/pkg/info"
 	"github.com/sqljames/goalctl/pkg/storage/sqlite/sqlc"
 	"github.com/sqljames/goalctl/pkg/util"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 var (
@@ -43,9 +44,11 @@ type Repository struct {
 func newDB() (db *database, err error) {
 	location, err := util.MakeApplicationFolder("database")
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
-	
+
 	return &database{
 		Location:  location,
 		Name:      info.GetApplicationName(),

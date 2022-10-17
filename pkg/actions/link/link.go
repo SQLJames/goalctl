@@ -19,12 +19,16 @@ func LogEntryToGoal(logEntryID, goalID []string) error {
 		for _, goalid := range goalIds {
 			goalidInt, err := strconv.Atoi(goalid)
 			if err != nil {
-				return fmt.Errorf("converting GoalID: %w", err)
+				jlogr.Logger.ILog.Error(err, err.Error())
+
+				return fmt.Errorf("converting GoalID: %v", err)
 			}
 
 			logentryIDInt, err := strconv.Atoi(logentryID)
 			if err != nil {
-				return fmt.Errorf("converting logentryID: %w", err)
+				jlogr.Logger.ILog.Error(err, err.Error())
+
+				return fmt.Errorf("converting logentryID: %v", err)
 			}
 
 			links = append(links, resources.Association{
@@ -36,7 +40,7 @@ func LogEntryToGoal(logEntryID, goalID []string) error {
 
 	storagelayer, err := storage.NewVault()
 	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, err.Error())
+		jlogr.Logger.ILog.Error(err, err.Error())
 
 		return err
 	}
@@ -44,7 +48,7 @@ func LogEntryToGoal(logEntryID, goalID []string) error {
 	for _, entry := range links {
 		_, err = storagelayer.Storage.CreateAssociation(context.TODO(), entry)
 		if err != nil {
-			jlogr.Logger.ILog.Fatal(err, err.Error())
+			jlogr.Logger.ILog.Error(err, err.Error())
 
 			return err
 		}

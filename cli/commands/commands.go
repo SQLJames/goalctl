@@ -60,6 +60,8 @@ func instrumentLoggingFlags(cliContext *cli.Context) error {
 	err := first(cliContext)
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
+		return err
 	}
 
 	// The second config map will not overwrite the first
@@ -68,6 +70,8 @@ func instrumentLoggingFlags(cliContext *cli.Context) error {
 	err = second(cliContext)
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+		
+		return err
 	}
 
 	jlogr.InitializeLogger(cliContext.Int("verbosity"))
@@ -93,6 +97,6 @@ func makeAuthors() (authors []*cli.Author) {
 			Email: author.Email,
 		})
 	}
-	
+
 	return authors
 }

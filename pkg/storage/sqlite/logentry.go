@@ -12,6 +12,8 @@ import (
 func (sl Repository) GetLogEntries(ctx context.Context) (logEntries []*resources.LogEntry, err error) {
 	sqlcLogEntries, err := sl.queries.GetLogEntries(ctx)
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
 
@@ -21,14 +23,18 @@ func (sl Repository) GetLogEntries(ctx context.Context) (logEntries []*resources
 func (sl Repository) CreateLogEntry(ctx context.Context, arg *resources.LogEntry, notebookName string) (*resources.LogEntry, error) {
 	NotebookID, err := sl.GetNotebookIDByName(ctx, notebookName)
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
-	
+
 	if NotebookID == 0 {
 		jlogr.Logger.ILog.Debug("No results for notebook, Attempting to create a new notebook")
 
 		notebook, err := sl.CreateNotebook(ctx, notebookName)
 		if err != nil {
+			jlogr.Logger.ILog.Error(err, err.Error())
+
 			return nil, err
 		}
 
@@ -50,6 +56,8 @@ func (sl Repository) CreateLogEntry(ctx context.Context, arg *resources.LogEntry
 	})
 
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
 
@@ -62,6 +70,8 @@ func (sl Repository) CreateLogEntry(ctx context.Context, arg *resources.LogEntry
 func (sl Repository) GetLogEntryByCreatedDate(ctx context.Context, createddate string) (logEntries []*resources.LogEntry, err error) {
 	sqlcLogEntries, err := sl.queries.GetLogEntryByCreatedDate(ctx, createddate)
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
 
@@ -71,6 +81,8 @@ func (sl Repository) GetLogEntryByCreatedDate(ctx context.Context, createddate s
 func (sl Repository) GetLogEntryByNotebook(ctx context.Context, name string) ([]*resources.LogEntry, error) {
 	sqlcLogEntries, err := sl.queries.GetLogEntryByNotebook(ctx, name)
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
 
@@ -80,6 +92,8 @@ func (sl Repository) GetLogEntryByNotebook(ctx context.Context, name string) ([]
 func (sl Repository) GetLogEntryByLogEntryID(ctx context.Context, logentryid int64) (*resources.LogEntry, error) {
 	sqlcLogEntry, err := sl.queries.GetLogEntryByLogEntryID(ctx, logentryid)
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+		
 		return nil, err
 	}
 

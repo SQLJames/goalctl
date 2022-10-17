@@ -10,6 +10,6 @@ import (
 func Output(outputFormat string, data interface{}) {
 	err := printer.NewPrinterByString(outputFormat).Writer.Write(data, os.Stdout)
 	if err != nil {
-		jlogr.Logger.ILog.Warn("issue Printing the data", "function", "ListEntries", "error", err.Error())
+		jlogr.Logger.ILog.Error(err, "issue Printing the data", "function", "ListEntries", "error", err.Error())
 	}
 }

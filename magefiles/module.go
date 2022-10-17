@@ -6,6 +6,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 // ModulePath returns the module path from the gomod file text.
@@ -14,14 +16,15 @@ func modulePath() string {
 
 	file, err := os.Open("go.mod")
 	if err != nil {
-		log.Println(err)
-		
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return filepath.Base(gitRoot())
 	}
 
 	defer func(f *os.File) {
 		if err := f.Close(); err != nil {
-			log.Println("issue closing file", "fileName", file.Name(), "error", err.Error())
+			jlogr.Logger.ILog.Error(err, err.Error(), "fileName", file.Name(), "error", err.Error())
+
 		}
 	}(file)
 

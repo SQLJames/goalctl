@@ -7,6 +7,7 @@ import (
 
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 	"github.com/sqljames/goalctl/pkg/storage/sqlite/sqlc"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 func (sl Repository) CreateGoal(ctx context.Context, arg *resources.Goal) (*resources.Goal, error) {
@@ -26,6 +27,8 @@ func (sl Repository) CreateGoal(ctx context.Context, arg *resources.Goal) (*reso
 		Status:      arg.Status,
 	})
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
 
@@ -37,6 +40,8 @@ func (sl Repository) CreateGoal(ctx context.Context, arg *resources.Goal) (*reso
 func (sl Repository) GetGoals(ctx context.Context) ([]*resources.Goal, error) {
 	sqlcGoals, err := sl.queries.GetGoals(ctx)
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
 
@@ -47,10 +52,14 @@ func (sl Repository) GetGoalByGoalID(ctx context.Context, goalID int) (*resource
 	sqlcGoal, err := sl.queries.GetGoalByGoalID(ctx, int64(goalID))
 
 	if err != nil && errors.Is(err, sql.ErrNoRows) {
+		jlogr.Logger.ILog.Error(err, err.Error())
+		
 		return nil, ErrNoRows
 	}
 
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
 

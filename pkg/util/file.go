@@ -2,7 +2,6 @@ package util
 
 import (
 	"embed"
-	"fmt"
 	"io/fs"
 	"os"
 	"path"
@@ -23,7 +22,7 @@ func getHomeDir() (directory string, err error) {
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, "getting home directory")
 
-		return "", fmt.Errorf("OS UserHomeDir: %w", err)
+		return "", err
 	}
 
 	return dirname, nil
@@ -58,6 +57,8 @@ func MakeApplicationFolder(folder string) (location string, err error) {
 func GetApplicationFile(leafDirectory, fileName string, openFlags int) (*os.File, error) {
 	location, err := MakeApplicationFolder(filepath.Clean(leafDirectory))
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
 
@@ -66,6 +67,8 @@ func GetApplicationFile(leafDirectory, fileName string, openFlags int) (*os.File
 	if !fileExists(file) {
 		osFile, err := os.Create(filepath.Clean(file))
 		if err != nil {
+			jlogr.Logger.ILog.Error(err, err.Error())
+
 			return nil, err
 		}
 
@@ -74,6 +77,8 @@ func GetApplicationFile(leafDirectory, fileName string, openFlags int) (*os.File
 
 	osFile, err := os.OpenFile(filepath.Clean(file), openFlags, defaultFilePermissions) //#nosec G304 -- Not sure why this is being flagged.
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
 
@@ -97,6 +102,8 @@ func MakeSchemaDirectory(embedFiles embed.FS) (string, error) {
 
 	location, err := MakeApplicationFolder(schemaLocation)
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return "", err
 	}
 
@@ -109,11 +116,15 @@ func MakeSchemaDirectory(embedFiles embed.FS) (string, error) {
 
 		bytes, err := fs.ReadFile(embedFiles, filePath)
 		if err != nil {
+			jlogr.Logger.ILog.Error(err, err.Error())
+
 			return err
 		}
 
 		schemaFile, err := GetApplicationFile(filepath.Dir(filePath), fileEntry.Name(), os.O_CREATE|os.O_RDWR|os.O_APPEND)
 		if err != nil {
+			jlogr.Logger.ILog.Error(err, err.Error())
+
 			return err
 		}
 		defer func(file *os.File) {
@@ -124,6 +135,8 @@ func MakeSchemaDirectory(embedFiles embed.FS) (string, error) {
 
 		_, err = schemaFile.Write(bytes)
 		if err != nil {
+			jlogr.Logger.ILog.Error(err, err.Error())
+
 			return err
 		}
 

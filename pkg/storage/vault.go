@@ -5,6 +5,7 @@ import (
 
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 	"github.com/sqljames/goalctl/pkg/storage/sqlite"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 type Vault struct {
@@ -48,6 +49,8 @@ type Repository interface {
 func NewVault() (vault Vault, err error) {
 	repo, err := sqlite.NewSQLiteStorage()
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return Vault{}, err
 	}
 
