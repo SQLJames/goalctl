@@ -42,15 +42,11 @@ func (f *EmbedFileMigrationSource) FindMigrations() ([]*migrate.Migration, error
 		}
 		// from now we always return nil cause if we send err, WalkDir stop processing.
 		if entry.IsDir() {
-			jlogr.Logger.ILog.Error(err, err.Error())
-
-			return err
+			return nil
 		}
 
 		if !strings.HasSuffix(entry.Name(), `.sql`) {
-			jlogr.Logger.ILog.Error(err, err.Error())
-
-			return err
+			return nil
 		}
 
 		content, err := f.Filesystem.ReadFile(path)
@@ -94,7 +90,7 @@ func runMigrations(sqlDB *sql.DB) (int, error) {
 	numberOfMigrations, err := migrate.Exec(sqlDB, "sqlite3", &migrate.MemoryMigrationSource{Migrations: migration}, migrate.Up)
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
-		
+
 		return 0, err
 	}
 
