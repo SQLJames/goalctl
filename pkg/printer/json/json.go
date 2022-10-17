@@ -2,8 +2,9 @@ package jsonprinter
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
+
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 type JSONPrinter struct {
@@ -15,7 +16,9 @@ func (jp *JSONPrinter) Write(data interface{}, destination io.Writer) (err error
 
 	err = enc.Encode(data)
 	if err != nil {
-		return fmt.Errorf("json: %w", err)
+		jlogr.Logger.ILog.Error(err, err.Error())
+
+		return err
 	}
 
 	return nil

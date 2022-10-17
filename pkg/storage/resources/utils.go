@@ -4,11 +4,12 @@ import (
 	"os/user"
 	"time"
 
+	"github.com/sqljames/goalctl/pkg/util"
 	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
-func NewGoal(goal, dueDate, details string, priority int) *Goal {
-	dueTime, err := time.Parse(time.RFC3339, dueDate)
+func NewGoal(goal string, dueDate *time.Time, details string, priority int) *Goal {
+	dueTime, err := time.Parse(time.RFC3339, util.TimeToString(dueDate))
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, "Unable to parse due time , getting current time.")
 

@@ -1,51 +1,91 @@
 package util
 
 import (
-	"fmt"
+	"embed"
 	"io/fs"
 	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/sqljames/goalctl/pkg/info"
 	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 var (
-	folderPermissons fs.FileMode = 0o755
+	defaultFolderPermissons fs.FileMode = 0o755
+	defaultFilePermissions  fs.FileMode = 0o600
+	defaultStorageLocation              = getDefaultApplicationFolder()
 )
 
-func GetHomeDir() (directory string, err error) {
+func getHomeDir() (directory string, err error) {
 	dirname, err := os.UserHomeDir()
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, "getting home directory")
 
-		return "", fmt.Errorf("OS UserHomeDir: %w", err)
+		return "", err
 	}
 
 	return dirname, nil
 }
 
-func MakeStorageLocation() (storageLocation string) {
+func getDefaultApplicationFolder() (storageLocation string) {
 	applicationName := info.GetApplicationName()
 
-	baseDir, err := GetHomeDir()
+	baseDir, err := getHomeDir()
 	if err != nil {
-		jlogr.Logger.ILog.Error(err, "Error getting home directory, setting location to tmp folder.")
-
-		baseDir = os.TempDir()
+		jlogr.Logger.ILog.Fatal(err, "Error getting home directory", "error", err)
 	}
 
 	storageLocation = path.Join(baseDir, "."+applicationName)
 
-	err = os.MkdirAll(storageLocation, folderPermissons)
-	if err != nil {
-		jlogr.Logger.ILog.Fatal(err, "error creating storagelocation", "location", storageLocation)
-	}
-
 	return storageLocation
 }
 
-func FileExists(fileName string) (exists bool) {
+func MakeApplicationFolder(folder string) (location string, err error) {
+	storageLocation := JoinPath(defaultStorageLocation, filepath.Clean(folder))
+
+	err = os.MkdirAll(storageLocation, defaultFolderPermissons)
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, "error creating storagelocation", "location", storageLocation)
+
+		return "", err
+	}
+
+	return storageLocation, nil
+}
+
+func GetApplicationFile(leafDirectory, fileName string, openFlags int) (*os.File, error) {
+	location, err := MakeApplicationFolder(filepath.Clean(leafDirectory))
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
+		return nil, err
+	}
+
+	file := JoinPath(filepath.Clean(location), filepath.Clean(fileName))
+
+	if !fileExists(file) {
+		osFile, err := os.Create(filepath.Clean(file))
+		if err != nil {
+			jlogr.Logger.ILog.Error(err, err.Error())
+
+			return nil, err
+		}
+
+		return osFile, err
+	}
+
+	osFile, err := os.OpenFile(filepath.Clean(file), openFlags, defaultFilePermissions) //#nosec G304 -- Not sure why this is being flagged.
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
+		return nil, err
+	}
+
+	return osFile, err
+}
+
+func fileExists(fileName string) (exists bool) {
 	if _, err := os.Stat(fileName); err != nil {
 		return false
 	}
@@ -54,8 +94,54 @@ func FileExists(fileName string) (exists bool) {
 }
 
 func JoinPath(basePath, leaf string) (fullPath string) {
-	joinedPath := path.Join(basePath, leaf)
-	jlogr.Logger.ILog.Trace(fmt.Sprintf("path is %s", joinedPath))
+	return path.Join(basePath, leaf)
+}
 
-	return joinedPath
+func MakeSchemaDirectory(embedFiles embed.FS) (string, error) {
+	schemaLocation := "schema"
+
+	location, err := MakeApplicationFolder(schemaLocation)
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
+		return "", err
+	}
+
+	err = fs.WalkDir(embedFiles, ".", func(filePath string, fileEntry fs.DirEntry, err error) error {
+		if fileEntry.IsDir() {
+			_, err := MakeApplicationFolder(JoinPath(schemaLocation, filePath))
+
+			return err
+		}
+
+		bytes, err := fs.ReadFile(embedFiles, filePath)
+		if err != nil {
+			jlogr.Logger.ILog.Error(err, err.Error())
+
+			return err
+		}
+
+		schemaFile, err := GetApplicationFile(filepath.Dir(filePath), fileEntry.Name(), os.O_CREATE|os.O_RDWR|os.O_APPEND)
+		if err != nil {
+			jlogr.Logger.ILog.Error(err, err.Error())
+
+			return err
+		}
+		defer func(file *os.File) {
+			if err := file.Close(); err != nil {
+				jlogr.Logger.ILog.Warn("issue closing file", "fileName", file.Name(), "error", err.Error())
+			}
+		}(schemaFile)
+
+		_, err = schemaFile.Write(bytes)
+		if err != nil {
+			jlogr.Logger.ILog.Error(err, err.Error())
+
+			return err
+		}
+
+		return nil
+	})
+
+	return location, err
 }

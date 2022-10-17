@@ -1,17 +1,18 @@
 package info
 
-import (
-	"github.com/urfave/cli/v2"
+const (
+	Description string = "A Cli tool for managing your Daily Journal entries."
+	Copyright   string = "Database Ally, LLC, 2022"
 )
 
-const (
-	Description     string = "A Cli tool for managing your Daily Journal entries."
-	Copyright string = "Database Ally, LLC, 2022"
-)
+type Author struct {
+	Name  string
+	Email string
+}
 
 var (
 	applicationName = "unknown"
-	Authors         = []*cli.Author{
+	Authors         = []*Author{
 		{
 			Name:  "James Rhoat",
 			Email: "James@Rhoat.com",

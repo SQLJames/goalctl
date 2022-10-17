@@ -1,3 +1,5 @@
+-- +migrate Up
+-- +migrate StatementBegin
 CREATE TABLE Goal (
   GoalID INTEGER PRIMARY KEY AUTOINCREMENT,
   DueDate text,
@@ -8,3 +10,9 @@ CREATE TABLE Goal (
   Priority INTEGER NOT NULL,
   Status text NOT NULL
 );
+-- +migrate StatementEnd
+
+-- +migrate Down
+-- +migrate StatementBegin
+DROP TABLE Goal;
+-- +migrate StatementEnd

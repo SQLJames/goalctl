@@ -9,10 +9,11 @@ import (
 	"hash"
 	"io"
 	"io/fs"
-	"log"
 	"os"
 	"path"
 	"path/filepath"
+
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 type Hash struct {
@@ -48,17 +49,22 @@ func (h *Hash) getFileChecksums(filePath string) (returnHashString string, err e
 
 	file, err := os.Open(sanitizedInput)
 	if err != nil {
-		return returnHashString, fmt.Errorf("os.Open: %w", err)
+		jlogr.Logger.ILog.Error(err, err.Error())
+
+		return returnHashString, err
 	}
 
 	defer func(f *os.File) {
 		if err := f.Close(); err != nil {
-			log.Println("issue closing file", "fileName", file.Name(), "error", err.Error())
+			jlogr.Logger.ILog.Error(err, err.Error())
+
 		}
 	}(file)
 
 	if _, err := io.Copy(h.newHash, file); err != nil {
-		return returnHashString, fmt.Errorf("io.Copy: %w", err)
+		jlogr.Logger.ILog.Error(err, err.Error())
+
+		return returnHashString, err
 	}
 
 	hashInBytes := h.newHash.Sum(nil)[:h.byteLength]
@@ -73,7 +79,7 @@ func generateChecksum(filePath string) {
 
 	files, err := os.ReadDir(sanitizedInput)
 	if err != nil {
-		log.Fatal(err)
+		jlogr.Logger.ILog.Fatal(err, err.Error())
 	}
 
 	for _, file := range files {
@@ -81,7 +87,7 @@ func generateChecksum(filePath string) {
 		for _, hash := range hashes {
 			checksum, err := hash.getFileChecksums(workingFile)
 			if err != nil {
-				log.Fatal(err)
+				jlogr.Logger.ILog.Fatal(err, err.Error())
 			}
 
 			writeChecksum(sanitizedInput, file.Name(), hash.name, checksum)
@@ -91,9 +97,9 @@ func generateChecksum(filePath string) {
 
 func writeChecksum(filePath, filename, checksumName, checksum string) {
 	sanitizedInput := filepath.Clean(filePath)
-	
+
 	err := os.WriteFile(path.Join(sanitizedInput, fmt.Sprintf("%s.%s.txt", filename, checksumName)), []byte(checksum), filePermissions)
 	if err != nil {
-		log.Fatal(err)
+		jlogr.Logger.ILog.Fatal(err, err.Error())
 	}
 }

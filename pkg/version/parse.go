@@ -4,13 +4,16 @@ import (
 	"fmt"
 
 	"github.com/Masterminds/semver"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 // parseVersion takes in a version string and then parses it to a Version object.
 func parseVersion(ver string) (version *semver.Version, err error) {
 	version, err = semver.NewVersion(ver)
 	if err != nil {
-		return nil, fmt.Errorf("parsing version: %w", err)
+		jlogr.Logger.ILog.Error(err, err.Error())
+
+		return nil, err
 	}
 
 	return version, nil
@@ -21,12 +24,16 @@ func parseVersion(ver string) (version *semver.Version, err error) {
 func UpgradeAvailable(remoteVersion string) (upgradeAvailable bool, err error) {
 	constraint, err := semver.NewConstraint(fmt.Sprintf("<%s", remoteVersion))
 	if err != nil {
-		return false, fmt.Errorf("semver NewConstraint: %w", err)
+		jlogr.Logger.ILog.Error(err, err.Error())
+
+		return false, err
 	}
 
 	semVerCurrent, err := parseVersion(buildVersion)
 	if err != nil {
-		return false, fmt.Errorf("parseVersion: %w", err)
+		jlogr.Logger.ILog.Error(err, err.Error())
+
+		return false, err
 	}
 
 	upgradeAvailable, _ = constraint.Validate(semVerCurrent)

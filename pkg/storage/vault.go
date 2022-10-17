@@ -5,6 +5,7 @@ import (
 
 	"github.com/sqljames/goalctl/pkg/storage/resources"
 	"github.com/sqljames/goalctl/pkg/storage/sqlite"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 type Vault struct {
@@ -12,30 +13,30 @@ type Vault struct {
 }
 
 type Notebook interface {
-	CreateNotebook(ctx context.Context, name string) resources.Notebook
-	GetNotebookIDByName(ctx context.Context, name string) int64
-	GetNotebook(ctx context.Context, name string) resources.Notebook
-	GetNotebooks(ctx context.Context) []*resources.Notebook
-	GetLogEntryByNotebook(ctx context.Context, name string) []*resources.LogEntry
+	CreateNotebook(ctx context.Context, name string) (resources.Notebook, error)
+	GetNotebookIDByName(ctx context.Context, name string) (int64, error)
+	GetNotebook(ctx context.Context, name string) (resources.Notebook, error)
+	GetNotebooks(ctx context.Context) ([]*resources.Notebook, error)
 }
 type LogEntry interface {
-	CreateLogEntry(ctx context.Context, arg *resources.LogEntry, notebookName string) *resources.LogEntry
-	GetLogEntries(ctx context.Context) []*resources.LogEntry
-	GetLogEntryByCreatedDate(ctx context.Context, createddate string) []*resources.LogEntry
-	GetLogEntryByLogEntryID(ctx context.Context, logentryid int64) *resources.LogEntry
-	UpdateLogEntry(ctx context.Context, arg *resources.LogEntry)
+	GetLogEntryByNotebook(ctx context.Context, name string) ([]*resources.LogEntry, error)
+	CreateLogEntry(ctx context.Context, arg *resources.LogEntry, notebookName string) (*resources.LogEntry, error)
+	GetLogEntries(ctx context.Context) ([]*resources.LogEntry, error)
+	GetLogEntryByCreatedDate(ctx context.Context, createddate string) ([]*resources.LogEntry, error)
+	GetLogEntryByLogEntryID(ctx context.Context, logentryid int64) (*resources.LogEntry, error)
+	UpdateLogEntry(ctx context.Context, arg *resources.LogEntry) error
 }
 type Goal interface {
-	CreateGoal(ctx context.Context, arg *resources.Goal) *resources.Goal
-	GetGoals(ctx context.Context) []*resources.Goal
-	UpdateGoal(ctx context.Context, arg *resources.Goal)
-	GetGoalByGoalID(ctx context.Context, goalID int) *resources.Goal
+	CreateGoal(ctx context.Context, arg *resources.Goal) (*resources.Goal, error)
+	GetGoals(ctx context.Context) ([]*resources.Goal, error)
+	UpdateGoal(ctx context.Context, arg *resources.Goal) error
+	GetGoalByGoalID(ctx context.Context, goalID int) (*resources.Goal, error)
 }
 type Associations interface {
-	CreateAssociation(ctx context.Context, arg resources.Association) resources.Association
-	GetAssociations(ctx context.Context) []*resources.Association
-	GetAssociationsByGoalID(ctx context.Context, goalid int) []*resources.Association
-	GetAssociationsByLogEntryID(ctx context.Context, logentryid int) []*resources.Association
+	CreateAssociation(ctx context.Context, arg resources.Association) (resources.Association, error)
+	GetAssociations(ctx context.Context) ([]*resources.Association, error)
+	GetAssociationsByGoalID(ctx context.Context, goalid int) ([]*resources.Association, error)
+	GetAssociationsByLogEntryID(ctx context.Context, logentryid int) ([]*resources.Association, error)
 }
 
 type Repository interface {
@@ -45,6 +46,13 @@ type Repository interface {
 	Associations
 }
 
-func NewVault() (vault Vault) {
-	return Vault{Storage: sqlite.NewSQLiteStorage()}
+func NewVault() (vault Vault, err error) {
+	repo, err := sqlite.NewSQLiteStorage()
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
+		return Vault{}, err
+	}
+
+	return Vault{Storage: repo}, nil
 }

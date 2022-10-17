@@ -6,9 +6,7 @@ import (
 	"strconv"
 
 	"github.com/go-logr/logr"
-	"github.com/sqljames/goalctl/pkg/info"
 	"k8s.io/klog/v2"
-	"k8s.io/klog/v2/klogr"
 )
 
 type internalklogImplementation struct {
@@ -21,10 +19,12 @@ type internalklogImplementation struct {
 	TraceLogger   logr.Logger
 }
 
+func SetLogger(logrLogger logr.Logger) {
+	defaultLogger = logrLogger
+}
+
 func newInternalklog() *internalklogImplementation {
-	logger := klogr.NewWithOptions(klogr.WithFormat(klogr.FormatKlog)).
-		WithCallDepth(1).
-		WithValues("applicationName", info.GetApplicationName())
+	logger := defaultLogger
 
 	return &internalklogImplementation{
 		PanicLogger:   logger.WithName("Panic"),
@@ -71,6 +71,6 @@ func InitializeLogger(logLevel int) {
 
 	err := fs.Set("v", strconv.Itoa(logLevel))
 	if err != nil {
-		Logger.ILog.Warn("issue setting verbosity flag", "error", err.Error())
+		Logger.ILog.Error(err, err.Error())
 	}
 }

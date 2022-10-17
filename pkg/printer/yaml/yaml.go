@@ -1,7 +1,6 @@
 package yamlprinter
 
 import (
-	"fmt"
 	"io"
 
 	"github.com/sqljames/goalctl/pkg/util/jlogr"
@@ -14,12 +13,16 @@ type YamlPrinter struct {
 func (yp *YamlPrinter) Write(data interface{}, destination io.Writer) (err error) {
 	bytes, err := yaml.Marshal(data)
 	if err != nil {
-		return fmt.Errorf("yaml: %w", err)
+		jlogr.Logger.ILog.Error(err, err.Error())
+
+		return err
 	}
 
 	_, err = destination.Write(bytes)
 	if err != nil {
-		jlogr.Logger.ILog.Warn("issue writing data out to destination.", "error", err.Error())
+		jlogr.Logger.ILog.Error(err, err.Error())
+
+		return err
 	}
 
 	return nil

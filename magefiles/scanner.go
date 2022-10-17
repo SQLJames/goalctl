@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/magefile/mage/sh"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 type scanner struct {
@@ -15,9 +16,9 @@ type scanner struct {
 }
 
 var scanners = []scanner{
-	{command: "golangci-lint", source: "github.com/golangci/golangci-lint/cmd/golangci-lint", version: "latest", runArgs: []string{"run"}},
 	{command: "govulncheck", source: "golang.org/x/vuln/cmd/govulncheck", version: "latest", runArgs: []string{"./..."}},
 	{command: "gosec", source: "github.com/securego/gosec/v2/cmd/gosec", version: "latest", runArgs: []string{"./..."}},
+	{command: "golangci-lint", source: "github.com/golangci/golangci-lint/cmd/golangci-lint", version: "latest", runArgs: []string{"run"}},
 }
 
 func (s *scanner) getInstallURL() (installURL string) {
@@ -28,7 +29,7 @@ func runStaticScanners() (err error) {
 		log.Printf("--> Running Scanner: %s\n", scanner.command)
 
 		if err := sh.RunV(scanner.command, scanner.runArgs...); err != nil {
-			return fmt.Errorf("sh RunV: %w", err)
+			return err
 		}
 	}
 
@@ -38,6 +39,8 @@ func confirmScanners() (err error) {
 	for _, scanner := range scanners {
 		err = install(scanner.command, scanner.getInstallURL())
 		if err != nil {
+			jlogr.Logger.ILog.Error(err, err.Error())
+
 			return err
 		}
 	}
@@ -53,7 +56,9 @@ func install(executableName, installURL string) (err error) {
 
 	err = sh.Run("go", "install", installURL)
 	if err != nil {
-		return fmt.Errorf("sh Run: %w", err)
+		jlogr.Logger.ILog.Error(err, err.Error())
+
+		return err
 	}
 
 	return nil

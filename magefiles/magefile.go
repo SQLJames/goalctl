@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"io/fs"
 	"log"
 	"os"
@@ -14,6 +13,7 @@ import (
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
+	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
 const (
@@ -65,7 +65,7 @@ func ensureDirs() error {
 			log.Printf("    creating '%s'\n", dir)
 
 			if err := os.MkdirAll(dir, folderPermissions); err != nil {
-				return fmt.Errorf("OS MkdirAll: %w", err)
+				return err
 			}
 		}
 	}
@@ -101,9 +101,9 @@ func Vendor() {
 func Build() error {
 	mg.SerialDeps(Vendor, ensureDirs)
 
-	sourcePath := gitRoot()
+	sourcePath := path.Join(gitRoot(), "cli")
 	if err := sh.Run(goexe, "build", "-o", binaryPath, "-ldflags="+flags(), sourcePath); err != nil {
-		return fmt.Errorf("sh Run: %w", err)
+		return err
 	}
 
 	return nil
@@ -121,7 +121,7 @@ func Release() {
 	log.Printf("--> Building '%s' for release\n", gitRoot())
 
 	for _, buildTarget := range targets {
-		buildTarget.SourceDir = gitRoot()
+		buildTarget.SourceDir = path.Join(gitRoot(), "cli")
 		go func(buildTarget target) {
 			defer waitGroup.Done()
 
@@ -140,7 +140,7 @@ func Release() {
 
 			err := sh.RunWith(env, goexe, "build", "-o", path.Join(binaryPath, buildTarget.name()), "-ldflags="+flags(), buildTarget.SourceDir)
 			if err != nil {
-				log.Printf("compilation failed: %s\n", err.Error())
+				jlogr.Logger.ILog.Error(err, err.Error())
 
 				return
 			}
@@ -157,11 +157,15 @@ func Scan() (err error) {
 
 	err = confirmScanners()
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return err
 	}
 
 	err = runStaticScanners()
 	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return err
 	}
 
@@ -178,5 +182,5 @@ func Test() error {
 
 	log.Println(strings.ReplaceAll(results, "\n", "\n    "))
 
-	return fmt.Errorf("sh Output: %w", err)
+	return err
 }
