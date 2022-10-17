@@ -31,11 +31,14 @@ func exportJournal() *cli.Command {
 }
 
 func actionExportJournal(cliContext *cli.Context) error {
-	journal, err := export.ExportJournal()
+	journal, err := export.Journal()
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return err
 	}
+
 	output.Output(cliContext.String(flags.OutputFormatFlagName), journal)
+
 	return nil
 }

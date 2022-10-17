@@ -31,26 +31,33 @@ func actionModifyGoal(cliContext *cli.Context) error {
 	if cliContext.IsSet(flags.DueDateFlagName) {
 		modificationDetails.GoalDeadline = cliContext.Timestamp(flags.DueDateFlagName)
 	}
+
 	if cliContext.IsSet(flags.NameFlagName) {
 		modificationDetails.GoalName = cliContext.String(flags.NameFlagName)
 	}
+
 	if cliContext.IsSet(flags.EntryTextFlagName) {
 		modificationDetails.GoalDetails = cliContext.String(flags.EntryTextFlagName)
 	}
+
 	if cliContext.IsSet(flags.PriorityFlagName) {
 		modificationDetails.GoalPriority = cliContext.Int(flags.PriorityFlagName)
 	}
+
 	if cliContext.IsSet(flags.GoalStatusFlagName) {
 		modificationDetails.GoalStatus = cliContext.String(flags.GoalStatusFlagName)
 	}
 
-	goal, err := modify.ModifyGoal(cliContext.Bool(flags.ConfirmFlagName), cliContext.Int(flags.GoalIDFlagName), modificationDetails)
+	goal, err := modify.Goal(cliContext.Bool(flags.ConfirmFlagName), cliContext.Int(flags.GoalIDFlagName), modificationDetails)
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return err
 	}
+
 	output.Output(cliContext.String(flags.OutputFormatFlagName), goal)
 
 	confirmationWarning(cliContext.Bool(flags.ConfirmFlagName))
+
 	return nil
 }

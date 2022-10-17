@@ -4,7 +4,6 @@ import (
 	"embed"
 	"fmt"
 	"io/fs"
-	"log"
 	"os"
 	"path"
 	"path/filepath"
@@ -14,9 +13,9 @@ import (
 )
 
 var (
-	folderPermissons       fs.FileMode = 0o755
-	filePermissions        fs.FileMode = 0o600
-	defaultStorageLocation             = getDefaultApplicationFolder()
+	defaultFolderPermissons fs.FileMode = 0o755
+	defaultFilePermissions  fs.FileMode = 0o600
+	defaultStorageLocation              = getDefaultApplicationFolder()
 )
 
 func getHomeDir() (directory string, err error) {
@@ -46,7 +45,7 @@ func getDefaultApplicationFolder() (storageLocation string) {
 func MakeApplicationFolder(folder string) (location string, err error) {
 	storageLocation := JoinPath(defaultStorageLocation, filepath.Clean(folder))
 
-	err = os.MkdirAll(storageLocation, folderPermissons)
+	err = os.MkdirAll(storageLocation, defaultFolderPermissons)
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, "error creating storagelocation", "location", storageLocation)
 
@@ -56,16 +55,29 @@ func MakeApplicationFolder(folder string) (location string, err error) {
 	return storageLocation, nil
 }
 
-func GetApplicationFile(leafDirectory string, fileName string, openFlagflag int) (*os.File, error) {
+func GetApplicationFile(leafDirectory, fileName string, openFlags int) (*os.File, error) {
 	location, err := MakeApplicationFolder(filepath.Clean(leafDirectory))
 	if err != nil {
 		return nil, err
 	}
 
-	if !fileExists(JoinPath(location, fileName)) {
-		return os.Create(JoinPath(location, fileName))
+	file := JoinPath(filepath.Clean(location), filepath.Clean(fileName))
+
+	if !fileExists(file) {
+		osFile, err := os.Create(filepath.Clean(file))
+		if err != nil {
+			return nil, err
+		}
+
+		return osFile, err
 	}
-	return os.OpenFile(JoinPath(location, fileName), openFlagflag, filePermissions)
+
+	osFile, err := os.OpenFile(filepath.Clean(file), openFlags, defaultFilePermissions) //#nosec G304 -- Not sure why this is being flagged.
+	if err != nil {
+		return nil, err
+	}
+
+	return osFile, err
 }
 
 func fileExists(fileName string) (exists bool) {
@@ -104,9 +116,11 @@ func MakeSchemaDirectory(embedFiles embed.FS) (string, error) {
 		if err != nil {
 			return err
 		}
-
-		defer schemaFile.Close()
-		log.Println(schemaFile.Name())
+		defer func(file *os.File) {
+			if err := file.Close(); err != nil {
+				jlogr.Logger.ILog.Warn("issue closing file", "fileName", file.Name(), "error", err.Error())
+			}
+		}(schemaFile)
 
 		_, err = schemaFile.Write(bytes)
 		if err != nil {

@@ -8,7 +8,7 @@ import (
 	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
-func CreateNotebook(notebookName string) (data *resources.Notebook, err error) {
+func Notebook(notebookName string) (data *resources.Notebook, err error) {
 	if notebookName == "" {
 		jlogr.Logger.ILog.Error(&EmptryStringError{}, "Error creating notebook", "function", "actionCreateNotebook")
 
@@ -18,12 +18,16 @@ func CreateNotebook(notebookName string) (data *resources.Notebook, err error) {
 	storagelayer, err := storage.NewVault()
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
+	
 	results, err := storagelayer.Storage.CreateNotebook(context.TODO(), notebookName)
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
+	
 	return &results, err
 }

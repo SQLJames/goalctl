@@ -12,7 +12,7 @@ func listNotebookEntries() *cli.Command {
 	return &cli.Command{
 		Name:   "entry",
 		Usage:  "Prints all the entries in a notebook",
-		Action: ListEntries,
+		Action: entries,
 		Flags: []cli.Flag{
 			flags.NameNotebookFlag,
 			flags.OutputFormatFlag,
@@ -20,12 +20,15 @@ func listNotebookEntries() *cli.Command {
 	}
 }
 
-func ListEntries(cliContext *cli.Context) error {
-	entries, err := list.ListEntries(cliContext.String(flags.NameFlagName))
+func entries(cliContext *cli.Context) error {
+	entries, err := list.Entries(cliContext.String(flags.NameFlagName))
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+		
 		return err
 	}
+	
 	output.Output(cliContext.String(flags.OutputFormatFlagName), entries)
+
 	return nil
 }

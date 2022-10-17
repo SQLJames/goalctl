@@ -21,9 +21,10 @@ func New() *cli.Command {
 }
 
 func linkAction(cliContext *cli.Context) error {
-	err := link.Link(cliContext.StringSlice(flags.LogEntryIDFlagName), cliContext.StringSlice(flags.GoalIDFlagName))
+	err := link.LogEntryToGoal(cliContext.StringSlice(flags.LogEntryIDFlagName), cliContext.StringSlice(flags.GoalIDFlagName))
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return err
 	}
 

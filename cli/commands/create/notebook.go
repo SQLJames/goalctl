@@ -19,10 +19,12 @@ func createNotebook() *cli.Command {
 }
 
 func actionCreateNotebook(cliContext *cli.Context) error {
-	result, err := create.CreateNotebook(cliContext.String(flags.NameFlagName))
+	result, err := create.Notebook(cliContext.String(flags.NameFlagName))
 	if err != nil {
 		return err
 	}
+	
 	output.Output(cliContext.String(flags.OutputFormatFlagName), result)
+
 	return nil
 }

@@ -15,9 +15,9 @@ type scanner struct {
 }
 
 var scanners = []scanner{
-	{command: "golangci-lint", source: "github.com/golangci/golangci-lint/cmd/golangci-lint", version: "latest", runArgs: []string{"run"}},
 	{command: "govulncheck", source: "golang.org/x/vuln/cmd/govulncheck", version: "latest", runArgs: []string{"./..."}},
 	{command: "gosec", source: "github.com/securego/gosec/v2/cmd/gosec", version: "latest", runArgs: []string{"./..."}},
+	{command: "golangci-lint", source: "github.com/golangci/golangci-lint/cmd/golangci-lint", version: "latest", runArgs: []string{"run"}},
 }
 
 func (s *scanner) getInstallURL() (installURL string) {

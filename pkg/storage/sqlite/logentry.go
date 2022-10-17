@@ -23,6 +23,7 @@ func (sl Repository) CreateLogEntry(ctx context.Context, arg *resources.LogEntry
 	if err != nil {
 		return nil, err
 	}
+	
 	if NotebookID == 0 {
 		jlogr.Logger.ILog.Debug("No results for notebook, Attempting to create a new notebook")
 
@@ -30,6 +31,7 @@ func (sl Repository) CreateLogEntry(ctx context.Context, arg *resources.LogEntry
 		if err != nil {
 			return nil, err
 		}
+
 		NotebookID = notebook.Notebookid
 	}
 

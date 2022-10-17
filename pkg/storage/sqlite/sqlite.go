@@ -22,7 +22,7 @@ var (
 )
 
 var (
-	ErrNoRows = errors.New("That Item Doesn't Exist")
+	ErrNoRows = errors.New("that item doesn't exist")
 )
 
 const (
@@ -45,6 +45,7 @@ func newDB() (db *database, err error) {
 	if err != nil {
 		return nil, err
 	}
+	
 	return &database{
 		Location:  location,
 		Name:      info.GetApplicationName(),

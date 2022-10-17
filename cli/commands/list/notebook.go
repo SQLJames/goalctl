@@ -12,20 +12,22 @@ func listNotebooks() *cli.Command {
 	return &cli.Command{
 		Name:   "notebook",
 		Usage:  "Prints all the notebooks in your journal",
-		Action: ListNotebooks,
+		Action: Notebooks,
 		Flags: []cli.Flag{
 			flags.OutputFormatFlag,
 		},
 	}
 }
 
-func ListNotebooks(cliContext *cli.Context) error {
-	notebookList, err := list.GetNotebooks()
+func Notebooks(cliContext *cli.Context) error {
+	results, err := list.Notebooks()
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return err
 	}
-	output.Output(cliContext.String(flags.OutputFormatFlagName), notebookList)
+
+	output.Output(cliContext.String(flags.OutputFormatFlagName), results)
 
 	return nil
 }

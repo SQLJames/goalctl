@@ -7,8 +7,8 @@ import (
 	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
-func Output(OutputFormat string, data interface{}) {
-	err := printer.NewPrinterByString(OutputFormat).Writer.Write(data, os.Stdout)
+func Output(outputFormat string, data interface{}) {
+	err := printer.NewPrinterByString(outputFormat).Writer.Write(data, os.Stdout)
 	if err != nil {
 		jlogr.Logger.ILog.Warn("issue Printing the data", "function", "ListEntries", "error", err.Error())
 	}

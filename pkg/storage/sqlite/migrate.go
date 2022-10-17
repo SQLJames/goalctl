@@ -31,14 +31,14 @@ var (
 	ErrEmbedReadDirFailed = errors.New(`directory read failed`)
 )
 
-// FindMigrations is part of MigrationSource implementation
+// FindMigrations is part of MigrationSource implementation.
 func (f *EmbedFileMigrationSource) FindMigrations() ([]*migrate.Migration, error) {
 	items := make([]*migrate.Migration, 0)
 	err := fs.WalkDir(f.Filesystem, `.`, func(path string, entry fs.DirEntry, err error) error {
 		if err != nil {
 			return fmt.Errorf(`%w: %v`, ErrEmbedReadDirFailed, err)
 		}
-		// from now we always return nil cause if we send err, WalkDir stop processing
+		// from now we always return nil cause if we send err, WalkDir stop processing.
 		if entry.IsDir() {
 			return err
 		}

@@ -26,14 +26,18 @@ func modifyEntry() *cli.Command {
 
 func actionModifyEntry(cliContext *cli.Context) error {
 	modificationDetails := decodeModificationRequest(cliContext)
-	logEntry, err := modify.ModifyEntry(cliContext.Bool(flags.ConfirmFlagName), cliContext.Int(flags.LogEntryIDFlagName), modificationDetails)
+
+	logEntry, err := modify.Entry(cliContext.Bool(flags.ConfirmFlagName), cliContext.Int(flags.LogEntryIDFlagName), modificationDetails)
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return err
 	}
+
 	output.Output(cliContext.String(flags.OutputFormatFlagName), logEntry)
 
 	confirmationWarning(cliContext.Bool(flags.ConfirmFlagName))
+
 	return nil
 }
 
@@ -50,5 +54,6 @@ func decodeModificationRequest(cliContext *cli.Context) modify.EntryModification
 	if cliContext.IsSet(flags.TagsFlagName) {
 		modificationDetails.EntryTags = cliContext.StringSlice(flags.TagsFlagName)
 	}
+	
 	return modificationDetails
 }

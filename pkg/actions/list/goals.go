@@ -10,12 +10,14 @@ import (
 	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
-func ListGoals(filter GoalFilter) ([]*resources.GoalDetail, error) {
-	goals, err := GetGoalDetails()
+func Goals(filter GoalFilter) ([]*resources.GoalDetail, error) {
+	goals, err := GoalDetails()
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
+
 	if filter.PastDue {
 		pastDueGoals := []*resources.GoalDetail{}
 
@@ -23,8 +25,10 @@ func ListGoals(filter GoalFilter) ([]*resources.GoalDetail, error) {
 			old, err := expired(&goals[index].Goal.Deadline)
 			if err != nil {
 				jlogr.Logger.ILog.Error(err, err.Error())
+
 				return nil, err
 			}
+
 			if old {
 				pastDueGoals = append(pastDueGoals, goals[index])
 			}
@@ -40,6 +44,7 @@ func expired(inputDate *string) (bool, error) {
 	parsedTime, err := util.StringToTime(*inputDate)
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return false, err
 	}
 
@@ -50,28 +55,34 @@ func expired(inputDate *string) (bool, error) {
 	return false, nil
 }
 
-func GetGoalDetails() (details []*resources.GoalDetail, err error) {
+func GoalDetails() (details []*resources.GoalDetail, err error) {
+	journal := resources.Journal{}
+
 	storagelayer, err := storage.NewVault()
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
-		return nil, err
-	}
-	goals, err := storagelayer.Storage.GetGoals(context.TODO())
-	if err != nil {
-		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
 
-	journal := resources.Journal{}
+	goals, err := storagelayer.Storage.GetGoals(context.TODO())
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
+		return nil, err
+	}
+
 	allLogEntries, err := storagelayer.Storage.GetLogEntries(context.TODO())
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
 
 	allAssociations, err := storagelayer.Storage.GetAssociations(context.TODO())
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
 
@@ -93,14 +104,22 @@ func GetGoalDetails() (details []*resources.GoalDetail, err error) {
 	return journal.GoalDetails, nil
 }
 
-func GetGoalByGoalID(goalID int) (*resources.Goal, error) {
+func GoalByGoalID(goalID int) (*resources.Goal, error) {
 	storagelayer, err := storage.NewVault()
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
+		return nil, err
+	}
+	
+	goal, err := storagelayer.Storage.GetGoalByGoalID(context.TODO(), goalID)
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
 
-	return storagelayer.Storage.GetGoalByGoalID(context.TODO(), goalID)
+	return goal, nil
 }
 
 func lookupAssociations(entries []*resources.Association, goalID int) (associations []*resources.Association) {

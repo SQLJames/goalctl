@@ -16,7 +16,7 @@ func (sl Repository) CreateNotebook(ctx context.Context, name string) (resources
 	sqlcNotebook, err := sl.queries.CreateNotebook(ctx, name)
 	if err != nil {
 		// we can check for unique value error by comparing it with sqlite3.SQLITE_CONSTRAINT_UNIQUE
-		return resources.Notebook{}, nil
+		return resources.Notebook{}, err
 	}
 
 	return resources.Notebook{Notebookid: sqlcNotebook.Notebookid, Name: sqlcNotebook.Name}, err

@@ -27,11 +27,15 @@ func actionCreateLogEntry(cliContext *cli.Context) error {
 		NotebookName: cliContext.String(flags.NameFlagName),
 		Tags:         cliContext.StringSlice(flags.TagsFlagName),
 	}
-	result, err := create.CreateLogEntry(logEntry)
+	
+	result, err := create.LogEntry(logEntry)
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return err
 	}
+
 	output.Output(cliContext.String(flags.OutputFormatFlagName), result)
+
 	return nil
 }

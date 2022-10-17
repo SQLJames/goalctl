@@ -8,13 +8,22 @@ import (
 	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
-func CreateLogEntry(newLogEntry NewLogEntry) (*resources.LogEntry, error) {
+func LogEntry(newLogEntry NewLogEntry) (*resources.LogEntry, error) {
 	storagelayer, err := storage.NewVault()
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
-	le := resources.NewLogEntry(newLogEntry.LogEntry, newLogEntry.Tags)
 
-	return storagelayer.Storage.CreateLogEntry(context.TODO(), le, newLogEntry.NotebookName)
+	logEntry := resources.NewLogEntry(newLogEntry.LogEntry, newLogEntry.Tags)
+
+	logEntry, err = storagelayer.Storage.CreateLogEntry(context.TODO(), logEntry, newLogEntry.NotebookName)
+	if err != nil {
+		jlogr.Logger.ILog.Error(err, err.Error())
+
+		return nil, err
+	}
+
+	return logEntry, nil
 }

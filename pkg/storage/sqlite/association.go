@@ -18,6 +18,7 @@ func (sl Repository) CreateAssociation(ctx context.Context, arg resources.Associ
 
 func (sl Repository) GetAssociations(ctx context.Context) ([]*resources.Association, error) {
 	associations, err := sl.queries.GetAssociations(ctx)
+	
 	return convertSqlcGoalToLogEntriesToResource(associations), err
 }
 

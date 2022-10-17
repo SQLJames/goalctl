@@ -19,12 +19,13 @@ type internalklogImplementation struct {
 	TraceLogger   logr.Logger
 }
 
-func SetLogger(logr logr.Logger) {
-	defaultLogger = logr
+func SetLogger(logrLogger logr.Logger) {
+	defaultLogger = logrLogger
 }
 
 func newInternalklog() *internalklogImplementation {
 	logger := defaultLogger
+	
 	return &internalklogImplementation{
 		PanicLogger:   logger.WithName("Panic"),
 		FatalLogger:   logger.WithName("Fatal"),

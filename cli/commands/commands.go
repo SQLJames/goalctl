@@ -93,5 +93,6 @@ func makeAuthors() (authors []*cli.Author) {
 			Email: author.Email,
 		})
 	}
+	
 	return authors
 }

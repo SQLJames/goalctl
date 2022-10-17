@@ -29,11 +29,14 @@ func actionCreateGoal(cliContext *cli.Context) error {
 		Details:  cliContext.String(flags.EntryTextFlagName),
 		Priority: cliContext.Int(flags.PriorityFlagName),
 	}
-	result, err := create.CreateGoal(newGoal)
+	
+	result, err := create.Goal(newGoal)
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return err
 	}
+
 	output.Output(cliContext.String(flags.OutputFormatFlagName), result)
 
 	return nil

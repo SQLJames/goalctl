@@ -9,23 +9,29 @@ import (
 	"github.com/sqljames/goalctl/pkg/util/jlogr"
 )
 
-func ModifyEntry(confirm bool, targetEntryID int, modOpts EntryModificationOptions) (*resources.LogEntry, error) {
-
-	logEntry, err := list.GetLogEntryByLogEntryID(targetEntryID)
+func Entry(confirm bool, targetEntryID int, modOpts EntryModificationOptions) (*resources.LogEntry, error) {
+	logEntry, err := list.LogEntryByLogEntryID(targetEntryID)
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return nil, err
 	}
+
 	logEntry = decodeEntryModificationOptions(logEntry, modOpts)
 
 	if confirm {
-		UpdateLogEntry(logEntry)
+		err := updateLogEntry(logEntry)
+		if err != nil {
+			jlogr.Logger.ILog.Error(err, err.Error())
+
+			return nil, err
+		}
 	}
+
 	return logEntry, nil
 }
 
 func decodeEntryModificationOptions(logEntry *resources.LogEntry, modOpts EntryModificationOptions) *resources.LogEntry {
-
 	if modOpts.TargetNotebookID != 0 {
 		logEntry.Notebookid = modOpts.TargetNotebookID
 	}
@@ -41,11 +47,13 @@ func decodeEntryModificationOptions(logEntry *resources.LogEntry, modOpts EntryM
 	return logEntry
 }
 
-func UpdateLogEntry(arg *resources.LogEntry) error {
+func updateLogEntry(arg *resources.LogEntry) error {
 	storagelayer, err := storage.NewVault()
 	if err != nil {
 		jlogr.Logger.ILog.Error(err, err.Error())
+
 		return err
 	}
+	
 	return storagelayer.Storage.UpdateLogEntry(context.TODO(), arg)
 }
