@@ -109,6 +109,7 @@ func (f *StringSliceFlag) ApplyInputSourceValue(cCtx *cli.Context, isc InputSour
 				continue
 			}
 			underlyingFlag.Value = &sliceValue
+			f.set.Set(n, sliceValue.Serialize())
 		}
 		if f.Destination != nil {
 			f.Destination.Set(sliceValue.Serialize())
@@ -134,6 +135,68 @@ func (f *IntSliceFlag) ApplyInputSourceValue(cCtx *cli.Context, isc InputSourceC
 			continue
 		}
 		var sliceValue = *(cli.NewIntSlice(value...))
+		for _, n := range f.Names() {
+			underlyingFlag := f.set.Lookup(n)
+			if underlyingFlag == nil {
+				continue
+			}
+			underlyingFlag.Value = &sliceValue
+		}
+		if f.Destination != nil {
+			f.Destination.Set(sliceValue.Serialize())
+		}
+	}
+	return nil
+}
+
+// ApplyInputSourceValue applies a Int64Slice value if required
+func (f *Int64SliceFlag) ApplyInputSourceValue(cCtx *cli.Context, isc InputSourceContext) error {
+	if f.set == nil || cCtx.IsSet(f.Name) || isEnvVarSet(f.EnvVars) {
+		return nil
+	}
+	for _, name := range f.Int64SliceFlag.Names() {
+		if !isc.isSet(name) {
+			continue
+		}
+		value, err := isc.Int64Slice(name)
+		if err != nil {
+			return err
+		}
+		if value == nil {
+			continue
+		}
+		var sliceValue = *(cli.NewInt64Slice(value...))
+		for _, n := range f.Names() {
+			underlyingFlag := f.set.Lookup(n)
+			if underlyingFlag == nil {
+				continue
+			}
+			underlyingFlag.Value = &sliceValue
+		}
+		if f.Destination != nil {
+			f.Destination.Set(sliceValue.Serialize())
+		}
+	}
+	return nil
+}
+
+// ApplyInputSourceValue applies a Float64Slice value if required
+func (f *Float64SliceFlag) ApplyInputSourceValue(cCtx *cli.Context, isc InputSourceContext) error {
+	if f.set == nil || cCtx.IsSet(f.Name) || isEnvVarSet(f.EnvVars) {
+		return nil
+	}
+	for _, name := range f.Float64SliceFlag.Names() {
+		if !isc.isSet(name) {
+			continue
+		}
+		value, err := isc.Float64Slice(name)
+		if err != nil {
+			return err
+		}
+		if value == nil {
+			continue
+		}
+		var sliceValue = *(cli.NewFloat64Slice(value...))
 		for _, n := range f.Names() {
 			underlyingFlag := f.set.Lookup(n)
 			if underlyingFlag == nil {
@@ -233,6 +296,63 @@ func (f *IntFlag) ApplyInputSourceValue(cCtx *cli.Context, isc InputSourceContex
 		}
 		for _, n := range f.Names() {
 			_ = f.set.Set(n, strconv.FormatInt(int64(value), 10))
+		}
+	}
+	return nil
+}
+
+func (f *Int64Flag) ApplyInputSourceValue(cCtx *cli.Context, isc InputSourceContext) error {
+	if f.set == nil || cCtx.IsSet(f.Name) || isEnvVarSet(f.EnvVars) {
+		return nil
+	}
+	for _, name := range f.Int64Flag.Names() {
+		if !isc.isSet(name) {
+			continue
+		}
+		value, err := isc.Int64(name)
+		if err != nil {
+			return err
+		}
+		for _, n := range f.Names() {
+			_ = f.set.Set(n, strconv.FormatInt(value, 10))
+		}
+	}
+	return nil
+}
+
+func (f *UintFlag) ApplyInputSourceValue(cCtx *cli.Context, isc InputSourceContext) error {
+	if f.set == nil || cCtx.IsSet(f.Name) || isEnvVarSet(f.EnvVars) {
+		return nil
+	}
+	for _, name := range f.UintFlag.Names() {
+		if !isc.isSet(name) {
+			continue
+		}
+		value, err := isc.Uint(name)
+		if err != nil {
+			return err
+		}
+		for _, n := range f.Names() {
+			_ = f.set.Set(n, strconv.FormatUint(uint64(value), 10))
+		}
+	}
+	return nil
+}
+
+func (f *Uint64Flag) ApplyInputSourceValue(cCtx *cli.Context, isc InputSourceContext) error {
+	if f.set == nil || cCtx.IsSet(f.Name) || isEnvVarSet(f.EnvVars) {
+		return nil
+	}
+	for _, name := range f.Uint64Flag.Names() {
+		if !isc.isSet(name) {
+			continue
+		}
+		value, err := isc.Uint64(name)
+		if err != nil {
+			return err
+		}
+		for _, n := range f.Names() {
+			_ = f.set.Set(n, strconv.FormatUint(value, 10))
 		}
 	}
 	return nil
