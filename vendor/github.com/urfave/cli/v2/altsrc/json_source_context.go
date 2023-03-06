@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"strings"
 	"time"
 
@@ -40,7 +39,7 @@ func NewJSONSourceFromFile(f string) (InputSourceContext, error) {
 // NewJSONSourceFromReader returns an InputSourceContext suitable for
 // retrieving config variables from an io.Reader that returns JSON data.
 func NewJSONSourceFromReader(r io.Reader) (InputSourceContext, error) {
-	data, err := ioutil.ReadAll(r)
+	data, err := io.ReadAll(r)
 	if err != nil {
 		return nil, err
 	}
@@ -75,6 +74,63 @@ func (x *jsonSource) Int(name string) (int, error) {
 		return int(v), nil
 	case float64:
 		return int(v), nil
+	}
+}
+
+func (x *jsonSource) Int64(name string) (int64, error) {
+	i, err := x.getValue(name)
+	if err != nil {
+		return 0, err
+	}
+	switch v := i.(type) {
+	default:
+		return 0, fmt.Errorf("unexpected type %T for %q", i, name)
+	case int64:
+		return v, nil
+	case int:
+		return int64(v), nil
+	case float32:
+		return int64(v), nil
+	case float64:
+		return int64(v), nil
+	}
+}
+
+func (x *jsonSource) Uint(name string) (uint, error) {
+	i, err := x.getValue(name)
+	if err != nil {
+		return 0, err
+	}
+	switch v := i.(type) {
+	default:
+		return 0, fmt.Errorf("unexpected type %T for %q", i, name)
+	case uint:
+		return v, nil
+	case uint64:
+		return uint(v), nil
+	case float32:
+		return uint(v), nil
+	case float64:
+		return uint(v), nil
+	}
+}
+
+func (x *jsonSource) Uint64(name string) (uint64, error) {
+	i, err := x.getValue(name)
+	if err != nil {
+		return 0, err
+	}
+	switch v := i.(type) {
+	default:
+		return 0, fmt.Errorf("unexpected type %T for %q", i, name)
+	case uint64:
+		return v, nil
+	case uint:
+		return uint64(v), nil
+	case float32:
+		return uint64(v), nil
+	case float64:
+		return uint64(v), nil
 	}
 }
 
@@ -151,6 +207,52 @@ func (x *jsonSource) IntSlice(name string) ([]int, error) {
 		c := []int{}
 		for _, s := range v {
 			if i2, ok := s.(int); ok {
+				c = append(c, i2)
+			} else {
+				return c, fmt.Errorf("unexpected item type %T in %T for %q", s, c, name)
+			}
+		}
+		return c, nil
+	}
+}
+
+func (x *jsonSource) Int64Slice(name string) ([]int64, error) {
+	i, err := x.getValue(name)
+	if err != nil {
+		return nil, err
+	}
+	switch v := i.(type) {
+	default:
+		return nil, fmt.Errorf("unexpected type %T for %q", i, name)
+	case []int64:
+		return v, nil
+	case []interface{}:
+		c := []int64{}
+		for _, s := range v {
+			if i2, ok := s.(int64); ok {
+				c = append(c, i2)
+			} else {
+				return c, fmt.Errorf("unexpected item type %T in %T for %q", s, c, name)
+			}
+		}
+		return c, nil
+	}
+}
+
+func (x *jsonSource) Float64Slice(name string) ([]float64, error) {
+	i, err := x.getValue(name)
+	if err != nil {
+		return nil, err
+	}
+	switch v := i.(type) {
+	default:
+		return nil, fmt.Errorf("unexpected type %T for %q", i, name)
+	case []float64:
+		return v, nil
+	case []interface{}:
+		c := []float64{}
+		for _, s := range v {
+			if i2, ok := s.(float64); ok {
 				c = append(c, i2)
 			} else {
 				return c, fmt.Errorf("unexpected item type %T in %T for %q", s, c, name)
